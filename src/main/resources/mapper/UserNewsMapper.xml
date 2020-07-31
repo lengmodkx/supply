@@ -258,14 +258,12 @@
 		select <include refid="Base_Column_List"/>
 		from prm_user_news
 		<where>
-			news_to_user = #{userId}
-			<if test="keyword !=null">
+			<if test="keyword !=null and keyword!=''">
 			   and news_name like <![CDATA[ CONCAT('%',#{keyword},'%') ]]> or news_content like <![CDATA[ CONCAT('%',#{keyword},'%') ]]>
 			</if>
 			<if test="startTime!=null and startTime!=''">
 				AND create_time &gt;= #{startTime}
 			</if>
-
 			<!-- 查询条件：创建结束时间 -->
 			<if test="endTime!=null and endTime!=''">
 				AND create_time &lt;= #{endTime}

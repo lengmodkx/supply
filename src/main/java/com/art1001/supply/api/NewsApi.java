@@ -1,20 +1,20 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.common.Constants;
+import com.art1001.supply.common.CommonPage;
+import com.art1001.supply.common.CommonResult;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.google.gson.JsonObject;
+import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -173,14 +173,13 @@ public class NewsApi {
      * @return
      */
     @GetMapping("/userNewsByCondition")
-    public JSONObject userNewsByCondition(@RequestParam(value = "keyword", required = false) String keyword,
-                                          @RequestParam(value = "startTime", required = false) Long startTime,
-                                          @RequestParam(value = "endTime", required = false) Long endTime) {
-        JSONObject jsonObject = new JSONObject();
+    public CommonResult<CommonPage<UserNews>> userNewsByCondition(@RequestParam(value = "keyword", required = false) String keyword,
+                                                                  @RequestParam(value = "startTime", required = false) Long startTime,
+                                                                  @RequestParam(value = "endTime", required = false) Long endTime,
+                                                                  @RequestParam(value = "pageSize",defaultValue = "10")Integer pageSize,
+                                                                  @RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum) {
         try {
-            jsonObject.put("result", 1);
-            jsonObject.put("data", userNewsService.userNewsByCondition(keyword, startTime, endTime));
-            return jsonObject;
+            return CommonResult.success(CommonPage.restPage(userNewsService.userNewsByCondition(keyword, startTime, endTime,pageSize,pageNum)));
         } catch (Exception e) {
             throw new AjaxException(e);
         }

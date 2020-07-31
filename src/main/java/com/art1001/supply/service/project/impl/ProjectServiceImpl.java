@@ -17,6 +17,7 @@ import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.vo.MenuVo;
 import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
@@ -31,6 +32,7 @@ import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.project.ProjectSimpleInfoService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.role.RoleService;
@@ -44,6 +46,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.MyBeanUtils;
+import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -88,9 +91,14 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Resource
     private TagService tagService;
 
+    @Resource
+    private ProResourcesService proResourcesService;
 
     @Resource
     private FileService fileService;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     @Resource
     private RelationService relationService;
@@ -744,5 +752,30 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         projectMemberService.saveMember(projectId, memberId, project.getOrganizationId());
 
         return "1";
+    }
+
+    @Override
+    public List<MenuVo> taskIndex(String projectId,String userId) {
+        List<MenuVo>menuVos=Lists.newArrayList();
+        List<String> keyList = proResourcesService.getMemberResourceKey(projectId, userId);
+        redisUtil.remove("perms:" + userId);
+        redisUtil.lset("perms:" + userId, keyList);
+        redisUtil.set("userId:" + userId, projectId);
+        List<Relation> list = relationService.list(new QueryWrapper<Relation>().eq("project_id", projectId).eq("parent_id", 0));
+        List<String> relationIds=Lists.newArrayList();
+        if (CollectionUtils.isNotEmpty(list)) {
+            relationIds = list.stream().filter(f->f.getParentId().equals(Constants.ZERO)).map(Relation::getRelationId).collect(Collectors.toList());
+        }
+
+        for (String relationId : relationIds) {
+            Relation relation = new Relation();
+            relation.setParentId(relationId);
+            relation.setLable(1);
+            Relation byId = relationService.getById(relationId);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation);
+            MenuVo menuVo =  MenuVo.builder().name(byId.getRelationName()).taskMenu(taskMenu).build();
+            menuVos.add(menuVo);
+        }
+        return menuVos;
     }
 }

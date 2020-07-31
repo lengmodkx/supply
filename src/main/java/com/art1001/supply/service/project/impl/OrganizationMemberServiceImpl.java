@@ -46,10 +46,7 @@ import javax.annotation.Resource;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.System.currentTimeMillis;
@@ -275,7 +272,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         organizationMember.setJob(user.getJob());
         organizationMember.setMemberEmail(user.getEmail());
         organizationMember.setUserName(user.getUserName());
-
+        organizationMember.setMemberLabel("拥有者");
         //todo 添加其他信息
         organizationMemberMapper.insert(organizationMember);
 
@@ -301,8 +298,11 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     public Boolean transferOwner(String orgId, String ownerId, String memberId) {
 
         try {
+            //企业拥有者改为成员
             Boolean updateOwner = organizationMemberMapper.updateOwner(orgId, ownerId);
+            //成员改为拥有者
             Boolean updateMember = organizationMemberMapper.updateMember(orgId, memberId);
+            //修改企业表的企业拥有者
             Boolean updatOorganization = organizationMapper.updatOorganization(orgId, ownerId, memberId);
 
 			/*//新修改 当用户移交企业权限后，企业用户表的memberlabel更改为成员
@@ -396,15 +396,15 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     public List<OrganizationMember> getMembersAndPartment(String orgId, Integer flag, Integer memberLabel) {
         List<OrganizationMember> orgMembers = Lists.newArrayList();
         if (Constants.B_ZERO.equals(flag)) {
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
+            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).orderByDesc("organization_lable"));
         } else if (Constants.B_ONE.equals(flag)) {
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("partment_id", 0));
+            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("partment_id", 0).orderByDesc("organization_lable"));
         } else if (Constants.B_TWO.equals(flag)) {
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_lock", 0));
+            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_lock", 0).orderByDesc("organization_lable"));
         } else if (Constants.B_THREE.equals(flag)) {
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("create_time", System.currentTimeMillis()));
+            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("create_time", System.currentTimeMillis()).orderByDesc("organization_lable"));
         } else {
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("other", 0));
+            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("other", 0).orderByDesc("organization_lable"));
         }
         if (CollectionUtils.isNotEmpty(orgMembers)) {
             setParams(orgMembers);
@@ -743,7 +743,15 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                         r.setStayComDate("不满一年");
                     }
                 }
-                PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(r.getPartmentId(), r.getMemberId());
+                Partment partment = partmentService.getOne(new QueryWrapper<Partment>().eq("partment_id", r.getPartmentId()));
+                if (partment!=null) {
+                    r.setDeptName(partment.getPartmentName());
+                    if (StringUtils.isNotEmpty(partment.getParentId())&&!partment.getParentId().equals(Constants.ZERO)) {
+                        Partment partment1 = partmentService.getOne(new QueryWrapper<Partment>().eq("partment_id", partment.getParentId()));
+                        r.setParentName(partment1.getPartmentName());
+                    }
+                }
+                /*PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(r.getPartmentId(), r.getMemberId());
                 if (partmentMember != null) {
                     r.setDeptName(partmentMember.getPartmentName());
                     if (partmentMember.getIsMaster()) {
@@ -752,7 +760,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                 }
                 if (!"".equals(partmentName)) {
                     r.setParentName(partmentName);
-                }
+                }*/
             }
         }
     }

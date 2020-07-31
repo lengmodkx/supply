@@ -121,5 +121,5 @@ public interface UserNewsService extends IService<UserNews> {
 	 * @param endTime
 	 * @return
 	 */
-	List<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime);
+	List<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime,Integer pageSize,Integer pageNum);
 }

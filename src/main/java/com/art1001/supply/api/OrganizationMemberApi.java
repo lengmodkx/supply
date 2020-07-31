@@ -8,6 +8,7 @@ import com.art1001.supply.entity.organization.InvitationLink;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.partment.Partment;
+import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.user.UserEntity;
@@ -15,6 +16,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.organization.InvitationLinkService;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
+import com.art1001.supply.service.partment.PartmentMemberService;
 import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -46,6 +48,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 企业成员
@@ -78,6 +81,9 @@ public class OrganizationMemberApi {
 
     @Resource
     private PartmentService partmentService;
+
+    @Resource
+    private PartmentMemberService partmentMemberService;
 
     /**
      * 未分配部门的员工
@@ -322,8 +328,14 @@ public class OrganizationMemberApi {
     public Result removeOrgUser(@RequestParam(value = "orgId", required = false) String orgId,
                                 @RequestParam(value = "userId") List<String> userId) {
 
+        List<Partment> partments = partmentService.list(new QueryWrapper<Partment>().eq("organization_id", orgId));
+        if (CollectionUtils.isNotEmpty(partments)) {
+            List<String> collect = partments.stream().map(Partment::getPartmentId).collect(Collectors.toList());
+            partmentMemberService.remove(new QueryWrapper<PartmentMember>().in("partment_id",collect).in("member_id",userId));
+        }
         organizationMemberService.remove(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).in("member_id", userId));
         roleUserService.remove(new QueryWrapper<RoleUser>().eq("org_id", orgId).in("u_id", userId));
+
 
         return Result.success();
     }

@@ -304,14 +304,14 @@
 	<!-- 移交企业权限 -->
 	<update id="updateOwner" >
 		update prm_organization_member
-		set organization_lable = 0
+		set organization_lable = 0 , member_label="成员"
 		WHERE organization_id = #{orgId} and member_id = #{ownerId}
 	</update>
 
 	<!-- 移交企业权限 -->
 	<update id="updateMember">
 		update prm_organization_member
-		set organization_lable = 1
+		set organization_lable = 1, member_label="拥有者"
 		WHERE organization_id = #{orgId} and member_id = #{memberId}
 	</update>
 
