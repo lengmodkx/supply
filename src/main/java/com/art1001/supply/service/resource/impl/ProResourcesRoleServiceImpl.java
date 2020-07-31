@@ -96,7 +96,7 @@ public class ProResourcesRoleServiceImpl extends ServiceImpl<ProResourcesRoleMap
     }
 
     @Override
-    public void distributionRoleResource(Integer roleId, String resources) {
+    public void distributionRoleResource(Integer roleId, String resources,String orgId) {
         //构造出查询该角色在角色资源表中存不存在的查询表达式
         LambdaQueryWrapper<ProResourcesRole> resourceRoleCountQw = new QueryWrapper<ProResourcesRole>().lambda()
                 .eq(ProResourcesRole::getRId, roleId);
