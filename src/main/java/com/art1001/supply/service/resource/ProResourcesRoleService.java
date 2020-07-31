@@ -50,7 +50,7 @@ public interface ProResourcesRoleService extends IService<ProResourcesRole> {
      * @updateInfo 暂无
      * @date 2019/6/26 11:00
      */
-    void distributionRoleResource(Integer roleId, String resources,String orgId);
+    void distributionRoleResource(Integer roleId, String resources);
 
     /**
      * 根据角色id 获取对应的权限id列表
