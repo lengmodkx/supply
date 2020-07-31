@@ -622,7 +622,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
     @Override
     public void saveOrganizationMember2(String orgId, UserEntity userEntity) {
-        this.save(saveOrganizationMemberInfo(orgId, userEntity));
+        OrganizationMember organizationMember = saveOrganizationMemberInfo(orgId, userEntity);
+        organizationMember.setMemberLabel("成员");
+        this.save(organizationMember);
     }
 
 

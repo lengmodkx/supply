@@ -170,6 +170,14 @@ public class OrganizationMemberApi {
         return jsonObject;
     }
 
+    /**
+     *
+     * @param orgId
+     * @param parmentId
+     * @param memberId
+     * @param param 1外部成员 0成员
+     * @return
+     */
     @PostMapping("/addMember1")
     public JSONObject addMember1(@RequestParam(value = "orgId", required = false) String orgId,
                                  @RequestParam(value = "parmentId", required = false) String parmentId,
