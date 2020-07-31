@@ -268,4 +268,5 @@ public interface ProjectMemberService extends IService<ProjectMember> {
 	List<ProjectMember> searchMemberByName(String condition,String projectId);
 
     Integer deleteMember(String memberId, String projectId);
+
 }

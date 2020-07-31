@@ -8,6 +8,7 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.project.ProjectTreeVO;
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.entity.task.vo.MenuVo;
 import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -279,4 +280,6 @@ public interface ProjectService extends IService<Project> {
 	 * @return
 	 */
     String addMember(String projectId, String memberId);
+
+    List<MenuVo> taskIndex(String projectId,String userId);
 }
