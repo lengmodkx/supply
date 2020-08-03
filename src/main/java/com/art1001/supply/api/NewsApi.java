@@ -170,6 +170,7 @@ public class NewsApi {
      * @param keyword
      * @param startTime
      * @param endTime
+     * @param param 0未读 1已读
      * @return
      */
     @GetMapping("/userNewsByCondition")
@@ -177,9 +178,10 @@ public class NewsApi {
                                                                   @RequestParam(value = "startTime", required = false) Long startTime,
                                                                   @RequestParam(value = "endTime", required = false) Long endTime,
                                                                   @RequestParam(value = "pageSize",defaultValue = "10")Integer pageSize,
-                                                                  @RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum) {
+                                                                  @RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum,
+                                                                  @RequestParam(value = "param",defaultValue = "0")Integer param) {
         try {
-            return CommonResult.success(CommonPage.restPage(userNewsService.userNewsByCondition(keyword, startTime, endTime,pageSize,pageNum)));
+            return CommonResult.success(CommonPage.restPage(userNewsService.userNewsByCondition(keyword, startTime, endTime,pageSize,pageNum,param)));
         } catch (Exception e) {
             throw new AjaxException(e);
         }

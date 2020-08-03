@@ -28,5 +28,7 @@ public interface IMUserService {
 	 */
 	Object createNewIMUserBatch(Object payload);
 
+//	Object getToken(String orgName,String appName);
+
 
 }

@@ -405,7 +405,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
             //新加入的成员
             orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("create_time", System.currentTimeMillis()).orderByDesc("organization_lable"));
         } else if(Constants.B_FIVE.equals(flag)){
-            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_label", "外部成员").orderByDesc("organization_lable"));
+            orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_label", "外部成员"));
         }
         else {
             orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("other", 0).orderByDesc("organization_lable"));
