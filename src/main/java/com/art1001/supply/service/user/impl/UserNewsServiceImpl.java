@@ -271,4 +271,9 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 
 		return userNews;
 	}
+
+	@Override
+	public void removeCount(String userId) {
+		userNewsMapper.removeCount(userId);
+	}
 }

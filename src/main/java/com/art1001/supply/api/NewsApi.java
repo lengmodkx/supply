@@ -1,6 +1,8 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.common.CommonPage;
 import com.art1001.supply.common.CommonResult;
 import com.art1001.supply.entity.user.UserNews;
@@ -152,17 +154,38 @@ public class NewsApi {
      *
      * @return
      */
+    @Push(value = PushType.F4)
     @GetMapping("/count")
     public JSONObject getCount() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("result", 1);
-            jsonObject.put("data", this.getNewsCount());
+            int newsCount = this.getNewsCount();
+            jsonObject.put("msgId", newsCount);
+            jsonObject.put("data", newsCount);
+            jsonObject.put("newsCount", newsCount);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
         }
     }
+
+    /**
+     * 移除所有通知
+     * @return
+     */
+    @GetMapping("/removeCount")
+    public JSONObject removeCount(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            userNewsService.removeCount(ShiroAuthenticationManager.getUserId());
+            jsonObject.put("result",1);
+            jsonObject.put("data",0);
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
 
     /**
      * 根据条件筛选用户消息

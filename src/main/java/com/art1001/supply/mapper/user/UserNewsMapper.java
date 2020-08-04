@@ -120,4 +120,5 @@ public interface UserNewsMapper extends BaseMapper<UserNews> {
 
 	List<UserNews> userNewsByCondition(@Param("keyword") String keyword, @Param("startTime") Long startTime, @Param("endTime") Long endTime,@Param("param") Integer param,@Param("userId") String userId);
 
+	void removeCount(@Param("userId") String userId);
 }
