@@ -1,8 +1,6 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.annotation.Push;
-import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.common.CommonPage;
 import com.art1001.supply.common.CommonResult;
 import com.art1001.supply.entity.user.UserNews;
@@ -154,15 +152,12 @@ public class NewsApi {
      *
      * @return
      */
-    @Push(value = PushType.F4)
     @GetMapping("/count")
     public JSONObject getCount() {
         JSONObject jsonObject = new JSONObject();
         try {
-            int newsCount = this.getNewsCount();
-            jsonObject.put("msgId", newsCount);
-            jsonObject.put("data", newsCount);
-            jsonObject.put("newsCount", newsCount);
+            jsonObject.put("result", 1);
+            jsonObject.put("data", this.getNewsCount());
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -226,7 +221,7 @@ public class NewsApi {
                 ids.stream().forEach(id -> userNewsService.updateIsRead(id));
             }
             jsonObject.put("result", 1);
-            jsonObject.put("data", "已标记为已读");
+            jsonObject.put("data", this.getNewsCount());
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
