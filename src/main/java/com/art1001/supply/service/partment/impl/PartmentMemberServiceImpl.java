@@ -198,5 +198,20 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
         }
     }
 
+    @Override
+    public Integer countPartMentMember(String orgId, List<String> memberId) {
+        return partmentMemberMapper.countPartMentMember(orgId,memberId);
+    }
+
+    @Override
+    public void removePartmentMember(String orgId, List<String> memberId) {
+        List<Partment> list = partmentService.list(new QueryWrapper<Partment>().eq("organization_id", orgId));
+        List<String> partmentIds=Lists.newArrayList();
+        if (CollectionUtils.isNotEmpty(list)) {
+             partmentIds = list.stream().map(Partment::getPartmentId).collect(Collectors.toList());
+        }
+        partmentMemberMapper.delete(new QueryWrapper<PartmentMember>().in("partment_id",partmentIds).in("member_id",memberId));
+    }
+
 
 }

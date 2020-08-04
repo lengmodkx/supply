@@ -1,5 +1,6 @@
 package com.art1001.supply.service.role.impl;
 
+import com.art1001.supply.common.AuthToRedis;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRole;
@@ -54,6 +55,9 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
     @Resource
     private ProResourcesService proResourcesService;
 
+    @Resource
+    private AuthToRedis authToRedis;
+
     @Override
     public void distributionRoleToUser(Integer roleId, String userId, String projectId) {
         ProRoleUser proRoleUser = new ProRoleUser();
@@ -69,6 +73,7 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
         redisUtil.lset("perms:" + userId, keyList);
 
         projectMemberService.update(projectMember,new UpdateWrapper<ProjectMember>().eq("project_id", projectId).eq("member_id", userId));
+        authToRedis.setPermsAuth(projectId,userId);
     }
 
     @Override

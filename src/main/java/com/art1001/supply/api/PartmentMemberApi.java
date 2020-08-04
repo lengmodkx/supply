@@ -63,10 +63,18 @@ public class PartmentMemberApi {
                                         @RequestParam List<String> memberId){
         JSONObject jsonObject = new JSONObject();
         try {
-             partmentMemberService.addDeptMember(partmentId, orgId, memberId);
+            OrganizationMember organizationMember = new OrganizationMember();
+            if (partmentMemberService.countPartMentMember(orgId,memberId)>0) {
+                partmentMemberService.removePartmentMember(orgId,memberId);
+                organizationMember.setPartmentId("0");
+                organizationMemberService.update(organizationMember,new QueryWrapper<OrganizationMember>().eq("organization_id",orgId).in("member_id",memberId));
+            }
+
+            partmentMemberService.addDeptMember(partmentId, orgId, memberId);
+            organizationMember.setPartmentId(partmentId);
+            organizationMemberService.update(organizationMember,new QueryWrapper<OrganizationMember>().eq("organization_id",orgId).in("member_id",memberId));
             Partment partment = partmentService.getById(partmentId);
             jsonObject.put("data",partment);
-
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (ServiceException e){

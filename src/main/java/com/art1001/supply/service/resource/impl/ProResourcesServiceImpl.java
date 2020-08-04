@@ -55,14 +55,10 @@ public class ProResourcesServiceImpl extends ServiceImpl<ProResourcesMapper, Pro
             return null;
         }
         //构造出根据 resourceId 集合 查询出resourcesKey的sql表达式
-        LambdaQueryWrapper<ProResources> selectKeysByRIdsQw = new QueryWrapper<ProResources>().lambda()
-                .select(ProResources::getSSourceKey)
-                .in(ProResources::getSId, rIds);
-
-
-        return proResourcesService.list(selectKeysByRIdsQw).stream()
+        List<String> collect = proResourcesService.list(new QueryWrapper<ProResources>().lambda().in(ProResources::getSId, rIds)).stream()
                 .map(ProResources::getSSourceKey)
                 .collect(Collectors.toList());
+        return collect;
     }
 
     @Override

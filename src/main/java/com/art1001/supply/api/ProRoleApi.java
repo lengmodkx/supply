@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.common.AuthToRedis;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.service.role.ProRoleService;
@@ -37,6 +38,9 @@ public class ProRoleApi extends BaseController {
      */
     @Resource
     private ProRoleService proRoleService;
+
+    @Resource
+    private AuthToRedis authToRedis;
 
     /**
      * 添加项目角色
