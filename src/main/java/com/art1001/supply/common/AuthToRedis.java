@@ -22,9 +22,12 @@ public class AuthToRedis {
     @Resource
     private RedisUtil redisUtil;
 
-    public void setPermsAuth(String projectId,String userId){
+    public void setPermsAuth(String projectId, String userId) {
         List<String> keyList = proResourcesService.getMemberResourceKey(projectId, userId);
+//        Object obj = redisUtil.getObj("perms:" + userId);
+
         redisUtil.remove("perms:" + userId);
+
         redisUtil.lset("perms:" + userId, keyList);
     }
 

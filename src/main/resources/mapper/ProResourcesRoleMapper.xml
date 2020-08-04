@@ -16,7 +16,7 @@
             s_id
         FROM
             sys_pro_role_user AS r
-            LEFT JOIN sys_pro_resources_role AS rr ON r.role_id = rr.r_id
+            JOIN sys_pro_resources_role AS rr ON r.role_id = rr.r_id
         WHERE
             r.project_id = #{projectId}
             AND r.u_id = #{userId}
