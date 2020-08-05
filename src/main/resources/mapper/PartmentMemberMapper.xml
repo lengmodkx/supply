@@ -31,6 +31,7 @@
         </if>
     </update>
 
+
     <!-- 获取部门的某个成员信息 -->
     <select id="selectPartmentMemberInfo" resultMap="BaseResultMap">
         SELECT
@@ -93,5 +94,20 @@ FROM
 WHERE
 	p.organization_id = #{orgId}
 	AND pm.member_id = #{memberId}
+    </select>
+
+
+    <select id="countPartMentMember" resultType="java.lang.Integer">
+        SELECT
+        	COUNT( p.partment_id )
+        FROM
+        	prm_partment_member pm
+        	JOIN prm_partment p ON p.partment_id = pm.partment_id
+        WHERE
+        	p.organization_id = #{orgId} and
+            pm.member_id in
+        <foreach collection="ids" item="memberId" separator="," close=")" open="(">
+            #{memberId}
+        </foreach>
     </select>
 </mapper>

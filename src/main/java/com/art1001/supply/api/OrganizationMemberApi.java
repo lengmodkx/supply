@@ -416,7 +416,7 @@ public class OrganizationMemberApi {
             if (update) {
                 return Result.success();
             } else {
-                return Result.fail("更新失败");
+                return Result.fail("移交失败，移交对象不能是外部成员");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -524,7 +524,7 @@ public class OrganizationMemberApi {
      * 成员和部门功能接口
      *
      * @param orgId
-     * @param flag  1全部成员 0外部成员
+     * @param flag
      * @return
      */
     @GetMapping("/{orgId}/getOrgPartment")

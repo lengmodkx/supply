@@ -83,10 +83,12 @@ public class LogApi extends BaseController {
      *
      * @param logSendParam 消息参数
      * @return 是否发送成功
+     *  @Validated 去掉校验就可用了
+     *
      */
     @Push(value = PushType.F1)
     @PostMapping("/chat")
-    public JSONObject sendChat(@Validated @RequestBody LogSendParam logSendParam) {
+    public JSONObject sendChat( @RequestBody LogSendParam logSendParam) {
         JSONObject jsonObject = new JSONObject();
         try {
             //校验publicType合法性

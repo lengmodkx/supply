@@ -31,4 +31,9 @@ public class IMUserServiceImpl implements IMUserService {
     public Object createNewIMUserBatch(Object payload) {
         return responseHandler.handle(() -> api.orgNameAppNameUsersPost(OrgInfo.ORG_NAME,OrgInfo.APP_NAME, (RegisterUsers) payload,TokenUtil.getAccessToken()));
     }
+//
+//    @Override
+//    public Object getToken(String orgName, String appName) {
+//        return responseHandler
+//    }
 }

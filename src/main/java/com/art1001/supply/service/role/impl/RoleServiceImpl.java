@@ -257,4 +257,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper,Role> implements Rol
 		}
 		return 0;
 	}
+
+	@Override
+	public Role checkRole(String orgId, String memberId) {
+		return roleMapper.checkRole(orgId,memberId);
+	}
 }

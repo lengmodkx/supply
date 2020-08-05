@@ -1,5 +1,6 @@
 package com.art1001.supply.service.project.impl;
 
+import com.art1001.supply.common.AuthToRedis;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.organization.Organization;
@@ -152,6 +153,9 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
     @Resource
     private OrganizationService organizationService;
+
+    @Resource
+    private AuthToRedis authToRedis;
 
     private static final String EXTERNALMEMBER="外部成员";
 
@@ -413,6 +417,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                 }
             }));
         }
+        authToRedis.setPermsAuth(projectId,memberId);
         return 1;
     }
 

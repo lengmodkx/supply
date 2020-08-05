@@ -1,6 +1,7 @@
 package com.art1001.supply.service.user.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.user.UserEntity;
@@ -264,9 +265,15 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 	}
 
 	@Override
-	public List<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime,Integer pageSize,Integer pageNum) {
+	public List<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime,Integer pageSize,Integer pageNum,Integer param) {
 		PageHelper.startPage(pageNum, pageSize);
-		List<UserNews> userNews = userNewsMapper.userNewsByCondition(keyword, startTime, endTime);
+		List<UserNews> userNews = userNewsMapper.userNewsByCondition(keyword, startTime, endTime,param,ShiroAuthenticationManager.getUserId());
+
 		return userNews;
+	}
+
+	@Override
+	public void removeCount(String userId) {
+		userNewsMapper.removeCount(userId);
 	}
 }

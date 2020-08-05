@@ -69,8 +69,6 @@ public class PartmentApi {
             partment.setUpdateTime(System.currentTimeMillis());
             partmentService.savePartment(partment);
 
-            //保存部门成员
-            partmentMemberService.savePartmentMember(partment.getPartmentId(),memberId);
 
             jsonObject.put("msg", partment);
             jsonObject.put("result", 1);

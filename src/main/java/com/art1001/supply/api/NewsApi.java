@@ -165,11 +165,30 @@ public class NewsApi {
     }
 
     /**
+     * 移除所有通知
+     * @return
+     */
+    @GetMapping("/removeCount")
+    public JSONObject removeCount(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            userNewsService.removeCount(ShiroAuthenticationManager.getUserId());
+            jsonObject.put("result",1);
+            jsonObject.put("data",0);
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+
+    /**
      * 根据条件筛选用户消息
      *
      * @param keyword
      * @param startTime
      * @param endTime
+     * @param param 0未读 1已读
      * @return
      */
     @GetMapping("/userNewsByCondition")
@@ -177,9 +196,10 @@ public class NewsApi {
                                                                   @RequestParam(value = "startTime", required = false) Long startTime,
                                                                   @RequestParam(value = "endTime", required = false) Long endTime,
                                                                   @RequestParam(value = "pageSize",defaultValue = "10")Integer pageSize,
-                                                                  @RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum) {
+                                                                  @RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum,
+                                                                  @RequestParam(value = "param",defaultValue = "0")Integer param) {
         try {
-            return CommonResult.success(CommonPage.restPage(userNewsService.userNewsByCondition(keyword, startTime, endTime,pageSize,pageNum)));
+            return CommonResult.success(CommonPage.restPage(userNewsService.userNewsByCondition(keyword, startTime, endTime,pageSize,pageNum,param)));
         } catch (Exception e) {
             throw new AjaxException(e);
         }
@@ -201,7 +221,7 @@ public class NewsApi {
                 ids.stream().forEach(id -> userNewsService.updateIsRead(id));
             }
             jsonObject.put("result", 1);
-            jsonObject.put("data", "已标记为已读");
+            jsonObject.put("data", this.getNewsCount());
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);

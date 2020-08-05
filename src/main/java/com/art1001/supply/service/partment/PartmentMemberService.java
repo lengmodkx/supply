@@ -77,4 +77,9 @@ public interface PartmentMemberService extends IService<PartmentMember> {
     void savePartmentMember(String partmentId, String memberId);
 
     void updatePartMentMaster(String partmentId, String memberId);
+
+    Integer countPartMentMember( String orgId, List<String> memberId);
+
+
+    void removePartmentMember(String orgId, List<String> memberId);
 }
