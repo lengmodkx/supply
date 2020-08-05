@@ -53,31 +53,32 @@ public class TagApi {
 
     /**
      * 标签初始化
-     * @param projectId 项目id
-     * @param publicId 任务，文件，日程，分享id
+     *
+     * @param projectId  项目id
+     * @param publicId   任务，文件，日程，分享id
      * @param publicType 任务，文件，日程，分享
      */
     @GetMapping("/{projectId}")
     public JSONObject tagPage(@PathVariable(value = "projectId") String projectId,
                               @RequestParam(value = "publicId", required = false) String publicId,
-                              @RequestParam(value="publicType", required = false)String publicType) {
+                              @RequestParam(value = "publicType", required = false) String publicType) {
         JSONObject jsonObject = new JSONObject();
         try {
             //查询出项目的所有标签
             List<Tag> tagList = tagService.findByProjectId(projectId);
             //根据publicId 和 publicType查询出tag
-            if(StringUtils.isNotEmpty(publicId)&&StringUtils.isNotEmpty(publicType)){
-                List<Tag> tagListTemp = tagService.findByPublicId(publicId,publicType);
-                tagList.forEach(item-> tagListTemp.forEach(item2 -> {
+            if (StringUtils.isNotEmpty(publicId) && StringUtils.isNotEmpty(publicType)) {
+                List<Tag> tagListTemp = tagService.findByPublicId(publicId, publicType);
+                tagList.forEach(item -> tagListTemp.forEach(item2 -> {
                     if (item.getTagId().equals(item2.getTagId())) {
                         item.setFlag(true);
                     }
                 }));
             }
-            jsonObject.put("result",1);
+            jsonObject.put("result", 1);
             jsonObject.put("data", tagList);
-        } catch (Exception e){
-            log.error("系统异常,标签初始化失败:",e);
+        } catch (Exception e) {
+            log.error("系统异常,标签初始化失败:", e);
             throw new SystemException(e);
         }
         return jsonObject;
@@ -91,7 +92,7 @@ public class TagApi {
         JSONObject jsonObject = new JSONObject();
         try {
             List<Tag> tagList = tagService.getByProjectId(projectId);
-            if(!CollectionUtils.isEmpty(tagList)){
+            if (!CollectionUtils.isEmpty(tagList)) {
                 jsonObject.put("data", new JSONObject().fluentPut("tags", tagList).fluentPut("bindInfo", tagService.getTagBindInfo(tagList.get(0).getTagId())));
             } else {
                 jsonObject.put("data", new JSONObject().fluentPut("tags", new ArrayList()));
@@ -124,6 +125,7 @@ public class TagApi {
 
     /**
      * 查询多个标签
+     *
      * @param ids 标签数组
      * @return
      */
@@ -164,9 +166,9 @@ public class TagApi {
             jsonObject.put("result", 1);
             jsonObject.put("data", tag);
             jsonObject.put("msg", "添加成功");
-        } catch (ServiceException e){
-            jsonObject.put("result",0);
-            jsonObject.put("msg",e.getMessage());
+        } catch (ServiceException e) {
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", e.getMessage());
         } catch (Exception e) {
             log.error("添加标签异常:", e);
             throw new AjaxException(e);
@@ -179,7 +181,7 @@ public class TagApi {
      */
     @DeleteMapping("/{tagId}")
     public Result deleteTag(@PathVariable Long tagId
-                                ) {
+    ) {
         try {
             tagService.deleteTagByTagId(tagId);
             return Result.success();
@@ -191,23 +193,24 @@ public class TagApi {
 
     /**
      * 移除掉 任务 文件 日程 分享 上的标签
-     * @param publicId (任务,文件,日程,分享) 的id
+     *
+     * @param publicId   (任务,文件,日程,分享) 的id
      * @param publicType 要从 (任务,文件,日程,分享) 哪个类型上 移除掉标签
-     * @param tagId 标签id
+     * @param tagId      标签id
      * @return
      */
-    @Push(value = PushType.E2,type = 1)
+    @Push(value = PushType.E2, type = 1)
     @DeleteMapping("/{tagId}/remove/tag")
-    public JSONObject removeTag(@RequestParam(value = "publicId") String publicId, @RequestParam(value = "publicType") String publicType, @PathVariable long tagId){
+    public JSONObject removeTag(@RequestParam(value = "publicId") String publicId, @RequestParam(value = "publicType") String publicType, @PathVariable long tagId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            tagService.removeTag(publicId,publicType,tagId);
-            jsonObject.put("data",new JSONObject().fluentPut("tagId",tagId).fluentPut("publicId",publicId).fluentPut("publicType",publicType));
-            jsonObject.put("msgId",this.getProjectId(tagId));
-            jsonObject.put("result",1);
-            jsonObject.put("msg","移除成功");
-        } catch (Exception e){
-            log.error("系统异常,标签移除失败:",e);
+            tagService.removeTag(publicId, publicType, tagId);
+            jsonObject.put("data", new JSONObject().fluentPut("tagId", tagId).fluentPut("publicId", publicId).fluentPut("publicType", publicType));
+            jsonObject.put("msgId", this.getProjectId(tagId));
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "移除成功");
+        } catch (Exception e) {
+            log.error("系统异常,标签移除失败:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -216,111 +219,151 @@ public class TagApi {
 
     /**
      * 添加 任务 文件 日程 分享 的标签
-     * @param publicId (任务,文件,日程,分享) 的id
+     *
+     * @param publicId   (任务,文件,日程,分享) 的id
      * @param publicType 要从 (任务,文件,日程,分享) 哪个类型上 添加标签
-     * @param tagName 标签名称 标签名称 标签所属项目
-     * @param projectId 项目的id
+     * @param tagName    标签名称 标签名称 标签所属项目
+     * @param projectId  项目的id
      * @return 是否成功
      */
-    @Push(value = PushType.E3,type = 1)
+    @Push(value = PushType.E3, type = 1)
     @PostMapping("/add_and_bind")
     public JSONObject addItemTag(@RequestParam(value = "tagName") String tagName,
                                  @RequestParam(value = "bgColor") String bgColor,
-                                 @RequestParam(value = "publicId") String  publicId,
+                                 @RequestParam(value = "publicId") String publicId,
                                  @RequestParam(value = "publicType") String publicType,
-                                 @RequestParam(value = "projectId") String  projectId
-    ){
+                                 @RequestParam(value = "projectId") String projectId
+    ) {
         JSONObject jsonObject = new JSONObject();
         try {
             Tag tag = new Tag();
             tag.setTagName(tagName);
             tag.setBgColor(bgColor);
             tag.setProjectId(projectId);
-            if(tagService.addAndBind(tag,publicId,publicType)){
+            if (tagService.addAndBind(tag, publicId, publicType)) {
                 jsonObject.put("result", 1);
                 jsonObject.put("data", new JSONObject().fluentPut("publicType", publicType).fluentPut("publicId", publicId));
                 jsonObject.put("msgId", projectId);
             }
-        } catch (ServiceException e){
-            throw new AjaxException(e.getMessage(),e);
-        } catch (Exception e){
-            throw new AjaxException("系统异常,添加标签失败",e);
+        } catch (ServiceException e) {
+            throw new AjaxException(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,添加标签失败", e);
         }
         return jsonObject;
     }
 
     /**
      * 给某个信息绑定标签
-     * @param tagId 标签id
-     * @param publicId 信息id
+     *
+     * @param tagId      标签id
+     * @param publicId   信息id
      * @param publicType 信息类型
      * @return 是否成功
      */
-    @Push(value = PushType.E1,type = 1)
+    @Push(value = PushType.E1, type = 1)
     @PostMapping("/binding")
-    public JSONObject bindingInfo(@RequestParam("tagId")Long tagId,
+    public JSONObject bindingInfo(@RequestParam("tagId") Long tagId,
                                   @RequestParam("publicId") String publicId,
-                                  @RequestParam("publicType")String publicType){
+                                  @RequestParam("publicType") String publicType) {
         JSONObject jsonObject = new JSONObject();
         try {
-            int i = tagRelationService.findCountById(tagId,publicType,publicId);
-            if(i==0){
-                if(tagService.addItemTag(tagId,publicId,publicType)) {
+            int i = tagRelationService.findCountById(tagId, publicType, publicId);
+            if (i == 0) {
+                if (tagService.addItemTag(tagId, publicId, publicType)) {
                     Tag byId = tagService.getById(tagId);
                     jsonObject.put("result", 1);
-                    jsonObject.put("data", new JSONObject().fluentPut("publicId",publicId).fluentPut("publicType",publicType).fluentPut("tag",tagService.findById(Integer.valueOf(tagId+""))));
+                    jsonObject.put("data", new JSONObject().fluentPut("publicId", publicId).fluentPut("publicType", publicType).fluentPut("tag", tagService.findById(Integer.valueOf(tagId + ""))));
                     jsonObject.put("name", byId.getTagName());
                     jsonObject.put("msgId", this.getProjectId(tagId));
                     jsonObject.put("msg", "绑定成功!");
                     jsonObject.put("id", publicId);
-                } else{
-                    jsonObject.put("result",0);
-                    jsonObject.put("msg","绑定失败!");
+                } else {
+                    jsonObject.put("result", 0);
+                    jsonObject.put("msg", "绑定失败!");
                 }
-            }else {
-                jsonObject.put("result",0);
-                jsonObject.put("msg","不能重复绑定!");
+            } else {
+                jsonObject.put("result", 0);
+                jsonObject.put("msg", "不能重复绑定!");
             }
 
             return jsonObject;
-        } catch (Exception e){
-            throw new AjaxException("系统异常,标签绑定失败!",e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,标签绑定失败!", e);
         }
     }
 
     /**
      * 更新标签
-     * @param tagId 标签id
+     *
+     * @param tagId   标签id
      * @param tagName 标签名称
      * @param bgColor 标签颜色
      * @return
      */
-    @Push(value = PushType.E2,type = 1)
+    @Push(value = PushType.E2, type = 1)
     @PutMapping("/{tagId}")
     public JSONObject updateTag(@PathVariable Long tagId,
                                 @RequestParam(value = "projectId") String projectId,
                                 @RequestParam(value = "tagName") String tagName,
                                 @RequestParam(value = "bgColor") String bgColor,
-                                @RequestParam(value = "publicId") String  publicId,
-                                @RequestParam(value = "publicType") String publicType
-                                ){
+                                @RequestParam(value = "publicId", required = false) String publicId,
+                                @RequestParam(value = "publicType", required = false) String publicType
+    ) {
         JSONObject jsonObject = new JSONObject();
-        try{
+        try {
             Tag tag = new Tag();
             tag.setProjectId(projectId);
             tag.setTagId(tagId);
             tag.setTagName(tagName);
             tag.setBgColor(bgColor);
             tagService.updateTag(tag);
-            jsonObject.put("data",new JSONObject().fluentPut("tagId",tagId).fluentPut("publicId",publicId).fluentPut("publicType",publicType));
+            jsonObject.put("data", new JSONObject().fluentPut("tagId", tagId).fluentPut("publicId", publicId).fluentPut("publicType", publicType));
             jsonObject.put("msgId", projectId);
-            jsonObject.put("result",1);
-        } catch (ServiceException e){
-            jsonObject.put("msg",e.getMessage());
-            jsonObject.put("result",0);
+            jsonObject.put("result", 1);
+        } catch (ServiceException e) {
+            jsonObject.put("msg", e.getMessage());
+            jsonObject.put("result", 0);
             return jsonObject;
-        } catch (Exception e){
-            log.error("系统异常,更新失败:",e);
+        } catch (Exception e) {
+            log.error("系统异常,更新失败:", e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+    /**
+     * 更新标签2
+     *
+     * @param tagId   标签id
+     * @param tagName 标签名称
+     * @param bgColor 标签颜色
+     * @return
+     */
+    @Push(value = PushType.E2, type = 1)
+    @PutMapping("/{tagId}/updateTag2")
+    public JSONObject updateTag2(@PathVariable Long tagId,
+                                @RequestParam(value = "projectId") String projectId,
+                                @RequestParam(value = "tagName") String tagName,
+                                @RequestParam(value = "bgColor") String bgColor
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Tag tag = new Tag();
+            tag.setProjectId(projectId);
+            tag.setTagId(tagId);
+            tag.setTagName(tagName);
+            tag.setBgColor(bgColor);
+            tagService.updateTag(tag);
+            jsonObject.put("data", new JSONObject().fluentPut("tagId", tagId));
+            jsonObject.put("msgId", projectId);
+            jsonObject.put("result", 1);
+        } catch (ServiceException e) {
+            jsonObject.put("msg", e.getMessage());
+            jsonObject.put("result", 0);
+            return jsonObject;
+        } catch (Exception e) {
+            log.error("系统异常,更新失败:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -328,21 +371,22 @@ public class TagApi {
 
     /**
      * 移入回收站
+     *
      * @param
      * @return
      */
     @PutMapping("/{tagId}/dropTag")
-    public JSONObject dropTag(@PathVariable Long tagId){
+    public JSONObject dropTag(@PathVariable Long tagId) {
         JSONObject jsonObject = new JSONObject();
-        try{
+        try {
             Tag tag = new Tag();
             tag.setTagId(tagId);
             tag.setIsDel(1);
             tag.setUpdateTime(System.currentTimeMillis());
             tagService.updateTag(tag);
-            jsonObject.put("result",1);
-        }catch (Exception e){
-            log.error("系统异常,移入回收站失败:",e);
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            log.error("系统异常,移入回收站失败:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -350,44 +394,47 @@ public class TagApi {
 
     /**
      * 用于获取当前标签的所属项目id
+     *
      * @param tagId 标签id
      * @return 项目id
      */
-    private String getProjectId(Long tagId){
-        return tagService.getOne(new QueryWrapper<Tag>().select("project_id").eq("tag_id",tagId)).getProjectId();
+    private String getProjectId(Long tagId) {
+        return tagService.getOne(new QueryWrapper<Tag>().select("project_id").eq("tag_id", tagId)).getProjectId();
     }
 
     /**
      * 获取标签的所有绑定信息
+     *
      * @param tagId 标签id
      * @return 绑定信息
      */
     @GetMapping("/{tagId}/tag_bind_info")
-    public JSONObject getTagBindInfo(@PathVariable Long tagId){
+    public JSONObject getTagBindInfo(@PathVariable Long tagId) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("data", tagService.getTagBindInfo(tagId));
             jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new AjaxException("系统异常,数据获取失败!");
         }
     }
 
 
     /**
-     *标签搜索
+     * 标签搜索
+     *
      * @param key
      * @return
      */
     @GetMapping("/search")
-    public JSONObject searchByName(@RequestParam(value = "key") String key,@RequestParam String projcetId){
+    public JSONObject searchByName(@RequestParam(value = "key") String key, @RequestParam String projcetId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data", tagService.searchTag(key,projcetId));
+            jsonObject.put("data", tagService.searchTag(key, projcetId));
             jsonObject.put("result", 1);
-            return  jsonObject;
-        } catch (Exception e){
+            return jsonObject;
+        } catch (Exception e) {
             throw new AjaxException("系统异常,数据获取失败!");
         }
 
