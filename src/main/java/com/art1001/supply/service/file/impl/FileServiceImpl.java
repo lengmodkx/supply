@@ -1128,14 +1128,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      */
     @Override
     public List<File> getBindTagInfo(Long tagId) {
-        List<File> files = new ArrayList<File>();
-        List<TagRelation> tagRelation = tagRelationMapper.findTagRelationByTagId(tagId);
-        for (TagRelation t : tagRelation) {
-            if (t.getFileId() != null) {
-                files.add(fileMapper.findFileById(t.getFileId()));
-            }
-        }
-        return files;
+
+        return fileMapper.selectBindTagInfo(tagId);
     }
 
     @Override

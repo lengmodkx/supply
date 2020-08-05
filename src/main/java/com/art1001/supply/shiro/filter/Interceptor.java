@@ -84,7 +84,7 @@ public class Interceptor implements HandlerInterceptor {
                 redisUtil.lset("orgms:" + userId, list);
             }
 
-                List<String> permsList = redisUtil.getList(String.class, "perms:" + userId);
+            List<String> permsList = redisUtil.getList(String.class, "perms:" + userId);
             if(list.contains(key.toString()) || permsList.contains(key.toString())){
                 log.info("用户：{} -- 拥有{}权限", ShiroAuthenticationManager.getUserId(), key);
                 return true;

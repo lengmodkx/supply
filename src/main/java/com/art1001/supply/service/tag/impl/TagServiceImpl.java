@@ -325,7 +325,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 		if(!this.checkIsExist(tagId)){
 			throw new ServiceException("该标签不存在!");
 		}
-		Tag t = this.getById(tagId);
+		Tag t = getById(tagId);
 		t.setTaskList(taskService.getBindTagInfo(tagId));
 		t.setFileList(fileService.getBindTagInfo(tagId));
 		t.setScheduleList(scheduleServcie.getBindTagInfo(tagId));
