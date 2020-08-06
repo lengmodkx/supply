@@ -27,6 +27,9 @@ public class FileTree {
 
     private String fileUids;
 
+    private String memberId;
+
+    private Integer filePrivacy;
     public FileTree(String id, String pId, String name, boolean open, String icon, int isParent) {
         this.id = id;
         this.pId = pId;

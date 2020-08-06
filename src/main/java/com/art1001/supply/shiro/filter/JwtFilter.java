@@ -116,7 +116,7 @@ public class JwtFilter extends AuthenticatingFilter {
     private void fillCorsHeader(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
         httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
         httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS,HEAD");
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with,content-type");
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with,content-type,x-auth-token");
         httpServletResponse.setHeader("Access0-Control-Allow-Credentials","true");
     }
 

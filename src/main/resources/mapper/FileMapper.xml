@@ -583,7 +583,9 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 			f.file_id as id,
 		 	f.parent_id as pId,
 		 	f.file_name as `name`,
-		 	f.file_uids
+		 	f.file_uids,
+		 	f.member_id,
+		 	f.file_privacy
 		from prm_file f where `catalog`=1 and file_del=0 and parent_id = #{fileId}
 	</select>
 

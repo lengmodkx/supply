@@ -319,6 +319,7 @@ public class FileApi extends BaseController {
             file.setFilePrivacy(privacy);
             fileService.updateById(file);
             jsonObject.put("result", 1);
+            jsonObject.put("msg","设置成功");
             jsonObject.put("msgId", projectId);
             jsonObject.put("data",parentId);
             return jsonObject;
