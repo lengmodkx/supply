@@ -25,4 +25,14 @@ public class FileTree {
 
     private int isParent=1;
 
+    private String fileUids;
+
+    public FileTree(String id, String pId, String name, boolean open, String icon, int isParent) {
+        this.id = id;
+        this.pId = pId;
+        this.name = name;
+        this.open = open;
+        this.icon = icon;
+        this.isParent = isParent;
+    }
 }

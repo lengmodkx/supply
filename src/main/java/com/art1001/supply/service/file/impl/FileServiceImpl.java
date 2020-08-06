@@ -104,7 +104,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     public List<FileTree> querySubFileList(String fileId) {
+        String userId = ShiroAuthenticationManager.getUserId();
         List<FileTree> trees = fileMapper.querySubFileList(fileId);
+        trees.removeIf(next -> StringUtils.isNotEmpty(next.getFileUids()) && !ArrayUtils.contains(next.getFileUids().split(","), userId));
+
         trees.forEach(item -> {
             if (checkChildFolder(item.getId()) == 1) {
                 item.setIsParent(1);

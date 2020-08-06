@@ -179,31 +179,6 @@ public class FileApi extends BaseController {
                                         @RequestParam(defaultValue = "1") Integer current,
                                         @RequestParam(defaultValue = "99999") Integer size) {
         try {
-//            String userId = ShiroAuthenticationManager.getUserId();
-//            String projectId = redisUtil.get("userId:" + userId);
-//            ProRoleUser proRoleUser = proRoleUserService.findProRoleUser(projectId, userId);
-
-//            ProRole role = proRoleService.getById(proRoleUser.getRoleId());
-            /*File file = fileService.getOne(new QueryWrapper<File>().eq("file_id", fileId));
-            if (StringUtils.isNotEmpty(file.getFileUids())) {
-                if (!ArrayUtils.contains(file.getFileUids().split(","),userId)) {
-                    return Result.fail("无权访问,请联系管理员");
-                }
-            }*/
-         /*   List<UserEntity> projectMembers = userService.getProjectMembers(projectId);
-            if (CollectionUtils.isNotEmpty(projectMembers)) {
-                List<UserEntity> collect = projectMembers.stream().filter(f -> f.getUserId().equals(userId)).collect(Collectors.toList());
-                if (CollectionUtils.isEmpty(collect)) {
-                    return Result.fail("无权访问,请联系管理员");
-                }
-
-            }*/
-            /*if(!"administrator".equals(role.getRoleKey())&&!"admin".equals(role.getRoleKey())){
-                File file = fileService.getOne(new QueryWrapper<File>().eq("file_id", fileId));
-                if(file.getCatalog()==1&&file.getFilePrivacy()==1){
-                    return Result.fail("无权访问,请联系管理员");
-                }
-            }*/
             List<File> fileList = fileService.queryFileList(fileId,current,size);
             return Result.success(fileList);
         } catch (Exception e){

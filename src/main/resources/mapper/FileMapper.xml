@@ -300,7 +300,7 @@
         <include refid="Base_Column_List"/>
         FROM
         prm_file
-        where catalog = 1 and parent_id = #{fileId} and public_lable = 0 order by create_time desc
+        where `catalog` = 1 and parent_id = #{fileId} and public_lable = 0 order by create_time desc
     </select>
 
     <update id="moveFile" parameterType="java.lang.String">
@@ -582,7 +582,8 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 		select
 			f.file_id as id,
 		 	f.parent_id as pId,
-		 	f.file_name as `name`
+		 	f.file_name as `name`,
+		 	f.file_uids
 		from prm_file f where `catalog`=1 and file_del=0 and parent_id = #{fileId}
 	</select>
 
