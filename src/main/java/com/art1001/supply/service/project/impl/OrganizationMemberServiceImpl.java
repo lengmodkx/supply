@@ -626,9 +626,13 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
     @Override
     public void saveOrganizationMember2(String orgId, UserEntity userEntity) {
-        OrganizationMember organizationMember = saveOrganizationMemberInfo(orgId, userEntity);
-        organizationMember.setMemberLabel("成员");
-        this.save(organizationMember);
+        Integer integer = organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userEntity.getUserId()));
+        if (integer==0) {
+            OrganizationMember organizationMember = saveOrganizationMemberInfo(orgId, userEntity);
+            organizationMember.setMemberLabel("成员");
+            this.save(organizationMember);
+        }
+
     }
 
 
