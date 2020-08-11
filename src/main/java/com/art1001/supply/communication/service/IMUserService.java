@@ -11,7 +11,7 @@ public interface IMUserService {
 	/**
 	 * 注册IM用户[单个] <br>
 	 * POST
-	 * 
+	 *
 	 * @param payload
 	 *            <code>{"username":"${用户名}","password":"${密码}", "nickname":"${昵称值}"}</code>
 	 * @return
@@ -21,14 +21,12 @@ public interface IMUserService {
 	/**
 	 * 注册IM用户[批量] <br>
 	 * POST
-	 * 
+	 *
 	 * @param payload
 	 *            <code>[{"username":"${用户名1}","password":"${密码}"},…,{"username":"${用户名2}","password":"${密码}"}]</code>
 	 * @return
 	 */
 	Object createNewIMUserBatch(Object payload);
-
-//	Object getToken(String orgName,String appName);
 
 
 }

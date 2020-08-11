@@ -50,3 +50,6 @@ mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml
   type-aliases-package: com.art1001.supply.entity.*
 callback_url: http://test.art1001.com/api/oss/callback
+
+http:
+  short: http://test.art1001.com

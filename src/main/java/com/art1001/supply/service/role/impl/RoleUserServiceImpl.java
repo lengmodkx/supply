@@ -95,4 +95,9 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, RoleUser> i
         }
         return 1;
     }
+
+    @Override
+    public RoleUser getOrgOwenr(String orgId) {
+        return roleUserMapper.getOrgOwenr(orgId);
+    }
 }

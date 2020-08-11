@@ -31,6 +31,12 @@ public class UserInfo extends Model<UserInfo> {
     private String userName;
 
     /**
+     * 环信token
+     */
+    @TableField(exist = false)
+    private Object authToken;
+
+    /**
      * 用户名
      */
     private String accountName;

@@ -42,4 +42,10 @@ public interface RoleUserMapper extends BaseMapper<RoleUser> {
     Boolean updateRoleMember(@Param("orgId")String orgId,  @Param("memberId")String memberId,@Param("roleId")Integer roleId);
 
 
+    /**
+     * 获取企业拥有者
+     * @param orgId
+     * @return
+     */
+    RoleUser getOrgOwenr(@Param("orgId")String orgId);
 }

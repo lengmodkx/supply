@@ -10,6 +10,8 @@ import io.swagger.client.api.UsersApi;
 import io.swagger.client.model.RegisterUsers;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  * @ClassName IMUserServiceImpl
  * @Author 邓凯欣 lengmodkx@163.com
@@ -21,19 +23,23 @@ public class IMUserServiceImpl implements IMUserService {
 
     private UsersApi api = new UsersApi();
     private ResponseHandler responseHandler = new ResponseHandler();
-
     @Override
-    public Object createNewIMUserSingle(Object payload) {
-        return responseHandler.handle(() -> api.orgNameAppNameUsersPost(OrgInfo.ORG_NAME,OrgInfo.APP_NAME, (RegisterUsers) payload, TokenUtil.getAccessToken()));
+    public Object createNewIMUserSingle(final Object payload) {
+        return responseHandler.handle(new EasemobAPI() {
+            @Override
+            public Object invokeEasemobAPI() throws ApiException {
+                return api.orgNameAppNameUsersPost(OrgInfo.ORG_NAME,OrgInfo.APP_NAME, (RegisterUsers) payload,TokenUtil.getAccessToken());
+            }
+        });
     }
 
     @Override
-    public Object createNewIMUserBatch(Object payload) {
-        return responseHandler.handle(() -> api.orgNameAppNameUsersPost(OrgInfo.ORG_NAME,OrgInfo.APP_NAME, (RegisterUsers) payload,TokenUtil.getAccessToken()));
+    public Object createNewIMUserBatch(final Object payload) {
+        return responseHandler.handle(new EasemobAPI() {
+            @Override
+            public Object invokeEasemobAPI() throws ApiException {
+                return api.orgNameAppNameUsersPost(OrgInfo.ORG_NAME,OrgInfo.APP_NAME, (RegisterUsers) payload,TokenUtil.getAccessToken());
+            }
+        });
     }
-//
-//    @Override
-//    public Object getToken(String orgName, String appName) {
-//        return responseHandler
-//    }
 }

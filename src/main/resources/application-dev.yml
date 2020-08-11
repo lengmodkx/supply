@@ -52,4 +52,7 @@ mybatis-plus:
 
 callback_url: http://285r71z809.zicp.vip/oss/callback
 
+http:
+  short: http://test.art1001.com
+
 

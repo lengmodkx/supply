@@ -50,3 +50,5 @@ mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml
   type-aliases-package: com.art1001.supply.entity.*
 callback_url: https://work.aldbim.com/api/oss/callback
+http:
+  short: https://work.aldbim.com

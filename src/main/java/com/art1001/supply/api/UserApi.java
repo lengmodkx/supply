@@ -6,6 +6,7 @@ import com.art1001.supply.aliyun.message.service.aliyun.AliyunMessageService;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.communication.service.IMUserService;
+import com.art1001.supply.communication.service.impl.EasemobAuthToken;
 import com.art1001.supply.entity.CodeMsg;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.user.UserEntity;
@@ -16,17 +17,18 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
-import com.art1001.supply.util.DateUtil;
-import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.RedisUtil;
-import com.art1001.supply.util.RegexUtils;
+import com.art1001.supply.util.*;
 import com.art1001.supply.util.crypto.EndecryptUtils;
+import com.art1001.supply.util.crypto.MD5;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.code.kaptcha.Producer;
+import com.google.common.collect.Lists;
 import io.swagger.client.model.RegisterUsers;
 import io.swagger.client.model.User;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -50,10 +52,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 用户
@@ -88,8 +87,14 @@ public class UserApi {
     @Resource
     private IMUserService imUserService;
 
+    @Resource
+    private EasemobAuthToken easemobAuthToken;
+
+
     private final static String ONE = "1";
     private final static String ZERO = "0";
+    private final static String IM_PASSWORD="AAF9A7ADE8AD853549F9CE5D53E8D645";
+
 
     /**
      * 用户登陆
@@ -108,6 +113,7 @@ public class UserApi {
             subject.login(token);
             if (subject.isAuthenticated()) {
                 UserInfo userInfo = userService.findInfo(accountName);
+                userInfo.setAuthToken(easemobAuthToken.getAuthToken());
                 redisUtil.set(Constants.USER_INFO + userInfo.getUserId(), userInfo);
                 return Result.success(userInfo);
             } else {
@@ -159,10 +165,7 @@ public class UserApi {
         userEntity.setCredentialsSalt(user.getCredentialsSalt());
         try {
             //向第三方环信注册用户
-            RegisterUsers users = new RegisterUsers();
-            User user1 = new User().username(accountName).password(userEntity.getPassword());
-            users.add(user1);
-            imUserService.createNewIMUserSingle(users);
+            registerImService(accountName);
             // 保存用户注册信息
             userService.insert(userEntity, password);
             return Result.success();
@@ -198,7 +201,8 @@ public class UserApi {
             return Result.fail("用户已存在");
         }
         try {
-            String result = userService.registerAndProjectMember(captcha, accountName, password, userName, job, projectId);
+            userService.registerAndProjectMember(captcha, accountName, password, userName, job, projectId);
+            registerImService(accountName);
             return Result.success();
         } catch (Exception e) {
             log.error("注册失败:", e);
@@ -233,11 +237,23 @@ public class UserApi {
         }
         try {
             String result = userService.registerAndOrgMember(captcha, accountName, password, userName, job, orgId);
+            registerImService(accountName);
             return Result.success();
         } catch (Exception e) {
             log.error("注册失败:", e);
             return Result.fail(CodeMsg.REGISTER_FAIL);
         }
+    }
+
+    /**
+     * 将用户注册进环信客户端
+     * @param accountName
+     */
+    private void registerImService( String accountName) {
+        RegisterUsers users = new RegisterUsers();
+        User user1 = new User().username(accountName).password(IM_PASSWORD);
+        users.add(user1);
+        imUserService.createNewIMUserSingle(users);
     }
 
     /**
@@ -648,6 +664,14 @@ public class UserApi {
 
 
     /**
+     *生成环信用户密码
+     * @return
+     */
+    private static String getAuth(){
+        return MD5.encrypt("supply");
+    }
+
+    /**
      * @Author: 邓凯欣
      * @Email：dengkaixin@art1001.com
      * @Param:
@@ -655,18 +679,28 @@ public class UserApi {
      * @Description: 向第三方环信批量注册用户
      * @create: 17:42 2020/6/2
      */
-/*    @GetMapping("/registerAll")
+    @GetMapping("/registerAll")
     public void registerAll(){
 //        List<UserEntity> list = userService.selectAll();
         List<UserEntity> list = userService.list(new QueryWrapper<UserEntity>().eq("delete_status", 0));
-        RegisterUsers users = new RegisterUsers();
 
-        Optional.ofNullable(list).ifPresent(l->l.stream().forEach(r->{
-            User user1 = new User().username(r.getAccountName()).password(r.getPassword());
-            users.add(user1);
-        }));
-        imUserService.createNewIMUserBatch(users);
-    }*/
+        List<User>list1= Lists.newArrayList();
+        for (UserEntity u : list) {
+            User user=new User();
+            user.setUsername(u.getAccountName());
+            user.setPassword(IM_PASSWORD);
+            list1.add(user);
+        }
+        List<List<User>> partition = Lists.partition(list1, 1);
+        for (List<User> userList : partition) {
+            RegisterUsers users = new RegisterUsers();
+            users.addAll(userList);
+            imUserService.createNewIMUserBatch(users);
+
+        }
+
+    }
+
 
     @GetMapping("checkcookie")
     public Result checkCookie(){

@@ -38,5 +38,16 @@
         where org_id=#{orgId} and u_id=#{memberId}
     </update>
 
+    <select id="getOrgOwenr" resultType="com.art1001.supply.entity.role.RoleUser">
+      SELECT
+      	ru.role_id,
+      	ru.u_id
+      FROM
+      	sys_role r
+      	JOIN sys_role_user ru ON r.role_id = ru.role_id
+      WHERE
+      	r.organization_id = #{orgId}
+      	AND r.role_name = '拥有者'
+    </select>
 
 </mapper>

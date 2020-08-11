@@ -135,4 +135,5 @@ public interface RoleService extends IService<Role> {
     Integer getOrgRoleIdByName(String orgId, String roleName);
 
     Role checkRole(String orgId, String memberId);
+
 }
