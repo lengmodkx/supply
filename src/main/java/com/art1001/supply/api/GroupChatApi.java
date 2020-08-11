@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.OSSException;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
-import com.art1001.supply.communication.service.impl.EasemobSendMessage;
 import com.art1001.supply.entity.chat.Chat;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.exception.AjaxException;
