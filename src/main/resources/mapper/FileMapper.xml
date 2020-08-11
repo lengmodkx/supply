@@ -563,8 +563,8 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 			f.public_id,
 			f.`level`
 		FROM
-			new_file f
-			LEFT JOIN prm_file_version v ON f.file_id = v.file_id
+			prm_file f
+			left JOIN prm_file_version v ON f.file_id = v.file_id
 		WHERE
 			parent_id = #{folderId}
 		ORDER BY
@@ -659,7 +659,7 @@ update prm_file set user_id = #{userId} where user_id = #{id}
         SELECT
 			count(1)
 		FROM
-			new_file f
+			prm_file f
 			LEFT JOIN prm_file_version v ON f.file_id = v.file_id
 		WHERE
 			parent_id = #{folderId}

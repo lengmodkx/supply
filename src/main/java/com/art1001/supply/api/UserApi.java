@@ -113,7 +113,7 @@ public class UserApi {
             subject.login(token);
             if (subject.isAuthenticated()) {
                 UserInfo userInfo = userService.findInfo(accountName);
-                userInfo.setAuthToken(easemobAuthToken.getAuthToken());
+//                userInfo.setAuthToken(easemobAuthToken.getAuthToken());
                 redisUtil.set(Constants.USER_INFO + userInfo.getUserId(), userInfo);
                 return Result.success(userInfo);
             } else {
