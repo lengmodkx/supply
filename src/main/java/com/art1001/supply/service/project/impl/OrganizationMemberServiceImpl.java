@@ -631,6 +631,19 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
             OrganizationMember organizationMember = saveOrganizationMemberInfo(orgId, userEntity);
             organizationMember.setMemberLabel("成员");
             this.save(organizationMember);
+            List<Role> roles = roleService.list(new QueryWrapper<Role>().eq("org_id", orgId));
+            for (Role role : roles) {
+                if (role.getRoleName().equals(Constants.MEMBER_CN)) {
+                    RoleUser roleUser = new RoleUser();
+                    roleUser.setOrgId(orgId);
+                    roleUser.setUId(userEntity.getUserId());
+                    roleUser.setRoleId(role.getRoleId());
+                    roleUser.setTCreateTime(LocalDateTime.now());
+                    roleUserService.save(roleUser);
+                }
+            }
+
+
         }
 
     }

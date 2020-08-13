@@ -215,12 +215,22 @@ public class RoleApi {
                                      @RequestParam(value = "userId") String userId) {
         JSONObject object = new JSONObject();
         try {
-            RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id", userId).eq("org_id", orgId));
 
-            roleUser.setUId(userId);
-            roleUser.setOrgId(orgId);
-            roleUser.setRoleId(roleId);
-            roleUserService.updateById(roleUser);
+            RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id", userId).eq("org_id", orgId));
+           //弥补之前疏忽，企业成员未添加到角色表的数据需要重新添加
+            if (roleUser==null) {
+                RoleUser roleUser1 = new RoleUser();
+                roleUser1.setUId(userId);
+                roleUser1.setOrgId(orgId);
+                roleUser1.setRoleId(roleId);
+                roleUser1.setTCreateTime(LocalDateTime.now());
+                roleUserService.save(roleUser1);
+            }else {
+                roleUser.setUId(userId);
+                roleUser.setOrgId(orgId);
+                roleUser.setRoleId(roleId);
+                roleUserService.updateById(roleUser);
+            }
             Role role = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleId));
             OrganizationMember orgm=new OrganizationMember();
             orgm.setMemberLabel(role.getRoleName());

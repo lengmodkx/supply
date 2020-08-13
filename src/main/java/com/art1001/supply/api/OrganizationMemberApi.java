@@ -175,7 +175,6 @@ public class OrganizationMemberApi {
      * @param orgId
      * @param parmentId
      * @param memberId
-     * @param param 1外部成员 0成员
      * @return
      */
     @PostMapping("/addMember1")
