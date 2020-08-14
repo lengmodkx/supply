@@ -120,6 +120,14 @@ public interface RoleService extends IService<Role> {
      */
     Role getRoleAndResourcesInfo(Integer roleId);
 
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description:  获取企业成员角色列表
+    * @create: 13:59 2020/8/14
+    */
     List<Role> roleForMember(String userId, String orgId);
 
     /**

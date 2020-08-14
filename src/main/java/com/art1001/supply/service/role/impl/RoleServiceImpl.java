@@ -235,35 +235,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         //查询当前这个人的角色。
         RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("org_id", orgId).eq("u_id", userId));
         Role userRole = getOne(new QueryWrapper<Role>().eq("role_id", roleUser.getRoleId()));
-
         List<Role> roles = list(new QueryWrapper<Role>().eq("organization_id", orgId));
 
-        if(userRole.getRoleKey().equals(Constants.OWNER_KEY)){
-            roles = roles.stream().filter(role -> !role.getRoleKey().equals(Constants.OWNER_KEY)).collect(Collectors.toList());
-        }
-
-        if(userRole.getRoleKey().equals(Constants.ADMIN_KEY)){
-            Stream<Role> roleStream = roles.stream().filter(role -> !role.getRoleKey().equals(Constants.OWNER_KEY));
-            roles = roleStream.filter(role -> !role.getRoleKey().equals(Constants.ADMIN_KEY)).collect(Collectors.toList());
-        }
-
-
-
-
-//        if (CollectionUtils.isNotEmpty(roles)) {
-//            for (int i = 0; i < roles.size(); i++) {
-//                if (roles.get(i).getRoleName().equals(Constants.OWNER_CN)) {
-//                    roles.remove(i);
-//                }
-//                if (roles.get(i).getRoleName().equals(Constants.ADMIN_CN)) {
-//                    roles.remove(0);
-//                    roles.remove(i);
-//
-//                }
-//            }
-//        }
-
-       /* RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id", userId).eq("org_id", orgId));
         Iterator<Role> iterator = roles.iterator();
         while (iterator.hasNext()) {
             Role role = iterator.next();
@@ -278,13 +251,16 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
                     role.setCurrentCheck(false);
                 }
             }
-            if (Constants.OWNER_CN.equals(role.getRoleName())) {
-                iterator.remove();
-            }
-            if (Constants.ADMIN_CN.equals(role.getRoleName())) {
-                iterator.remove();
-            }
-        }*/
+        }
+
+        if(userRole.getRoleKey().equals(Constants.OWNER_KEY)){
+            roles = roles.stream().filter(role -> !role.getRoleKey().equals(Constants.OWNER_KEY)).collect(Collectors.toList());
+        }
+
+        if(userRole.getRoleKey().equals(Constants.ADMIN_KEY)){
+            Stream<Role> roleStream = roles.stream().filter(role -> !role.getRoleKey().equals(Constants.OWNER_KEY));
+            roles = roleStream.filter(role -> !role.getRoleKey().equals(Constants.ADMIN_KEY)).collect(Collectors.toList());
+        }
         return roles;
     }
 
