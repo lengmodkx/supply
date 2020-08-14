@@ -462,6 +462,7 @@
                     <include>**/*.xml</include>
                     <include>**/*.properties</include>
                     <include>**/*.html</include>
+                    <include>**/*.txt</include>
                 </includes>
             </resource>
         </resources>
