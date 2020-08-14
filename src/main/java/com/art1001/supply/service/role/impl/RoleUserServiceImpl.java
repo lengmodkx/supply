@@ -90,7 +90,7 @@ public class RoleUserServiceImpl extends ServiceImpl<RoleUserMapper, RoleUser> i
     public Integer isOwner(String orgId) {
         RoleUser roleUser = roleUserMapper.selectOne(new QueryWrapper<RoleUser>().eq("u_id", ShiroAuthenticationManager.getUserId()).eq("org_id", orgId));
         Role role = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleUser.getRoleId()));
-        if (!Constants.OWNER_CN.equals(role.getRoleName())) {
+        if (!Constants.OWNER_CN.equals(role.getRoleName())&&!Constants.ADMIN_CN.equals(role.getRoleName())) {
             return 0;
         }
         return 1;

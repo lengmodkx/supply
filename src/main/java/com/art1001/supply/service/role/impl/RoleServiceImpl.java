@@ -233,10 +233,23 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     public List<Role> roleForMember(String userId, String orgId) {
         List<Role> roles = list(new QueryWrapper<Role>().eq("organization_id", orgId));
 
+        if (CollectionUtils.isNotEmpty(roles)) {
+            for (int i = 0; i < roles.size(); i++) {
+                if (roles.get(i).getRoleName().equals(Constants.OWNER_CN)) {
+                    roles.remove(i);
+                }
+                if (roles.get(i).getRoleName().equals(Constants.ADMIN_CN)) {
+                    roles.remove(0);
+                    roles.remove(i);
+
+                }
+            }
+        }
+
+       /* RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id", userId).eq("org_id", orgId));
         Iterator<Role> iterator = roles.iterator();
         while (iterator.hasNext()) {
             Role role = iterator.next();
-            RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id", userId).eq("org_id", orgId));
             if (roleUser != null) {
                 if (roleUser.getRoleId().equals(role.getRoleId())) {
                     OrganizationMember organizationMember = new OrganizationMember();
@@ -251,22 +264,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             if (Constants.OWNER_CN.equals(role.getRoleName())) {
                 iterator.remove();
             }
-        }
-
-        /*roles.forEach(role -> {
-            RoleUser roleUser = roleUserService.getOne(new QueryWrapper<RoleUser>().eq("u_id", userId).eq("org_id", orgId));
-            if (roleUser != null) {
-                if (roleUser.getRoleId().equals(role.getRoleId())) {
-                    OrganizationMember organizationMember = new OrganizationMember();
-                    organizationMember.setMemberLabel(role.getRoleName());
-                    organizationMember.setUpdateTime(System.currentTimeMillis());
-                    organizationMemberService.update(organizationMember, new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userId));
-                    role.setCurrentCheck(true);
-                } else {
-                    role.setCurrentCheck(false);
-                }
+            if (Constants.ADMIN_CN.equals(role.getRoleName())) {
+                iterator.remove();
             }
-        });*/
+        }*/
         return roles;
     }
 
