@@ -659,7 +659,7 @@ update prm_file set user_id = #{userId} where user_id = #{id}
         SELECT
 			count(1)
 		FROM
-			prm_ f
+			prm_file f
 			LEFT JOIN prm_file_version v ON f.file_id = v.file_id
 		WHERE
 			parent_id = #{folderId}
