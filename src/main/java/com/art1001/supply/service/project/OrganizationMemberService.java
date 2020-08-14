@@ -158,12 +158,12 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	/**
 	 * 根据部门成员分类
 	 * @param partmentId
-	 * @param memberLebel
+	 * @param memberLabel
 	 * @param flag
 	 * @param orgId
 	 * @return
 	 */
-	List<OrganizationMember> getOrgPartmentByMemberLebel(String partmentId, String memberLebel, String flag,String orgId);
+	List<OrganizationMember> getOrgPartmentByMemberLebel(String partmentId, String memberLabel, String flag,String orgId);
 
 	/**
 	 * 根据电话号或邮箱邀请企业成员

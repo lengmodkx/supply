@@ -21,7 +21,7 @@ public interface OrganizationGroupMemberService extends IService<OrganizationGro
      * @param memberId 成员id
      * @return 结果
      */
-    Boolean addGroupMember(String groupId, List<String> memberId);
+    Boolean addGroupMember(String groupId, List<String> memberId,String chatGroupId);
 
     /**
      * 该成员在分组中是否存在
@@ -47,7 +47,7 @@ public interface OrganizationGroupMemberService extends IService<OrganizationGro
      * @param groupId 群组id
      * @return 结果
      */
-    Boolean removeMember(String memberId, String groupId);
+    Boolean removeMember(String memberId, String groupId,String chatGroupId);
 
     /**
      * 获取群组下的所有成员信息

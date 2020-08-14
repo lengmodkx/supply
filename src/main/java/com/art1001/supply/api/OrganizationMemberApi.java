@@ -550,13 +550,13 @@ public class OrganizationMemberApi {
      */
     @GetMapping("/getOrgPartmentByMemberLebel")
     public JSONObject getOrgPartmentByMemberLebel(@RequestParam(value = "partmentId", required = false) String partmentId,
-                                                  @RequestParam(value = "memberLabel", required = false) String memberLebel,
+                                                  @RequestParam(value = "memberLabel", required = false) String memberLabel,
                                                   @RequestParam(value = "flag", defaultValue = "1") String flag,
                                                   @RequestParam(value = "orgId") String orgId) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("result", 1);
-            jsonObject.put("data", organizationMemberService.getOrgPartmentByMemberLebel(partmentId, memberLebel, flag, orgId));
+            jsonObject.put("data", organizationMemberService.getOrgPartmentByMemberLebel(partmentId, memberLabel, flag, orgId));
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);

@@ -33,7 +33,8 @@
         SELECT
         u.user_id AS userId,
         u.user_name AS userName,
-        u.image AS image
+        u.image AS image,
+        og.consul_group
         FROM
         prm_organization_group_member AS ogm
         JOIN prm_organization_group AS og

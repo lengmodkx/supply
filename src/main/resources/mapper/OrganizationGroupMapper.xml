@@ -9,6 +9,7 @@
 		<result column="owner" property="owner" jdbcType="VARCHAR" />
 		<result column="create_time" property="createTime" jdbcType="BIGINT" />
 		<result column="update_time" property="updateTime" jdbcType="BIGINT" />
+		<result column="consul_group" property="consulGroup" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -70,7 +71,8 @@
 		SELECT
 			og.group_id,
 			og.group_name,
-			og.organization_id
+			og.organization_id,
+			og.consul_group
 		FROM
 			prm_organization_group AS og
 		WHERE

@@ -1,5 +1,7 @@
 package com.art1001.supply.service.organization.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.communication.service.ChatGroupAPI;
 import com.art1001.supply.communication.service.IMUserService;
 import com.art1001.supply.entity.organization.OrganizationGroup;
@@ -14,6 +16,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +58,7 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
      * @return 结果
      */
     @Override
-    public Boolean addGroupMember(String groupId, List<String> memberId) {
+    public Boolean addGroupMember(String groupId, List<String> memberId,String chatGroupId) {
         memberId.forEach(r->{
             if(!this.checkMemberIsExist(groupId, r)){
 //                throw new ServiceException("成员已经存在,不能重复添加!");
@@ -65,19 +68,16 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
                 organizationGroupMember.setUpdateTime(System.currentTimeMillis());
                 organizationGroupMember.setCreateTime(System.currentTimeMillis());
                 organizationGroupMemberMapper.insert(organizationGroupMember);
-
-                //向环信群组添加成员
-             /*   List<UserEntity> users = userService.list(new QueryWrapper<UserEntity>().in("user_id", memberId));
-                UserEntity user = userService.findById(ShiroAuthenticationManager.getUserId());
-                if (!CollectionUtils.isEmpty(users)) {
-                    for (UserEntity userEntity : users) {
-                        chatGroupAPI.addSingleUserToChatGroup()
-                    }
-                }*/
-
             }
-
         });
+
+        //向环信群组添加成员
+        List<UserEntity> users = userService.list(new QueryWrapper<UserEntity>().in("user_id", memberId));
+        if (!CollectionUtils.isEmpty(users)) {
+            for (UserEntity userEntity : users) {
+                chatGroupAPI.addSingleUserToChatGroup(groupId,userEntity.getAccountName());
+            }
+        }
         return true;
 
     }
@@ -114,10 +114,14 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean removeMember(String memberId, String groupId) {
+    public Boolean removeMember(String memberId, String groupId,String chatGroupId) {
 
         //移除企业群组成员
         organizationGroupMemberMapper.delete(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId).eq("member_id", memberId));
+
+        //移除环信群组成员
+        UserEntity byId = userService.findById(memberId);
+        chatGroupAPI.removeSingleUserFromChatGroup(chatGroupId,byId.getAccountName());
         //如果当前用户退出后,群组内人数 < = 0 就需要删除分组
         if(organizationGroupMemberMapper.selectCount(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId)) <= 0){
             organizationGroupService.removeById(groupId);
@@ -164,6 +168,7 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
                 } else{
                     item.setIsOwner(false);
                 }
+
             });
             return organizationGroupMembers;
         }

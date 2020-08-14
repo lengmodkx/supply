@@ -69,7 +69,7 @@ public interface OrganizationGroupService extends IService<OrganizationGroup> {
 	 * @param groupId 群组id
 	 * @return 结果
 	 */
-    Boolean removeGroup(String groupId);
+    Boolean removeGroup(String groupId,String chatGroupId);
 
 	/**
 	 * 根据企业id 获取企业下的所有群组信息

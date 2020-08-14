@@ -477,7 +477,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     }
 
     @Override
-    public List<OrganizationMember> getOrgPartmentByMemberLebel(String partmentId, String memberLebel, String flag, String orgId) {
+    public List<OrganizationMember> getOrgPartmentByMemberLebel(String partmentId, String memberLabel, String flag, String orgId) {
         List<OrganizationMember> orgs = Lists.newArrayList();
         List<PartmentMember> partmentMembers = Lists.newArrayList();
         OrganizationMember org = new OrganizationMember();
@@ -491,10 +491,10 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                             .eq("other", flag));
                     if (org != null) {
                         org.setUserEntity(userService.findById(partmentMember.getMemberId()));
-                        if (StringUtils.isEmpty(memberLebel)) {
+                        if (StringUtils.isEmpty(memberLabel)) {
                             orgs.add(org);
                         }
-                        OrganizationMember orgsResult = getOrgsResult(memberLebel, org);
+                        OrganizationMember orgsResult = getOrgsResult(memberLabel, org);
                         if (orgsResult != null) {
                             orgs.add(orgsResult);
                         }
@@ -502,22 +502,23 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                 }
             }
         } else {
-            if (StringUtils.isEmpty(memberLebel)) {
+            if (StringUtils.isEmpty(memberLabel)) {
                 orgs = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
                 orgs.stream().forEach(r -> r.setUserEntity(userService.findById(r.getMemberId())));
             }
             orgs = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId));
             orgs.stream().forEach(r -> r.setUserEntity(userService.findById(r.getMemberId())));
-            Optional.ofNullable(orgs).ifPresent(os -> {
-                if (StringUtils.isNotEmpty(memberLebel)) {
-                    if (Constants.ONE.equals(memberLebel))
-                        os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.MEMBER_CN)).collect(Collectors.toList());
-                    else if (Constants.TWO.equals(memberLebel))
-                        os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.OWNER_CN)).collect(Collectors.toList());
-                    else if (Constants.THREE.equals(memberLebel))
-                        os.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.ADMIN_CN)).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(orgs)) {
+                if (StringUtils.isNotEmpty(memberLabel)) {
+                    if (Constants.ONE.equals(memberLabel))
+                        orgs=orgs.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.MEMBER_CN)).collect(Collectors.toList());
+                    else if (Constants.TWO.equals(memberLabel))
+                        orgs=orgs.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.OWNER_CN)).collect(Collectors.toList());
+                    else if (Constants.THREE.equals(memberLabel))
+                        orgs=orgs.stream().filter(o -> o.getMemberLabel() != null && o.getMemberLabel().equals(Constants.ADMIN_CN)).collect(Collectors.toList());
                 }
-            });
+            }
+
         }
         return orgs;
     }

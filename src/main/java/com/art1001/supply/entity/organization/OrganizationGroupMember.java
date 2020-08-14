@@ -88,4 +88,6 @@ public class OrganizationGroupMember implements Serializable {
     private UserEntity userEntity;
 
 
+
+
 }

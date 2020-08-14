@@ -707,4 +707,15 @@ public class UserApi {
     public Result checkCookie(){
         return Result.success();
     }
+
+    /**
+     * 环信加好友
+     * @param accountName  自己电话号
+     * @param buddyAccountName  好友电话号
+     * @return
+     */
+    @GetMapping("/addBuddyByAccountName")
+    public Object addBuddyByAccountName(@RequestParam String accountName,@RequestParam String buddyAccountName){
+       return imUserService.addFriendSingle(accountName,buddyAccountName);
+    }
 }

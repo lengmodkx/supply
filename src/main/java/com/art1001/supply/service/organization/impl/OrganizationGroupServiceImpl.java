@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
 import com.art1001.supply.communication.service.ChatGroupAPI;
 import com.art1001.supply.communication.service.impl.EasemobChatGroup;
 import com.art1001.supply.entity.organization.OrganizationGroup;
@@ -22,6 +23,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.swagger.client.model.Group;
 import io.swagger.client.model.UserName;
 import io.swagger.client.model.UserNames;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import org.springframework.transaction.annotation.Transactional;
@@ -131,14 +134,15 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 		organizationGroup.setOwner(ShiroAuthenticationManager.getUserId());
 		organizationGroupMapper.insert(organizationGroup);
 
-		//在环信创建企业群组信息
+		/*//在环信创建企业群组信息
 		Group group = new Group();
 		UserEntity byId = userService.findById(ShiroAuthenticationManager.getUserId());
 		List<String> accountNames = userService.list(new QueryWrapper<UserEntity>().in("user_id", memberIds)).stream().map(UserEntity::getAccountName).collect(Collectors.toList());
 		UserName userName=new UserName();
 		userName.addAll(accountNames);
 		group.groupname(organizationGroup.getGroupName()).desc("")._public(true).maxusers(50).approval(false).owner(byId.getAccountName()).members(userName);
-		chatGroupAPI.createChatGroup(group);
+		Object chatGroup = chatGroupAPI.createChatGroup(group);*/
+
 
 		//保存分组成员信息
 		if(memberIds != null){
@@ -163,9 +167,10 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public Boolean removeGroup(String groupId) {
+	public Boolean removeGroup(String groupId,String chatGroupId) {
 		organizationGroupMapper.deleteById(groupId);
 		organizationGroupMemberService.remove(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId));
+		chatGroupAPI.deleteChatGroup(chatGroupId);
 		return true;
 	}
 
@@ -179,7 +184,15 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 		if(!organizationService.checkOrgIsExist(orgId)){
 			throw new ServiceException("该企业已经不存在!");
 		}
-		return organizationGroupMapper.selectOrgGroups(orgId);
+		List<OrganizationGroup> organizationGroups = organizationGroupMapper.selectOrgGroups(orgId);
+		if (CollectionUtils.isNotEmpty(organizationGroups)) {
+			organizationGroups.stream().forEach(r-> {
+				if (StringUtils.isNotEmpty(r.getConsulGroup())) {
+					r.setConsulGroupObject(JSON.parseObject(r.getConsulGroup()));
+				}
+			});
+		}
+		return organizationGroups;
 	}
 
 	/**
