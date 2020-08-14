@@ -299,7 +299,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
         try {
 
-            Role role=roleService.checkRole(orgId,memberId);
+            Role role = roleService.checkRole(orgId, memberId);
             if (!role.getRoleName().equals(Constants.EXTERNAL)) {
                 //企业拥有者改为成员
                 Boolean updateOwner = organizationMemberMapper.updateOwner(orgId, ownerId);
@@ -404,10 +404,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         } else if (Constants.B_THREE.equals(flag)) {
             //新加入的成员
             orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("create_time", System.currentTimeMillis()).orderByDesc("organization_lable"));
-        } else if(Constants.B_FIVE.equals(flag)){
+        } else if (Constants.B_FIVE.equals(flag)) {
             orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_label", "外部成员"));
-        }
-        else {
+        } else {
             orgMembers = organizationMemberMapper.selectList(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("other", 0).orderByDesc("organization_lable"));
         }
         if (CollectionUtils.isNotEmpty(orgMembers)) {
@@ -416,8 +415,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         }
         if (memberLabel != null) {
             Role role = roleService.getOne(new QueryWrapper<Role>().eq("role_id", memberLabel));
-            if (CollectionUtils.isNotEmpty(orgMembers)&&role!=null) {
-                orgMembers=orgMembers.stream().filter(o->o.getMemberLabel().equals(role.getRoleName())).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(orgMembers) && role != null) {
+                orgMembers = orgMembers.stream().filter(o -> o.getMemberLabel().equals(role.getRoleName())).collect(Collectors.toList());
             }
         }
         return orgMembers;
@@ -627,23 +626,19 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
     @Override
     public void saveOrganizationMember2(String orgId, UserEntity userEntity) {
         Integer integer = organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userEntity.getUserId()));
-        if (integer==0) {
+        if (integer == 0) {
             OrganizationMember organizationMember = saveOrganizationMemberInfo(orgId, userEntity);
             organizationMember.setMemberLabel("成员");
             this.save(organizationMember);
-            List<Role> roles = roleService.list(new QueryWrapper<Role>().eq("org_id", orgId));
-            for (Role role : roles) {
-                if (role.getRoleName().equals(Constants.MEMBER_CN)) {
-                    RoleUser roleUser = new RoleUser();
-                    roleUser.setOrgId(orgId);
-                    roleUser.setUId(userEntity.getUserId());
-                    roleUser.setRoleId(role.getRoleId());
-                    roleUser.setTCreateTime(LocalDateTime.now());
-                    roleUserService.save(roleUser);
-                }
+            Role role = roleService.getOne(new QueryWrapper<Role>().eq("org_id", orgId).eq("role_name", "成员"));
+            if (role!=null) {
+                RoleUser roleUser = new RoleUser();
+                roleUser.setOrgId(orgId);
+                roleUser.setUId(userEntity.getUserId());
+                roleUser.setRoleId(role.getRoleId());
+                roleUser.setTCreateTime(LocalDateTime.now());
+                roleUserService.save(roleUser);
             }
-
-
         }
 
     }
@@ -767,9 +762,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                     }
                 }
                 Partment partment = partmentService.getOne(new QueryWrapper<Partment>().eq("partment_id", r.getPartmentId()));
-                if (partment!=null) {
+                if (partment != null) {
                     r.setDeptName(partment.getPartmentName());
-                    if (StringUtils.isNotEmpty(partment.getParentId())&&!partment.getParentId().equals(Constants.ZERO)) {
+                    if (StringUtils.isNotEmpty(partment.getParentId()) && !partment.getParentId().equals(Constants.ZERO)) {
                         Partment partment1 = partmentService.getOne(new QueryWrapper<Partment>().eq("partment_id", partment.getParentId()));
                         r.setParentName(partment1.getPartmentName());
                     }
