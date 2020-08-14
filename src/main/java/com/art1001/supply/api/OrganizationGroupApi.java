@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.communication.service.ChatGroupAPI;
 import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.exception.AjaxException;
@@ -35,6 +36,9 @@ public class OrganizationGroupApi {
      */
     @Resource
     private OrganizationGroupService organizationGroupService;
+
+    @Resource
+    private ChatGroupAPI chatGroupAPI;
 
     /**
      * 创建企业群组
@@ -129,5 +133,13 @@ public class OrganizationGroupApi {
             throw new SystemException("系统异常,获取群组信息失败!");
         }
     }
+
+/*    @GetMapping("/getChatGroups")
+    public Object getChatGroups(){
+        Long limit = 20L;
+        String cursor = "";
+        Object chatGroups = chatGroupAPI.getChatGroups(limit, cursor);
+        return chatGroups;
+    }*/
 }
 

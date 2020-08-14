@@ -2,18 +2,26 @@ package com.art1001.supply.service.organization.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
+import com.art1001.supply.communication.service.ChatGroupAPI;
+import com.art1001.supply.communication.service.impl.EasemobChatGroup;
 import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationGroupMapper;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.organization.OrganizationGroupService;
 import com.art1001.supply.service.organization.OrganizationService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.swagger.client.model.Group;
+import io.swagger.client.model.UserName;
+import io.swagger.client.model.UserNames;
 import org.springframework.stereotype.Service;
 import com.art1001.supply.entity.base.Pager;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +47,12 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 	 */
 	@Resource
 	OrganizationGroupMemberService organizationGroupMemberService;
+
+	@Resource
+	private ChatGroupAPI chatGroupAPI;
+
+	@Resource
+	private UserService userService;
 	
 	/**
 	 * 查询分页组织群组数据
@@ -116,6 +130,15 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 		organizationGroup.setUpdateTime(System.currentTimeMillis());
 		organizationGroup.setOwner(ShiroAuthenticationManager.getUserId());
 		organizationGroupMapper.insert(organizationGroup);
+
+		//在环信创建企业群组信息
+		Group group = new Group();
+		UserEntity byId = userService.findById(ShiroAuthenticationManager.getUserId());
+		List<String> accountNames = userService.list(new QueryWrapper<UserEntity>().in("user_id", memberIds)).stream().map(UserEntity::getAccountName).collect(Collectors.toList());
+		UserName userName=new UserName();
+		userName.addAll(accountNames);
+		group.groupname(organizationGroup.getGroupName()).desc("")._public(true).maxusers(50).approval(false).owner(byId.getAccountName()).members(userName);
+		chatGroupAPI.createChatGroup(group);
 
 		//保存分组成员信息
 		if(memberIds != null){

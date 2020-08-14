@@ -42,4 +42,14 @@ public class IMUserServiceImpl implements IMUserService {
             }
         });
     }
+
+    @Override
+    public Object addFriendSingle(final String userName,final String friendName) {
+        return responseHandler.handle(new EasemobAPI() {
+            @Override
+            public Object invokeEasemobAPI() throws ApiException {
+                return api.orgNameAppNameUsersOwnerUsernameContactsUsersFriendUsernamePost(OrgInfo.ORG_NAME,OrgInfo.APP_NAME,TokenUtil.getAccessToken(),userName,friendName);
+            }
+        });
+    }
 }

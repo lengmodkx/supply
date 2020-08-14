@@ -1,5 +1,7 @@
 package com.art1001.supply.service.organization.impl;
 
+import com.art1001.supply.communication.service.ChatGroupAPI;
+import com.art1001.supply.communication.service.IMUserService;
 import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.entity.user.UserEntity;
@@ -8,6 +10,7 @@ import com.art1001.supply.mapper.organization.OrganizationGroupMemberMapper;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.organization.OrganizationGroupService;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
@@ -39,6 +42,12 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
     @Resource
     private UserService userService;
 
+    @Resource
+    private IMUserService imUserService;
+
+    @Resource
+    private ChatGroupAPI chatGroupAPI;
+
     /**
      * 群组中添加组成员
      * @param groupId 群组id
@@ -56,6 +65,15 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
                 organizationGroupMember.setUpdateTime(System.currentTimeMillis());
                 organizationGroupMember.setCreateTime(System.currentTimeMillis());
                 organizationGroupMemberMapper.insert(organizationGroupMember);
+
+                //向环信群组添加成员
+             /*   List<UserEntity> users = userService.list(new QueryWrapper<UserEntity>().in("user_id", memberId));
+                UserEntity user = userService.findById(ShiroAuthenticationManager.getUserId());
+                if (!CollectionUtils.isEmpty(users)) {
+                    for (UserEntity userEntity : users) {
+                        chatGroupAPI.addSingleUserToChatGroup()
+                    }
+                }*/
 
             }
 

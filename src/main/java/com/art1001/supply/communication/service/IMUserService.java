@@ -28,5 +28,17 @@ public interface IMUserService {
 	 */
 	Object createNewIMUserBatch(Object payload);
 
+	/**
+	 * 给IM用户的添加好友 <br>
+	 * POST
+	 *
+	 * @param userName
+	 *            用戶名或用戶ID
+	 * @param friendName
+	 *            好友用戶名或用戶ID
+	 * @return
+	 */
+	Object addFriendSingle(String userName, String friendName);
+
 
 }

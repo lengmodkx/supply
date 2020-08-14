@@ -5,6 +5,7 @@ import com.art1001.supply.aliyun.message.enums.KeyWord;
 import com.art1001.supply.aliyun.message.service.aliyun.AliyunMessageService;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.communication.service.AuthTokenAPI;
 import com.art1001.supply.communication.service.IMUserService;
 import com.art1001.supply.communication.service.impl.EasemobAuthToken;
 import com.art1001.supply.entity.CodeMsg;
@@ -88,7 +89,7 @@ public class UserApi {
     private IMUserService imUserService;
 
     @Resource
-    private EasemobAuthToken easemobAuthToken;
+    private AuthTokenAPI easemobAuthToken;
 
 
     private final static String ONE = "1";
