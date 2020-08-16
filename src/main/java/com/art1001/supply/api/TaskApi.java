@@ -12,6 +12,7 @@ import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.entity.task.vo.ExecutorVo;
 import com.art1001.supply.entity.task.vo.TaskDynamicVO;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -795,7 +796,8 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
 
             String[] taskIdList = taskUids.split(",");
-            userNewsService.saveUserNews(taskIdList, taskId, Constants.TASK, ShiroAuthenticationManager.getUserEntity().getUserName() + PushType.A14.getName(), null);
+            UserEntity byId = userService.findById(ShiroAuthenticationManager.getUserId());
+            userNewsService.saveUserNews(taskIdList, taskId, Constants.TASK, byId.getUserName() + PushType.A14.getName(), null);
 
 //            //推送微信小程序消息给多个用户
 //            WeChatAppMessageTemplate weChatAppMessageTemplate = WeChatAppMessageTemplateBuild.updateTaskJoin();
