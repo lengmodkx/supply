@@ -184,15 +184,15 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 		if(!organizationService.checkOrgIsExist(orgId)){
 			throw new ServiceException("该企业已经不存在!");
 		}
-		List<OrganizationGroup> organizationGroups = organizationGroupMapper.selectOrgGroups(orgId);
-		if (CollectionUtils.isNotEmpty(organizationGroups)) {
+		return organizationGroupMapper.selectOrgGroups(orgId);
+	/*	if (CollectionUtils.isNotEmpty(organizationGroups)) {
 			organizationGroups.stream().forEach(r-> {
 				if (StringUtils.isNotEmpty(r.getConsulGroup())) {
 					r.setConsulGroupObject(JSON.parseObject(r.getConsulGroup()));
 				}
 			});
-		}
-		return organizationGroups;
+		}*/
+//		return organizationGroups;
 	}
 
 	/**

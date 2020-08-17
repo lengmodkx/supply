@@ -88,6 +88,8 @@ public class GroupChatApi {
                     file.setFileName(jsonObject.getString("name"));
                     file.setSize(jsonObject.getString("size"));
                     file.setExt(jsonObject.getString("ext"));
+                    file.setCreateTime(System.currentTimeMillis());
+                    file.setUpdateTime(System.currentTimeMillis());
                     fileService.save(file);
                 }
             }
