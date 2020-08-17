@@ -237,21 +237,18 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         Role userRole = getOne(new QueryWrapper<Role>().eq("role_id", roleUser.getRoleId()));
         List<Role> roles = list(new QueryWrapper<Role>().eq("organization_id", orgId));
 
-        Iterator<Role> iterator = roles.iterator();
-        while (iterator.hasNext()) {
-            Role role = iterator.next();
-            if (roleUser != null) {
-                if (roleUser.getRoleId().equals(role.getRoleId())) {
-                    OrganizationMember organizationMember = new OrganizationMember();
-                    organizationMember.setMemberLabel(role.getRoleName());
-                    organizationMember.setUpdateTime(System.currentTimeMillis());
-                    organizationMemberService.update(organizationMember, new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userId));
-                    role.setCurrentCheck(true);
-                } else {
-                    role.setCurrentCheck(false);
-                }
+        for (Role role1 : roles) {
+            if (roleUser.getRoleId().equals(role1.getRoleId())) {
+                OrganizationMember organizationMember = new OrganizationMember();
+                organizationMember.setMemberLabel(role1.getRoleName());
+                organizationMember.setUpdateTime(System.currentTimeMillis());
+                organizationMemberService.update(organizationMember, new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", userId));
+                role1.setCurrentCheck(true);
+            } else {
+                role1.setCurrentCheck(false);
             }
         }
+
 
         if(userRole.getRoleKey().equals(Constants.OWNER_KEY)){
             roles = roles.stream().filter(role -> !role.getRoleKey().equals(Constants.OWNER_KEY)).collect(Collectors.toList());
