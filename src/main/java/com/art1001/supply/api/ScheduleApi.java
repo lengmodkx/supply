@@ -3,6 +3,7 @@ package com.art1001.supply.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushName;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.collect.PublicCollect;
@@ -109,7 +110,7 @@ public class ScheduleApi extends BaseController {
      * @param privacy      隐私
      * @return
      */
-    @Push(value = PushType.D9, type = 1)
+    @Push(value = PushType.D9, name = PushName.SHARE,type = 1)
     @PostMapping
     public JSONObject addSchedule(@RequestParam String projectId,
                                   @RequestParam String scheduleName,
@@ -203,7 +204,7 @@ public class ScheduleApi extends BaseController {
      * @param scheduleName 日程名称
      * @return
      */
-    @Push(value = PushType.D1, type = 1)
+    @Push(value = PushType.D1, name = PushName.SHARE,type = 1)
     @PutMapping("/{scheduleId}/schedule_name")
     public JSONObject updateScheduleName(@PathVariable String scheduleId,
                                          @RequestParam String scheduleName) {
@@ -235,7 +236,7 @@ public class ScheduleApi extends BaseController {
      * @param startTime  日程开始时间
      * @return
      */
-    @Push(value = PushType.D2, type = 1)
+    @Push(value = PushType.D2, name = PushName.SHARE,type = 1)
     @PutMapping("/{scheduleId}/starttime")
     public JSONObject updateScheduleStartTime(@PathVariable String scheduleId,
                                               @RequestParam Long startTime) {
@@ -265,7 +266,7 @@ public class ScheduleApi extends BaseController {
      * @param endTime    日程结束结束
      * @return
      */
-    @Push(value = PushType.D3, type = 1)
+    @Push(value = PushType.D3, name = PushName.SHARE,type = 1)
     @PutMapping("/{scheduleId}/endtime")
     public JSONObject updateScheduleEndtime(@PathVariable String scheduleId,
                                             @RequestParam Long endTime) {
@@ -294,7 +295,7 @@ public class ScheduleApi extends BaseController {
      * @param repeat     日程重复
      * @return
      */
-    @Push(value = PushType.D7, type = 1)
+    @Push(value = PushType.D7, name = PushName.SHARE,type = 1)
     @PutMapping("/{scheduleId}/repeat")
     public JSONObject updateRepeat(@PathVariable String scheduleId,
                                    @RequestParam String repeat) {
@@ -349,7 +350,7 @@ public class ScheduleApi extends BaseController {
      * @param remarks    日程备注
      * @return
      */
-    @Push(value = PushType.D5, type = 1)
+    @Push(value = PushType.D5, name = PushName.SHARE,type = 1)
     @PutMapping("/{scheduleId}/remarks")
     public JSONObject updateRemarks(@PathVariable String scheduleId,
                                     @RequestParam String remarks) {
@@ -378,7 +379,7 @@ public class ScheduleApi extends BaseController {
      * @param address    日程地点
      * @return
      */
-    @Push(type = 1, value = PushType.D4)
+    @Push(type = 1, name = PushName.SHARE,value = PushType.D4)
     @PutMapping("/{scheduleId}/address")
     public JSONObject updateAddress(@PathVariable String scheduleId,
                                     @RequestParam String address) {
@@ -407,7 +408,7 @@ public class ScheduleApi extends BaseController {
      * @param memberIds  日程参与者
      * @return
      */
-    @Push(value = PushType.D6, type = 1)
+    @Push(value = PushType.D6, name = PushName.SHARE,type = 1)
     @PutMapping("/{scheduleId}/memberIds")
     public JSONObject updateMembers(@PathVariable String scheduleId,
                                     @RequestParam String memberIds) {
@@ -436,7 +437,7 @@ public class ScheduleApi extends BaseController {
      * @param projectId  项目id
      * @return
      */
-    @Push(type = 1, value = PushType.D10)
+    @Push(type = 1, name = PushName.SHARE,value = PushType.D10)
     @PostMapping("/{scheduleId}/copy")
     public JSONObject copySchedule(@PathVariable String scheduleId, @RequestParam String projectId) {
         JSONObject object = new JSONObject();
@@ -462,7 +463,7 @@ public class ScheduleApi extends BaseController {
      * @param projectId  项目id
      * @return
      */
-    @Push(type = 2, value = PushType.D11)
+    @Push(type = 2,name = PushName.SHARE, value = PushType.D11)
     @PutMapping("/{scheduleId}/move")
     public JSONObject moveSchedule(@PathVariable String scheduleId, @RequestParam String projectId) {
         JSONObject object = new JSONObject();
@@ -496,7 +497,7 @@ public class ScheduleApi extends BaseController {
      * @param scheduleId 日程id
      * @return
      */
-    @Push(value = PushType.D12, type = 1)
+    @Push(value = PushType.D12,name = PushName.SHARE, type = 1)
     @PutMapping("/{scheduleId}/recyclebin")
     public JSONObject moveToRecycleBin(@PathVariable String scheduleId) {
         JSONObject object = new JSONObject();
@@ -525,7 +526,7 @@ public class ScheduleApi extends BaseController {
      * @param privacy    日程隐私
      * @return 是否成功
      */
-    @Push(type = 1, value = PushType.D13)
+    @Push(type = 1,name = PushName.SHARE, value = PushType.D13)
     @PutMapping("/{scheduleId}/privacy")
     public JSONObject upadtePrivacy(@PathVariable String scheduleId, @RequestParam Integer privacy) {
         JSONObject object = new JSONObject();
