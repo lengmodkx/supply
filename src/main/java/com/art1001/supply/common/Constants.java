@@ -17,7 +17,7 @@ public class Constants {
     public static final String SCHEDULE  = "日程";
     public static final String GROUP_CHAT = "群聊";
     public static final String GROUP_CHAT_INFO = "群聊消息";
-    public static final String GROUP_CHAT_RETURN = "群聊消息";
+    public static final String GROUP_CHAT_RETURN = "撤回消息";
 
     public static final String EXECUTOR = "执行者";
     public static final String PARTICIPANT = "参与者";

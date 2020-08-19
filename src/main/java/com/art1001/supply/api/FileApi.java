@@ -1221,13 +1221,6 @@ public class FileApi extends BaseController {
             //处理单个文件的情况
             if (files.size() == 1) {
                 if (files.get(0).getCatalog() == 0) {
-                    //保存成员下载信息
-                    for (String id : ids) {
-                        memberDownloadService.save(MemberDownload.builder()
-                                .memberId(ShiroAuthenticationManager.getUserId())
-                                .fileId(id).isDelete(fileService.getOne(new QueryWrapper<File>().eq("file_id", id)).getFileDel())
-                                .downloadTime(String.valueOf(System.currentTimeMillis())).build());
-                    }
                     fileService.downloadSingleFile(files.get(0), response);
                 } else {
                     fileService.downloadSingleFolder(files.get(0), response);

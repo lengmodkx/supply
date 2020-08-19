@@ -126,16 +126,18 @@ public class TaskApi extends BaseController {
      * @return object
      */
     @AutomationRule(value = "#task.taskId", trigger = AutomationRuleConstans.ADD_TASK)
-    @Push(value = PushType.A1, type = 1)
+    @Push(value = PushType.A1, name = PushName.TASK,type = 1)
     @PostMapping
     public JSONObject addTask(Task task) {
         try {
             taskService.saveTask(task);
             JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id",task.getTaskId());
             jsonObject.put("msgId", task.getProjectId());
+            jsonObject.put("name",task.getTaskName());
             jsonObject.put("data", task.getProjectId());
             jsonObject.put("result", 1);
-            jsonObject.put("task", taskService.getById(task.getTaskId()));
+            //jsonObject.put("task", taskService.getById(task.getTaskId()));
 
 //            //推送微信小程序消息给多个用户
 //            WeChatAppMessageTemplate weChatAppMessageTemplate = WeChatAppMessageTemplateBuild.createTask();
@@ -174,32 +176,23 @@ public class TaskApi extends BaseController {
      * @param taskId 任务id
      * @return object
      */
-//    @ProjectAuth(value = "#taskId")
-    @Push(value = PushType.A2, type = 1)
+    @Push(value = PushType.A2, name = PushName.TASK,type = 1)
     @DeleteMapping("/{taskId}")
-    public Result deleteTask(@PathVariable(value = "taskId") String taskId) {
+    public JSONObject deleteTask(@PathVariable(value = "taskId") String taskId) {
         try {
+            Task task = taskService.getOne(new QueryWrapper<Task>().eq("task_id", taskId));
             taskService.removeById(taskId);
-            System.out.println("taskId = " + taskId);
-            return Result.success();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id",taskId);
+            jsonObject.put("msgId", task.getProjectId());
+            jsonObject.put("name",task.getTaskName());
+            jsonObject.put("data", task.getProjectId());
+            jsonObject.put("result",1);
+            return jsonObject;
         } catch (Exception e) {
             throw new AjaxException("系统异常,删除失败", e);
         }
     }
-
-   /* @PutMapping("/{taskId}/changeStatus")
-    public JSONObject changeStatus(@PathVariable(value = "taskId")String taskId,
-                                   @RequestParam(value = "projectId") String projectId,
-                                   @RequestParam(value = "status")String status){
-        JSONObject object = new JSONObject();
-
-
-
-
-        return  object;
-    }*/
-
-
     /**
      * 完成任务
      *

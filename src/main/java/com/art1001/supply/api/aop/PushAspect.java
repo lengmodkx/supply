@@ -1,6 +1,5 @@
 package com.art1001.supply.api.aop;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.api.base.BaseController;
@@ -16,29 +15,20 @@ import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.shiro.util.CollectionUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.core.DefaultParameterNameDiscoverer;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.Expression;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
 
 /**
  * @author shaohua
@@ -155,17 +145,20 @@ public class PushAspect extends BaseController {
         systemLog.setCreateTime(System.currentTimeMillis());
         systemLog.setLogType(0);
         String name = object.getString(NAME) != null ? object.getString(NAME) : "";
-        if (Constants.TASK.equals(object.getString(PUBLICTYPE))) {
-            systemLog.setLogFlag(1);
-        } else if (Constants.FILE.equals(object.getString(PUBLICTYPE))) {
-            systemLog.setLogFlag(2);
-        } else if (Constants.SHARE.equals(object.getString(PUBLICTYPE))) {
-            systemLog.setLogFlag(3);
-        } else if (Constants.SCHEDULE.equals(object.getString(PUBLICTYPE))) {
-            systemLog.setLogFlag(4);
+        switch (push.name()){
+            case TASK:
+                systemLog.setLogFlag(1);
+                break;
+            case FILE:
+                systemLog.setLogFlag(2);
+                break;
+            case SHARE:
+                systemLog.setLogFlag(3);
+                break;
+            case SCHEDULE:
+                systemLog.setLogFlag(4);
+                break;
         }
-
-
         UserInfo userInfo = (UserInfo) redisUtil.getObj(Constants.USER_INFO + ":" + ShiroAuthenticationManager.getUserId());
 
         //redis取不到值从数据库查询当前用户信息
@@ -180,6 +173,7 @@ public class PushAspect extends BaseController {
             systemLog.setLogIsWithDraw(0);
         }
         if(push.value().getName().equals(Constants.GROUP_CHAT_RETURN)){
+            systemLog.setLogType(1);
             systemLog.setLogIsWithDraw(1);
         }
         systemLog.setMemberId(ShiroAuthenticationManager.getUserId());

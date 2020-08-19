@@ -145,7 +145,7 @@ public class Log extends Model<Log> {
 	/**
 	 *文件ids，现在用不到
 	 */
-	private Reader fileIds;
+	private String fileIds;
 
 	/**
 	 * 是否为撤回的消息 0正常 1撤回

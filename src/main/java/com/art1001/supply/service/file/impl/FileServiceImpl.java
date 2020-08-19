@@ -1479,6 +1479,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     public void downloadSingleFile(File file, HttpServletResponse response) {
+        saveDownloadFileInfo(file);
         InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(), response);
         // 设置头信息
         // 设置fileName的编码
@@ -1529,6 +1530,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         List<File> files = fileService.list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()).eq("file_privacy", 0));
         if (files != null && files.size() > 0) {
             for (File inFile : files) {
+
                 if (inFile.getCatalog() == 1) {
                     String name = inFile.getFileName();
                     if (!"".equals(dir)) {

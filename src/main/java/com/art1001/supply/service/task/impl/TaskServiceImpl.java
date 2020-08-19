@@ -1771,7 +1771,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     @Override
     public Task taskInfoShow(String taskId) {
         //查询出此条任务的具体信息
-        Task task = taskService.findTaskByTaskId(taskId);
+        Task task = findTaskByTaskId(taskId);
         completionTaskInfo(task);
         return task;
     }
