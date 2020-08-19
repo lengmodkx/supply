@@ -34,7 +34,7 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
                 "/change_password", "/users/**","/organizations/my_org","/news/count","/oss/callback",
                 "/wechatcode","/invite/**","/wechattoken","/files/**/upload","/files/**/model","/files/**/name",
                 "/files/deletefile","/logs/exportLogByExcel","/organization/members/expOrgMember","/organization/members/impUser/**",
-                "/check_account_exist"};
+                "/check_account_exist","/organization/members/addMember1"};
         registry.addInterceptor(interceptor).addPathPatterns("/**").excludePathPatterns(path);
         registry.addInterceptor(recycleParamCheck).addPathPatterns("/recycle_bin/move_task_rb","/recycle_bin/move_file_rb","/recycle_bin/move_share_rb","/recycle_bin/move_schedule_rb","/recycle_bin/move_tag_rb");
         super.addInterceptors(registry);

@@ -76,8 +76,9 @@ public class OrganizationGroupApi {
             UserName userName = new UserName();
             userName.addAll(accountNames);
             group.groupname(organizationGroup.getGroupName()).desc("")._public(true).maxusers(50).approval(false).owner(byId.getAccountName()).members(userName);
+
             String chatGroup = (String)chatGroupAPI.createChatGroup(group);
-            organizationGroup.setConsulGroup(chatGroup);
+            organizationGroup.setConsulGroup(JSON.parseObject(chatGroup).getJSONObject("data").getString("groupid"));
 
             if (organizationGroupService.createGroup(organizationGroup, memberIds)) {
                 jsonObject.put("result", 1);

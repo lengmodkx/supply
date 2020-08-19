@@ -56,7 +56,6 @@ public class OrganizationGroup implements Serializable {
 
     private String consulGroup;
 
-    @TableField(exist = false)
-    private Object consulGroupObject;
+
 
 }
