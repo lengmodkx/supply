@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Log;
 import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushName;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
@@ -318,7 +319,7 @@ public class FileApi extends BaseController {
      * @param privacy 隐私模式
      * @return
      */
-    @Push(value = PushType.C8, type = 1)
+    @Push(value = PushType.C8, name = PushName.FILE,type = 1)
     @PutMapping("/{id}/privacy/{privacy}")
     public JSONObject privacy(@PathVariable String id,
                               @PathVariable int privacy,
@@ -400,7 +401,7 @@ public class FileApi extends BaseController {
      * @param projectId 项目id
      */
 //    @Log(PushType.C2)
-    @Push(value = PushType.C2, type = 1)
+    @Push(value = PushType.C2, name = PushName.FILE,type = 1)
     @PostMapping("/{parentId}/upload")
     public JSONObject uploadFile(
             @PathVariable(value = "parentId") String parentId,
@@ -422,7 +423,7 @@ public class FileApi extends BaseController {
         return jsonObject;
     }
 
-    @Push(value = PushType.C2, type = 1)
+    @Push(value = PushType.C2,name = PushName.FILE, type = 1)
     @PostMapping("/uploadFile")
     public JSONObject uploadFile1(
             @RequestParam(value = "parentId") String parentId,
@@ -539,7 +540,7 @@ public class FileApi extends BaseController {
      * @return
      */
     @Log(PushType.C4)
-    @Push(value = PushType.C4, type = 1)
+    @Push(value = PushType.C4, name = PushName.FILE,type = 1)
     @PostMapping("/{fileId}/version")
     public JSONObject updateUploadFile(
             @PathVariable(value = "fileId") String fileId,
@@ -576,7 +577,7 @@ public class FileApi extends BaseController {
      * @param fileId 文件id
      */
     @Log(PushType.C5)
-    @Push(value = PushType.C5, type = 1)
+    @Push(value = PushType.C5, name = PushName.FILE,type = 1)
     @PostMapping("/{parentId}/update_model")
     public JSONObject updateModel(
             @PathVariable(value = "parentId") String fileId,
@@ -752,7 +753,7 @@ public class FileApi extends BaseController {
      * @param toProjectId 目标项目id
      * @return
      */
-    @Push(value = PushType.C12, type = 2)
+    @Push(value = PushType.C12, name = PushName.FILE,type = 2)
     @PutMapping("/{folderId}/m_move")
     public JSONObject moveFile(
             @PathVariable String folderId,
@@ -789,7 +790,7 @@ public class FileApi extends BaseController {
      * @param toProjectId 目标项目id
      * @return
      */
-    @Push(value = PushType.C10, type = 1)
+    @Push(value = PushType.C10, name = PushName.FILE,type = 1)
     @PostMapping("/{folderId}/copy")
     public JSONObject copyFile(
             @PathVariable String folderId,
@@ -823,7 +824,7 @@ public class FileApi extends BaseController {
      * @param fileIds   ids
      * @param projectId 项目id
      */
-    @Push(value = PushType.C13, type = 1)
+    @Push(value = PushType.C13, name = PushName.FILE,type = 1)
     @PutMapping("/{fileIds}/m_recycle")
     public JSONObject moveToRecycleBin(
             @PathVariable(value = "fileIds") String fileIds,
@@ -921,7 +922,7 @@ public class FileApi extends BaseController {
      * @param newJoin 新的参与者id 数组
      * @return
      */
-    @Push(value = PushType.C9, type = 1)
+    @Push(value = PushType.C9, name = PushName.FILE,type = 1)
     @PutMapping("/{fileId}/add_remove_join")
     public JSONObject addAndRemoveFileJoin(@PathVariable(value = "fileId") String fileId,
                                            @RequestParam(value = "newJoin") String newJoin) {
@@ -1031,7 +1032,7 @@ public class FileApi extends BaseController {
      * @param files 文件信息
      * @return
      */
-    @Push(value = PushType.A30, type = 1)
+    @Push(value = PushType.A30, name = PushName.FILE,type = 1)
     @PostMapping("/bind_files")
     public JSONObject bindFile(@RequestParam String files, @RequestParam String publicId, @RequestParam String projectId) {
         JSONObject jsonObject = new JSONObject();
@@ -1091,7 +1092,7 @@ public class FileApi extends BaseController {
     /*
      * 在文件系统创建标签并绑定文件
      * */
-    @Push(value = PushType.E3, type = 1)
+    @Push(value = PushType.E3, name = PushName.FILE,type = 1)
     @PostMapping("/addTagBindFile")
     public JSONObject addTagBindFile(@RequestParam(value = "tagName") String tagName,
                                      @RequestParam(value = "bgColor") String bgColor,
@@ -1273,7 +1274,7 @@ public class FileApi extends BaseController {
     }
 
     //文件设置隐私模式
-    @Push(value = PushType.C8, type = 1)
+    @Push(value = PushType.C8, name = PushName.FILE,type = 1)
     @PutMapping("/folder/look")
     public JSONObject setFolderLook(@RequestParam String folderId,
                                     @RequestParam String userIds,
@@ -1299,7 +1300,7 @@ public class FileApi extends BaseController {
         }
     }
 
-    @Push(value = PushType.C8, type = 1)
+    @Push(value = PushType.C8, name = PushName.FILE,type = 1)
     @PutMapping("/folder/delUser")
     public JSONObject setFolderDelUser(@RequestParam String folderId,
                                        @RequestParam String userIds,

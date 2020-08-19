@@ -2,6 +2,7 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushName;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.annotation.Log;
 import com.art1001.supply.entity.Result;
@@ -95,7 +96,7 @@ public class ShareApi {
      * @param memberIds 多个成员id的字符串
      * @return
      */
-    @Push(value = PushType.B10,type = 1)
+    @Push(value = PushType.B10,name = PushName.SHARE,type = 1)
     @PutMapping("/{shareId}/members")
     public JSONObject updateMembers(@PathVariable String shareId,@RequestParam(value = "memberIds") String memberIds){
         JSONObject jsonObject = new JSONObject();
