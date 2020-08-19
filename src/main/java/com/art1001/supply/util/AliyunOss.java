@@ -7,6 +7,8 @@ import com.aliyun.oss.event.ProgressEventType;
 import com.aliyun.oss.event.ProgressListener;
 import com.aliyun.oss.model.*;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.util.crypto.ShortCodeUtils;
+import com.mchange.lang.ShortUtils;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -15,6 +17,7 @@ import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -25,6 +28,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.List;
+import java.util.Random;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
@@ -44,6 +48,7 @@ public class AliyunOss {
     private static String firstKey = "my-first-key";
 
 
+
     /**
      * 创建Bucket, 如果不存在创建
      */
@@ -56,6 +61,7 @@ public class AliyunOss {
             // 设置bucket权限
             createBucketRequest.setCannedACL(CannedAccessControlList.PublicReadWrite);
             ossClient.createBucket(createBucketRequest);
+
         }
 
         // 查看Bucket信息。
@@ -584,10 +590,17 @@ public class AliyunOss {
     //压缩文件夹中的文件
     public static void doZip(com.art1001.supply.entity.file.File inFile, ZipOutputStream out, String dir)  {
         String entryName;
+        StringBuffer randomNum=new StringBuffer();
+        for (int i = 0; i < 6; i++) {
+            int i1 = new Random().nextInt(6);
+            randomNum.append(i1);
+        }
+
         if (!"".equals(dir)) {
-            entryName = dir + "/" + inFile.getFileName() + inFile.getExt();
+            entryName = dir + "/" + inFile.getFileName()+randomNum+ inFile.getExt();
         } else {
-            entryName = inFile.getFileName() + inFile.getExt();
+            entryName = inFile.getFileName()+randomNum + inFile.getExt();
+
         }
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {

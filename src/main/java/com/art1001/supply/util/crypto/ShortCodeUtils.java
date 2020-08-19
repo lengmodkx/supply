@@ -36,7 +36,8 @@ public class ShortCodeUtils {
      */
     public String encode(String longUrl) {
         String key = getString(longUrl);
-        redisUtil.set("shortUrl:"+key,key,LocalDateTime.now().withNano(0).plusHours(48).toInstant(ZoneOffset.of("+8")).toEpochMilli());
+        redisUtil.set("shortUrl:"+key,key,LocalDateTime.now().withNano(0).plusHours(48).toEpochSecond(ZoneOffset.of("+8")));
+
         return key;
     }
 

@@ -183,7 +183,7 @@ public class NewsApi {
 
 
     /**
-     * 根据条件筛选用户消息
+     * 根据条件筛选项目通知
      *
      * @param keyword
      * @param startTime

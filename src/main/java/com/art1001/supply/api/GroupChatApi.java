@@ -6,16 +6,25 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.OSSException;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.chat.Chat;
+import com.art1001.supply.entity.chat.HxChatNotice;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.organization.OrganizationGroupMember;
+import com.art1001.supply.entity.relation.GroupUser;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.chat.ChatService;
+import com.art1001.supply.service.chat.HxChatNoticeService;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.organization.OrganizationGroupMemberService;
+import com.art1001.supply.service.relation.GroupUserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileExt;
 import com.art1001.supply.util.FileUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +36,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 项目
@@ -46,6 +57,12 @@ public class GroupChatApi {
     private FileService fileService;
     @Resource
     private ChatService chatService;
+
+    @Resource
+    private HxChatNoticeService hxChatNoticeService;
+
+    @Resource
+    private OrganizationGroupMemberService organizationGroupMemberService;
 
 
     /**
@@ -170,6 +187,32 @@ public class GroupChatApi {
         }
         return object;
     }
+
+    /**
+     * 保存未接收环信消息消息数量
+     * @param memberId
+     * @param contentFrom
+     * @param hxGroupId
+     * @param groupId
+     * @return
+     */
+    @PostMapping("/saveChatCount")
+    public JSONObject saveChatCount(@RequestParam(value = "memberId",required = false) String memberId,
+                                     @RequestParam(value = "contentFrom",defaultValue = "0") Integer contentFrom,
+                                     @RequestParam(value = "hxGroupId",required = false) String hxGroupId,
+                                     @RequestParam(value ="groupId",required = false)String groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            hxChatNoticeService.saveChatCount(memberId,contentFrom,hxGroupId,groupId);
+            jsonObject.put("data","保存成功");
+            jsonObject.put("result",1);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
 
 
 }

@@ -167,8 +167,8 @@ public class OrganizationGroupApi {
             throw new SystemException("系统异常,获取群组信息失败!");
         }
     }
-
-/*    @GetMapping("/getChatGroups")
+/*
+    @GetMapping("/getChatGroups")
     public Object getChatGroups(){
         Long limit = 20L;
         String cursor = "";

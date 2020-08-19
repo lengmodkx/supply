@@ -278,7 +278,7 @@
             and public_lable = #{publicLable}
         </if>
     </select>
-
+<!--and file_privacy=0-->
     <select id="findByIds" resultMap="PublicMap">
         select
         <include refid="Base_Column_List"/>
@@ -287,7 +287,8 @@
         <foreach collection="array" open="(" separator="," close=")" item="id">
             #{id}
         </foreach>
-        and public_lable = 0 and file_privacy=0
+        and public_lable = 0
+
     </select>
 
 
