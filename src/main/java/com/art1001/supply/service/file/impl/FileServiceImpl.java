@@ -1480,20 +1480,22 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public void downloadSingleFile(File file, HttpServletResponse response) {
         saveDownloadFileInfo(file);
-        InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(), response);
-        // 设置头信息
-        // 设置fileName的编码
-        try {
-            String fileName = URLEncoder.encode(file.getFileName() + file.getExt(), "UTF-8");
-            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-            response.setContentType("application/octet-stream");
-            ServletOutputStream outputStream = response.getOutputStream();
-            assert inputStream != null;
-            IOUtils.copy(inputStream, outputStream);
-            outputStream.close();
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (file.getFilePrivacy().equals(Constants.B_ZERO)||(file.getFilePrivacy().equals(Constants.B_ONE)&&file.getFileUids().contains(ShiroAuthenticationManager.getUserId()))) {
+            InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(), response);
+            // 设置头信息
+            // 设置fileName的编码
+            try {
+                String fileName = URLEncoder.encode(file.getFileName() + file.getExt(), "UTF-8");
+                response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+                response.setContentType("application/octet-stream");
+                ServletOutputStream outputStream = response.getOutputStream();
+                assert inputStream != null;
+                IOUtils.copy(inputStream, outputStream);
+                outputStream.close();
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1527,10 +1529,16 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     private void compress(File folder, ZipOutputStream out, String dir) throws IOException {
 
-        List<File> files = fileService.list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()).eq("file_privacy", 0));
+        List<File> files = fileService.list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()));
         if (files != null && files.size() > 0) {
-            for (File inFile : files) {
 
+            //过滤出符合下载条件的文件
+            List<File> fileList = files.stream().filter(f -> f.getFilePrivacy().equals(Constants.B_ZERO)
+                    || (f.getFilePrivacy().equals(Constants.B_ONE)
+                    && f.getFileUids().contains(ShiroAuthenticationManager.getUserId())))
+                    .collect(Collectors.toList());
+
+            for (File inFile : fileList) {
                 if (inFile.getCatalog() == 1) {
                     String name = inFile.getFileName();
                     if (!"".equals(dir)) {
