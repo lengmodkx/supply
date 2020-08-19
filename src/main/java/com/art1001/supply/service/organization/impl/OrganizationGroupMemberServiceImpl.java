@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.communication.service.ChatGroupAPI;
 import com.art1001.supply.communication.service.IMUserService;
+import com.art1001.supply.entity.chat.HxChatNotice;
 import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationGroupMemberMapper;
+import com.art1001.supply.service.chat.HxChatNoticeService;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.organization.OrganizationGroupService;
 import com.art1001.supply.service.user.UserService;
@@ -23,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -51,6 +55,9 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
     @Resource
     private ChatGroupAPI chatGroupAPI;
 
+    @Resource
+    private HxChatNoticeService hxChatNoticeService;
+
     /**
      * 群组中添加组成员
      * @param groupId 群组id
@@ -77,6 +84,12 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
             for (UserEntity userEntity : users) {
                 chatGroupAPI.addSingleUserToChatGroup(groupId,userEntity.getAccountName());
             }
+        }
+        HxChatNotice hxChatNotice = hxChatNoticeService.getOne(new QueryWrapper<HxChatNotice>().eq("group_id", groupId).eq("hx_group_id",chatGroupId));
+        if (hxChatNotice!=null) {
+            String join = StringUtils.join(memberId, ",");
+            hxChatNotice.setNewsToUser(hxChatNotice.getNewsToUser()+","+join);
+            hxChatNoticeService.updateById(hxChatNotice);
         }
         return true;
 
@@ -122,18 +135,27 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
         //移除环信群组成员
         UserEntity byId = userService.findById(memberId);
         chatGroupAPI.removeSingleUserFromChatGroup(chatGroupId,byId.getAccountName());
+
+        //移除环信消息通知表群组成员
+        HxChatNotice hxChatNotice = hxChatNoticeService.getOne(new QueryWrapper<HxChatNotice>().eq("hx_group_id", chatGroupId).eq("group_id", groupId));
+        if (hxChatNotice!=null) {
+            String[] split = hxChatNotice.getNewsToUser().split(",");
+            List<String> strings = Arrays.asList(split);
+            Iterator<String> iterator = strings.iterator();
+            while (iterator.hasNext()) {
+                if (iterator.equals(memberId)) {
+                    iterator.remove();
+                }
+            }
+            hxChatNotice.setNewsToUser(StringUtils.join(strings,","));
+            hxChatNoticeService.updateById(hxChatNotice);
+        }
+
         //如果当前用户退出后,群组内人数 < = 0 就需要删除分组
         if(organizationGroupMemberMapper.selectCount(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId)) <= 0){
             organizationGroupService.removeById(groupId);
         } else {
             if(memberId.equals(organizationGroupService.getById(groupId).getOwner())){
-//                OrganizationGroup organizationGroup = new OrganizationGroup();
-//                organizationGroup.setGroupId(groupId);
-//                //获取到最早加入到该群组的成员id
-//                organizationGroup.setOwner(organizationGroupMemberMapper.selectEarliestMemberId(groupId));
-//                organizationGroup.setUpdateTime(System.currentTimeMillis());
-//                organizationGroupService.updateById(organizationGroup);
-
                 //群组拥有者退出则移除群组
                 organizationGroupService.removeById(groupId);
             }

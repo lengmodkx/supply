@@ -12,12 +12,14 @@ import com.art1001.supply.entity.chat.HxChatNotice;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.entity.relation.GroupUser;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.chat.ChatService;
 import com.art1001.supply.service.chat.HxChatNoticeService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.relation.GroupUserService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.FileExt;
@@ -50,7 +52,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@RequestMapping("groupchat")
+@RequestMapping("/groupchat")
 public class GroupChatApi {
 
     @Resource
@@ -63,6 +65,9 @@ public class GroupChatApi {
 
     @Resource
     private OrganizationGroupMemberService organizationGroupMemberService;
+
+    @Resource
+    private UserService userService;
 
 
     /**
@@ -122,10 +127,6 @@ public class GroupChatApi {
         }
         return object;
     }
-
-
-
-
 
     /**
      * 撤回消息
@@ -189,18 +190,18 @@ public class GroupChatApi {
     }
 
     /**
-     * 保存未接收环信消息消息数量
+     * 保存环信消息消息通知数量
      * @param memberId
      * @param contentFrom
      * @param hxGroupId
      * @param groupId
      * @return
      */
-    @PostMapping("/saveChatCount")
-    public JSONObject saveChatCount(@RequestParam(value = "memberId",required = false) String memberId,
-                                     @RequestParam(value = "contentFrom",defaultValue = "0") Integer contentFrom,
-                                     @RequestParam(value = "hxGroupId",required = false) String hxGroupId,
-                                     @RequestParam(value ="groupId",required = false)String groupId){
+    @PostMapping("/save/ChatCount")
+        public JSONObject saveChatCount(@RequestParam(value = "memberId",required = false) String memberId,
+                                        @RequestParam(value = "contentFrom",defaultValue = "0") Integer contentFrom,
+                                        @RequestParam(value = "hxGroupId",required = false) String hxGroupId,
+                                        @RequestParam(value ="groupId",required = false) String groupId){
         JSONObject jsonObject = new JSONObject();
         try {
             hxChatNoticeService.saveChatCount(memberId,contentFrom,hxGroupId,groupId);
@@ -212,7 +213,40 @@ public class GroupChatApi {
         return jsonObject;
     }
 
+    /**
+    * @Author: 邓凯欣
+    * @Email：dengkaixin@art1001.com
+    * @Param:
+    * @return:
+    * @Description:  获取当前登录人未读的聊天消息总数
+    * @create: 14:53 2020/8/19
+    */
+    @GetMapping("/getChat/count")
+    public JSONObject getChatCount(){
+        try {
+            return hxChatNoticeService.getChatCount();
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
 
-
-
+    /**
+     * 点击环信聊天通知消息为已读
+     * @param id
+     * @return
+     */
+    @GetMapping("/isReadChat/{id}")
+    public JSONObject isReadChat(@PathVariable String id){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            HxChatNotice byId = hxChatNoticeService.getById(id);
+            byId.setNewsCount(0);
+            byId.setNewsHandle(1);
+            hxChatNoticeService.updateById(byId);
+            jsonObject.put("result",1);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
 }

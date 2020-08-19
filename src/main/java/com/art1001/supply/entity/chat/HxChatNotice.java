@@ -34,11 +34,22 @@ public class HxChatNotice extends Model<HxChatNotice> {
   private String newsToUser;
 
   /**
+   * 消息接收方电话
+   */
+  @TableField(exist = false)
+  private String newsToUserAccountName;
+
+  /**
    * 消息来自于谁
    */
   @TableField("news_from_user")
   private String newsFromUser;
 
+  /**
+   * 消息发送方电话
+   */
+  @TableField(exist = false)
+  private String newsFromUserAccountName;
   /**
    * 消息
    */
@@ -48,7 +59,7 @@ public class HxChatNotice extends Model<HxChatNotice> {
   /**
    * 消息来源 0 单聊  1群聊  2聊天室
    */
-  @TableField("news_adress")
+  @TableField("news_address")
   private Integer newsAddress;
 
   /**

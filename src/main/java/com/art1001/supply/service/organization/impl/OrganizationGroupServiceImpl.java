@@ -8,11 +8,13 @@ import javax.annotation.Resource;
 import com.alibaba.fastjson.JSON;
 import com.art1001.supply.communication.service.ChatGroupAPI;
 import com.art1001.supply.communication.service.impl.EasemobChatGroup;
+import com.art1001.supply.entity.chat.HxChatNotice;
 import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationGroupMapper;
+import com.art1001.supply.service.chat.HxChatNoticeService;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.organization.OrganizationGroupService;
 import com.art1001.supply.service.organization.OrganizationService;
@@ -56,6 +58,9 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 
 	@Resource
 	private UserService userService;
+
+	@Resource
+	private HxChatNoticeService hxChatNoticeService;
 	
 	/**
 	 * 查询分页组织群组数据
@@ -157,6 +162,14 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 			}
 			organizationGroupMemberService.saveBatch(gms);
 		}
+
+
+		//创建群组消息通知信息
+		HxChatNotice hxChatNotice =HxChatNotice.builder().newsAddress(1).groupId(organizationGroup.getGroupId())
+				.hxGroupId(organizationGroup.getConsulGroup()).updateTime(System.currentTimeMillis())
+				.createTime(System.currentTimeMillis()).newsHandle(0).newsCount(1).newsContent("您有新消息请待查收")
+				.newsToUser(StringUtils.join(memberIds,",")).build();
+		hxChatNoticeService.save(hxChatNotice);
 		return true;
 	}
 
@@ -171,6 +184,7 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 		organizationGroupMapper.deleteById(groupId);
 		organizationGroupMemberService.remove(new QueryWrapper<OrganizationGroupMember>().eq("group_id", groupId));
 		chatGroupAPI.deleteChatGroup(chatGroupId);
+		hxChatNoticeService.remove(new QueryWrapper<HxChatNotice>().eq("hx_group_id",chatGroupId).eq("group_id",groupId));
 		return true;
 	}
 

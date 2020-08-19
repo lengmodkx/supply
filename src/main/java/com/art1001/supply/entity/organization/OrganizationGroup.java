@@ -53,7 +53,9 @@ public class OrganizationGroup implements Serializable {
      */
     private Long updateTime;
 
-
+    /**
+     *  环信groupid
+     */
     private String consulGroup;
 
 
