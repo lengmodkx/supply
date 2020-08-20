@@ -23,4 +23,12 @@ public enum TaskRepeat {
         this.name = name;
     }
 
+    public static TaskRepeat getName(String name) {
+        for (TaskRepeat c : TaskRepeat.values()) {
+            if (c.getName().equals(name)) {
+                return c;
+            }
+        }
+        return TaskRepeat.NO_REPEAT;
+    }
 }

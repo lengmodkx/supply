@@ -1585,9 +1585,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
         Long startTime = task.getStartTime();
         Long endTime = task.getEndTime();
-        if (startTime != null) {
+        if (startTime != null && startTime!=0) {
             LocalDateTime newStartTime = LocalDateTime.ofInstant(new Date(startTime).toInstant(), ZoneId.systemDefault());
-            switch (TaskRepeat.valueOf(task.getRepeat())){
+            switch (TaskRepeat.getName(task.getRepeat())){
                 case DAY_REPEAT:
                     newStartTime = newStartTime.plusDays(1);
                     task.setStartTime(newStartTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
@@ -1609,11 +1609,10 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
                     task.setStartTime(newStartTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
                     break;
             }
-
         }
-        if (endTime != null) {
+        if (endTime != null && endTime!=0) {
             LocalDateTime newEndTime = LocalDateTime.ofInstant(new Date(endTime).toInstant(), ZoneId.systemDefault());
-            switch (TaskRepeat.valueOf(task.getRepeat())){
+            switch (TaskRepeat.getName(task.getRepeat())){
                 case DAY_REPEAT:
                     newEndTime = newEndTime.plusDays(1);
                     task.setEndTime(newEndTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
