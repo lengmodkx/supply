@@ -13,6 +13,7 @@ import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -29,6 +30,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -173,8 +175,17 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
     public List<Log> selectLogByCondition(String orgId, String memberId, Long startTime, Long endTime) {
         List<String> projectIds = projectService.list(new QueryWrapper<Project>().eq("organization_id", orgId)).stream().map(Project::getProjectId).collect(Collectors.toList());
         List<Log> logs = Lists.newArrayList();
+        long starttime=0L;
+        long endtime=0L;
+        if (startTime.equals(endTime)) {
+            Date date = new Date(startTime);
+            starttime = DateUtils.getStartOfDay(date).getTime();
+
+            Date date1 = new Date(endTime);
+            endtime = DateUtils.getEndOfDay(date1).getTime();
+        }
         if (CollectionUtils.isNotEmpty(projectIds)) {
-            logs = logMapper.selectLogByCondition(projectIds, memberId, startTime, endTime);
+            logs = logMapper.selectLogByCondition(projectIds, memberId, starttime, endtime);
 
             Optional.ofNullable(logs).ifPresent(log -> {
                 log.stream().forEach(r -> {

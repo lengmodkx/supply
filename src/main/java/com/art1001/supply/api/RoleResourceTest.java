@@ -7,6 +7,8 @@ import com.art1001.supply.service.role.ProRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
  * @Date 2020/8/20 10:08
  * @Discription 修改资源
  */
-@RequestMapping("/lemon")
+
 public class RoleResourceTest {
 
     @Resource
@@ -30,7 +32,6 @@ public class RoleResourceTest {
     private ProResourcesRoleService proResourcesRoleService;
 
 
-    @GetMapping("/lemon")
     public void updateResource(){
         List<ProRole> administratorList = proRoleService.list(new QueryWrapper<ProRole>().select("role_id").eq("role_key", "administrator"));
         administratorList.forEach(a->{
@@ -47,4 +48,5 @@ public class RoleResourceTest {
         });
 
     }
+
 }
