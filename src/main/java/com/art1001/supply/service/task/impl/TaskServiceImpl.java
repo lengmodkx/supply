@@ -26,6 +26,8 @@ import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
+import com.art1001.supply.enums.TaskRepeat;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.fabulous.FabulousMapper;
 import com.art1001.supply.mapper.project.ProjectMapper;
@@ -61,6 +63,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.mchange.lang.LongUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
@@ -77,6 +80,9 @@ import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1555,36 +1561,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     /**
      * 完成任务
      *
-     * @param taskId 任务id
+     * @param task 任务
      */
     @Override
-    public Task completeTask(String taskId) {
-        Task task = getOne(new QueryWrapper<Task>().eq("task_id", taskId));
-
-        //这里判断是否有子任务未完成
-        List<Task> subTask = taskMapper.selectList(new QueryWrapper<Task>().eq("parent_id", taskId).eq("task_del", 0));
-        subTask.forEach(t -> {
-            if (!t.getTaskStatus()) {
-                throw new ServiceException("有子任务未完成!");
-            }
-        });
-        //先更新任务状态
-        Task completeTask = new Task();
-        completeTask.setTaskStatus(true);
-        completeTask.setTaskId(taskId);
-        completeTask.setUpdateTime(System.currentTimeMillis());
-        completeTask.setFinishTime(System.currentTimeMillis());
-        taskMapper.updateById(completeTask);
-
-        //判断当前完成的是不是子任务 如果是则查询出这个子任务的同级其他子任务并且遍历是否全部完成 如果全部完成 标记父任务的 "subIsAllComplete" 属性为true
-        if (!task.getParentId().equals("0")) {
-            int flag = 1;
-            for (Task t : taskMapper.selectList(new QueryWrapper<Task>().select("task_id", "task_status").eq("parent_id", task.getParentId()))) {
-                if (!t.getTaskStatus()) {
-                    flag = 0;
-                }
-            }
-            if (flag == 1) {
+    public void completeTask(Task task) {
+        //判断当前完成的是不是子任务 如果是则查询出这个子任务的同级其他子任务并且判断是否全部完成 如果全部完成 标记父任务的 "subIsAllComplete" 属性为true
+        if(!StringUtils.equalsIgnoreCase(task.getParentId(),"0")){
+            Task one = getOne(new QueryWrapper<Task>().eq("parent_id", task.getParentId()).eq("task_status", false));
+            if (one == null) {
                 Task pTask = new Task();
                 pTask.setTaskId(task.getParentId());
                 pTask.setUpdateTime(System.currentTimeMillis());
@@ -1593,60 +1577,70 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
                 taskMapper.updateById(pTask);
             }
         }
+        //先更新任务状态
+        task.setTaskStatus(true);
+        task.setUpdateTime(System.currentTimeMillis());
+        task.setFinishTime(System.currentTimeMillis());
+        updateById(task);
+
         Long startTime = task.getStartTime();
         Long endTime = task.getEndTime();
-        Long newStartTime = null;
-        Long newEndTime = null;
-        if (TaskStatusConstant.DAY_REPEAT.equals(task.getRepeat())) {
-            //每天重复后的时间
-            if (startTime != null) {
-                newStartTime = afterDaysTime(startTime, 1);
+        if (startTime != null) {
+            LocalDateTime newStartTime = LocalDateTime.ofInstant(new Date(startTime).toInstant(), ZoneId.systemDefault());
+            switch (TaskRepeat.valueOf(task.getRepeat())){
+                case DAY_REPEAT:
+                    newStartTime = newStartTime.plusDays(1);
+                    task.setStartTime(newStartTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                    break;
+                case WEEK_REPEAT:
+                    newStartTime = newStartTime.plusWeeks(1);
+                    task.setStartTime(newStartTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                    break;
+                case MONTH_REPEAT:
+                    newStartTime = newStartTime.plusMonths(1);
+                    task.setStartTime(newStartTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                    break;
+                case YEAR_REPEAT:
+                    newStartTime = newStartTime.plusYears(1);
+                    task.setStartTime(newStartTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                    break;
+                case WORKING_DAY_REPEAT:
+                    newStartTime = LocalDateTime.ofInstant(DateUtils.afterWorkDay(new Date(startTime)).toInstant(), ZoneId.systemDefault());
+                    task.setStartTime(newStartTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                    break;
             }
-            if (endTime != null) {
-                newEndTime = afterDaysTime(endTime, 1);
-            }
-        } else if (TaskStatusConstant.WEEK_REPEAT.equals(task.getRepeat())) {
-            //每周重复后的时间
-            if (startTime != null) {
-                newStartTime = afterDaysTime(startTime, 7);
-            }
-            if (endTime != null) {
-                newEndTime = afterDaysTime(endTime, 7);
-            }
-        } else if (TaskStatusConstant.MONTH_REPEAT.equals(task.getRepeat())) {
-            //每月重复后的时间
-            if (startTime != null) {
-                newStartTime = afterMonthTime(startTime);
-            }
-            if (endTime != null) {
-                newEndTime = afterMonthTime(endTime);
-            }
-        } else if (TaskStatusConstant.YEAR_REPEAT.equals(task.getRepeat())) {
-            //每年重复后的时间
-            if (startTime != null) {
-                newStartTime = DateUtils.afterYearTime(1, new Date(startTime));
-            }
-            if (endTime != null) {
-                newEndTime = DateUtils.afterYearTime(1, new Date(endTime));
-            }
-        } else if (TaskStatusConstant.WORKING_DAY_REPEAT.equals(task.getRepeat())) {
-            //工作日重复后的时间
-            if (startTime != null) {
-                newStartTime = DateUtils.afterWorkDay(new Date(startTime));
-            }
-            if (endTime != null) {
-                newEndTime = DateUtils.afterWorkDay(new Date(startTime));
-            }
-        } else {
-            return null;
+
         }
-        //更新任务id  以及时间信息
-        task.setTaskId(IdGen.uuid());
-        task.setStartTime(newStartTime);
-        task.setEndTime(newEndTime);
-        //存库
-        taskMapper.saveTask(task);
-        return task;
+        if (endTime != null) {
+            LocalDateTime newEndTime = LocalDateTime.ofInstant(new Date(endTime).toInstant(), ZoneId.systemDefault());
+            switch (TaskRepeat.valueOf(task.getRepeat())){
+                case DAY_REPEAT:
+                    newEndTime = newEndTime.plusDays(1);
+                    task.setEndTime(newEndTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                    break;
+                case WEEK_REPEAT:
+                    newEndTime = newEndTime.plusWeeks(1);
+                    task.setEndTime(newEndTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                    break;
+                case MONTH_REPEAT:
+                    newEndTime = newEndTime.plusMonths(1);
+                    task.setEndTime(newEndTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                    break;
+                case YEAR_REPEAT:
+                    newEndTime = newEndTime.plusYears(1);
+                    task.setEndTime(newEndTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                    break;
+                case WORKING_DAY_REPEAT:
+                    newEndTime = LocalDateTime.ofInstant(DateUtils.afterWorkDay(new Date(endTime)).toInstant(), ZoneId.systemDefault());
+                    task.setEndTime(newEndTime.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+                    break;
+            }
+        }
+        if(!StringUtils.equalsIgnoreCase(task.getRepeat(),TaskRepeat.NO_REPEAT.getName())){
+            //更新任务id  以及时间信息
+            task.setTaskId(IdGen.uuid());
+            save(task);
+        }
     }
 
     /**
@@ -1963,7 +1957,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", task.getTaskId()).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
         //获取该任务的未读消息数
         int unMsgCount = logService.count(new QueryWrapper<Log>().eq("public_id", task.getTaskId())) - 10;
-        task.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
+        task.setUnReadMsg(Math.max(unMsgCount, 0));
         //查询出  该任务的日志信息
         task.setLogs(logService.initLog(task.getTaskId()));
         //任务的附件

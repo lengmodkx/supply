@@ -104,6 +104,7 @@
         <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
             <id column="sub_task_id" property="taskId"/>
             <result column="sub_task_name" property="taskName"/>
+            <result column="sub_executor" property="executor"/>
             <result column="sub_status" property="taskStatus"/>
         </collection>
     </resultMap>

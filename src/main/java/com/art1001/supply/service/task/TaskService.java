@@ -510,9 +510,9 @@ public interface TaskService extends IService<Task> {
 
 	/**
 	 * 完成任务
-	 * @param taskId 任务id
+	 * @param task 任务
 	 */
-	Task completeTask(String taskId);
+	void completeTask(Task task);
 
 	/**
 	 * 更新任务的开始时间

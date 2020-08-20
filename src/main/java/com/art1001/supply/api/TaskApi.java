@@ -33,6 +33,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
 import org.quartz.SchedulerException;
@@ -51,6 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 任务增删改查，复制，移动
@@ -207,13 +210,21 @@ public class TaskApi extends BaseController {
                                  @RequestParam(required = false, defaultValue = "0") Integer label) {
         JSONObject object = new JSONObject();
         try {
-            taskService.completeTask(taskId);
-            String parentId = taskService.getById(taskId).getParentId();
-            object.put("status", 1);
+            Task task = taskService.getById(taskId);
+            //这里判断是否有子任务未完成
+            Task one = taskService.getOne(new QueryWrapper<Task>().eq("parent_id", task.getTaskId()).eq("task_status", false));
+            if(one!=null){
+                object.put("msg", "有子任务未完成!");
+                object.put("result", 0);
+                return object;
+            }
+            //完成任务逻辑
+            taskService.completeTask(task);
+
             object.put("result", 1);
             //判断点击的任务是否在父任务页面
             if (label == 1) {
-                object.put("data", new JSONObject().fluentPut("taskId", parentId).fluentPut("projectId", projectId));
+                object.put("data", new JSONObject().fluentPut("taskId", task.getParentId()).fluentPut("projectId", projectId));
             } else {
                 object.put("data", new JSONObject().fluentPut("taskId", taskId).fluentPut("projectId", projectId));
             }
@@ -246,33 +257,33 @@ public class TaskApi extends BaseController {
         JSONObject object = new JSONObject();
         try {
             //这里判断父任务是否已经完成
-            String parentId = taskService.getById(taskId).getParentId();
-            if (!parentId.equals("0")) {
-                Task pTask = taskService.getOne(new QueryWrapper<Task>().eq("task_id", parentId));
+            Task task = taskService.getById(taskId);
+            if (!task.getParentId().equals("0")) {
+                Task pTask = taskService.getOne(new QueryWrapper<Task>().eq("task_id", task.getParentId()));
                 if (pTask.getTaskStatus()) {
                     object.put("result", 0);
                     object.put("msg", "父任务已经完成不能重做子任务!");
                     return object;
                 }
             }
-            object.put("msgId", projectId);
-            Task task = new Task();
-            task.setTaskId(taskId);
+
             task.setTaskStatus(false);
             taskService.updateById(task);
             Task pTask = new Task();
-            pTask.setTaskId(parentId);
+            pTask.setTaskId(task.getParentId());
             pTask.setUpdateTime(System.currentTimeMillis());
             pTask.setSubIsAllComplete(false);
             taskService.updateById(pTask);
+            object.put("msgId", projectId);
             object.put("result", 1);
             object.put("msg", "更新成功");
             if (label == 1) {
-                object.put("data", new JSONObject().fluentPut("taskId", parentId).fluentPut("projectId", object.getString("msgId")));
+                object.put("data", new JSONObject().fluentPut("taskId", task.getParentId()).fluentPut("projectId", object.getString("msgId")));
             } else {
                 object.put("data", new JSONObject().fluentPut("taskId", taskId).fluentPut("projectId", object.getString("msgId")));
             }
             object.put("id", taskId);
+
             object.put("publicType", Constants.TASK);
         } catch (Exception e) {
             throw new AjaxException(e);

@@ -26,7 +26,7 @@ public enum MediaTypes {
 	
 	private String type;
 	
-	private MediaTypes(String type)
+	MediaTypes(String type)
 	{
 		this.type = type;
 	}

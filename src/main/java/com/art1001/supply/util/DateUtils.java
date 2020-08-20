@@ -816,13 +816,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
      * @param curr
      * @return
      */
-    public static Long afterWorkDay(Date curr) {
+    public static Long afterWorkDay1(Date curr) {
         Calendar now = new GregorianCalendar();
         now.setTime(curr);
-
         //取得今天的星期值
         int week = now.get(Calendar.DAY_OF_WEEK) - 1;
-
         if (week == 5) {
             now.roll(Calendar.DAY_OF_YEAR, +3);
         } else {
@@ -832,6 +830,18 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return l;
     }
 
+    public static Date afterWorkDay(Date curr) {
+        Calendar now = new GregorianCalendar();
+        now.setTime(curr);
+        //取得今天的星期值
+        int week = now.get(Calendar.DAY_OF_WEEK) - 1;
+        if (week == 5) {
+            now.roll(Calendar.DAY_OF_YEAR, +3);
+        } else {
+            now.roll(Calendar.DAY_OF_YEAR, +1);
+        }
+        return now.getTime();
+    }
 
     /**
      * 转换为默认的时间格式
@@ -1012,10 +1022,25 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 //		System.out.println(getmonthtime(1));
 
         Date date = new Date();
+        long time = 1597824273157L;
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        //Calendar cd=Calendar.getInstance();//获取一个Calendar对象
+        //cd.setTime(new Date(time));//设置calendar日期
+          ///cd.add(Calendar.DATE,1);//增加n天
+            //cd.add(Calendar.YEAR,1);//增加n年
+            //cd.add(Calendar.MONTH,1);//增加n个月
+        LocalDateTime currentDateTime = LocalDateTime.ofInstant(new Date(time).toInstant(), ZoneId.systemDefault());
+        currentDateTime = currentDateTime.plusDays(1);
+
+        LocalDateTime localDate1 = LocalDateTime.now().plusMonths(1);
+
+        LocalDateTime localDate2 = LocalDateTime.now().plusYears(1);
 //		System.out.println(getDateAddDays(date,7,""));
 
 
-        System.out.println(firstDayOfCurrentMonth("yyyy-MM-dd"));
+
+        System.out.println(formatter.format(currentDateTime));
     }
 
     /**
