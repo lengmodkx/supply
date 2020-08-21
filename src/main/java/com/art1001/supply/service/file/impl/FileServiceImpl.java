@@ -1387,7 +1387,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             return Lists.newArrayList(files);
         }
         ArrayList<File> files = Lists.newArrayList(byFileNameOrTagNameFiles);
-        if (files.size() == 0) {
+            if (files.size() == 0) {
             return null;
         }
         return files;
@@ -1534,8 +1534,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
             //过滤出符合下载条件的文件
             List<File> fileList = files.stream().filter(f -> f.getFilePrivacy().equals(Constants.B_ZERO)
-                    || (f.getFilePrivacy().equals(Constants.B_ONE)
-                    && f.getFileUids().contains(ShiroAuthenticationManager.getUserId())))
+                    || (f.getFilePrivacy().equals(Constants.B_ONE)||
+                    (StringUtils.isNotEmpty(f.getFileUids()) && f.getFileUids().contains(ShiroAuthenticationManager.getUserId()))))
                     .collect(Collectors.toList());
 
             for (File inFile : fileList) {
@@ -1602,5 +1602,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<File> findList() {
+        List<File> list = fileMapper.findList();
+        return list;
     }
 }

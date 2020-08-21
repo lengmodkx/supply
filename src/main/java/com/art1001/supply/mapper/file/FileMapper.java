@@ -319,4 +319,7 @@ public interface FileMapper extends BaseMapper<File> {
 	List<File> join(@Param("order") String order, @Param("userId")String userId);
 
 	long findMateriaCount(String folderId);
+
+	@Select("select * from prm_file")
+    List<File> findList();
 }

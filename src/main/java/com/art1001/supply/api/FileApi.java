@@ -1186,24 +1186,15 @@ public class FileApi extends BaseController {
     /**
      * 更新ElasticSearch
      */
-    private void getFileToElastic() {
+    @GetMapping("/getFileToElastic/to")
+    public void getFileToElastic() {
         try {
-            List<File> allFile = fileService.list(new QueryWrapper<File>().isNotNull("ext").isNotNull("file_url"));
-            if (allFile.isEmpty()) {
-                System.out.print("文件不存在!");
-            } else {
-                System.out.print("条数==" + allFile.size());
-            }
-            int count = 0;
+            List<File> allFile = fileService.findList();
             for (File f : allFile) {
                 //保存到ElasticSearch
                 fileRepository.save(f);
-                count++;
             }
-            System.out.print("共" + count + "条数据更新成功");
-            // return success(fileService.getProjectAllFolder(one.getFileId()));
         } catch (Exception e) {
-            e.printStackTrace();
             throw new AjaxException("系统异常,更新elasticSearch失败!", e);
         }
     }
