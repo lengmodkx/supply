@@ -1534,7 +1534,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
             //过滤出符合下载条件的文件
             List<File> fileList = files.stream().filter(f -> f.getFilePrivacy().equals(Constants.B_ZERO)
-                    || (f.getFilePrivacy().equals(Constants.B_ONE)||
+                    || (f.getFilePrivacy().equals(Constants.B_ONE)&&
                     (StringUtils.isNotEmpty(f.getFileUids()) && f.getFileUids().contains(ShiroAuthenticationManager.getUserId()))))
                     .collect(Collectors.toList());
 
