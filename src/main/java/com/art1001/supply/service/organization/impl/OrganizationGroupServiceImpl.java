@@ -129,7 +129,7 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 	 * @return 结果
 	 */
 	@Override
-	public Boolean createGroup(OrganizationGroup organizationGroup, String[] memberIds) {
+	public Boolean 	createGroup(OrganizationGroup organizationGroup, String[] memberIds) {
 		if(!organizationService.checkOrgIsExist(organizationGroup.getOrganizationId())){
 			throw new ServiceException("该企业不能存在,不能创建群组!");
 		}
@@ -164,12 +164,12 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 		}
 
 
-		//创建群组消息通知信息
+/*		//创建群组消息通知信息
 		HxChatNotice hxChatNotice =HxChatNotice.builder().newsAddress(1).groupId(organizationGroup.getGroupId())
 				.hxGroupId(organizationGroup.getConsulGroup()).updateTime(System.currentTimeMillis())
 				.createTime(System.currentTimeMillis()).newsHandle(0).newsCount(1).newsContent("您有新消息请待查收")
 				.newsToUser(StringUtils.join(memberIds,",")).build();
-		hxChatNoticeService.save(hxChatNotice);
+		hxChatNoticeService.save(hxChatNotice);*/
 		return true;
 	}
 
