@@ -7,6 +7,8 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushName;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.common.CommonPage;
+import com.art1001.supply.common.CommonResult;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.*;
@@ -1148,7 +1150,9 @@ public class FileApi extends BaseController {
         jsonObject.put("result", 1);
         jsonObject.put("totle", fileService.getSucaiTotle(fileName));
         jsonObject.put("data", fileService.searchMaterialBaseFile(fileName, pageable));
+
         jsonObject.put("page", pageable.getPageNumber());
+
         return jsonObject;
     }
 

@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -1359,6 +1360,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     public Integer getSucaiTotle(String fileName) {
         MatchPhraseQueryBuilder fileName1 = QueryBuilders.matchPhraseQuery("fileName", fileName);
         Iterable<File> search1 = fileRepository.search(fileName1);
+        if (Lists.newArrayList(search1).size()==0) {
+            List<File> list = list(new QueryWrapper<File>().eq("catalog", "0").like("file_name", fileName));
+            return list.size();
+        }
         Iterator it = search1.iterator();
         int count = 0;
         while (it.hasNext()) {
@@ -1386,6 +1391,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         //如果在ES查询不到数据，则再从数据库查询一遍
         if (Lists.newArrayList(byFileNameOrTagNameFiles).size() == 0) {
+            PageHelper.startPage(pageable.getPageNumber(),pageable.getPageSize());
             List<File> files = fileService.list(new QueryWrapper<File>().eq("catalog", "0").like("file_name", fileName));
             return Lists.newArrayList(files);
         }
