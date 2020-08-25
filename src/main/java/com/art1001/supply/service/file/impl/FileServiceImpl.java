@@ -33,6 +33,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +54,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
@@ -1379,6 +1381,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withPageable(of)
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                .withQuery(QueryBuilders.matchPhraseQuery("ext", fileName))
                 .build();
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         //如果在ES查询不到数据，则再从数据库查询一遍
@@ -1387,10 +1390,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             return Lists.newArrayList(files);
         }
         ArrayList<File> files = Lists.newArrayList(byFileNameOrTagNameFiles);
-            if (files.size() == 0) {
+        if (files.size() == 0) {
             return null;
         }
-        return files;
+
+        return Lists.newArrayList(files);
     }
 
     @Override
@@ -1480,7 +1484,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public void downloadSingleFile(File file, HttpServletResponse response) {
         saveDownloadFileInfo(file);
-        if (file.getFilePrivacy().equals(Constants.B_ZERO)||(file.getFilePrivacy().equals(Constants.B_ONE)&&file.getFileUids().contains(ShiroAuthenticationManager.getUserId()))) {
+        if (file.getFilePrivacy().equals(Constants.B_ZERO) || (file.getFilePrivacy().equals(Constants.B_ONE) && file.getFileUids().contains(ShiroAuthenticationManager.getUserId()))) {
             InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(), response);
             // 设置头信息
             // 设置fileName的编码
@@ -1535,7 +1539,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
             //过滤出符合下载条件的文件
             List<File> fileList = files.stream().filter(f -> f.getFilePrivacy().equals(Constants.B_ZERO)
-                    || (f.getFilePrivacy().equals(Constants.B_ONE)&&
+                    || (f.getFilePrivacy().equals(Constants.B_ONE) &&
                     (StringUtils.isNotEmpty(f.getFileUids()) && f.getFileUids().contains(ShiroAuthenticationManager.getUserId()))))
                     .collect(Collectors.toList());
 
@@ -1561,6 +1565,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     /**
      * 保存下载文件信息
+     *
      * @param inFile
      */
     private void saveDownloadFileInfo(File inFile) {
