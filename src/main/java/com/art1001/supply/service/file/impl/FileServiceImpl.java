@@ -33,6 +33,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -1358,19 +1359,25 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      */
     @Override
     public Integer getSucaiTotle(String fileName) {
-        MatchPhraseQueryBuilder fileName1 = QueryBuilders.matchPhraseQuery("fileName", fileName);
-        Iterable<File> search1 = fileRepository.search(fileName1);
-        if (Lists.newArrayList(search1).size()==0) {
+//        MatchPhraseQueryBuilder fileName1 = QueryBuilders.matchPhraseQuery("fileName", fileName);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                .withQuery(QueryBuilders.matchPhraseQuery("ext", fileName))
+                .build();
+        Iterable<File> search1 = fileRepository.search(searchQuery);if (Lists.newArrayList(search1).size()==0) {
             List<File> list = list(new QueryWrapper<File>().eq("catalog", "0").like("file_name", fileName));
             return list.size();
         }
-        Iterator it = search1.iterator();
+        Integer totalElements = (int) ((org.springframework.data.domain.Page<File>) search1).getTotalElements();
+
+    /*    Iterator it = search1.iterator();
         int count = 0;
         while (it.hasNext()) {
             it.next();
             count++;
         }
-        return count;
+        return count;*/
+    return totalElements;
     }
 
     /**
@@ -1387,7 +1394,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 .withPageable(of)
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
                 .withQuery(QueryBuilders.matchPhraseQuery("ext", fileName))
+//                .withQuery(QueryBuilders.matchQuery("ext", fileName))
                 .build();
+
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         //如果在ES查询不到数据，则再从数据库查询一遍
         if (Lists.newArrayList(byFileNameOrTagNameFiles).size() == 0) {
