@@ -248,7 +248,6 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @AutomationRule(value = "#taskId", trigger = "redone", objectValue = "#label")
-    @Log(PushType.A4)
     @Push(value = PushType.A4, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/unFinish")
     public JSONObject unFinishTask(@PathVariable(value = "taskId") String taskId,
@@ -298,7 +297,6 @@ public class TaskApi extends BaseController {
      * @param taskIds   任务ids
      * @return
      */
-    @Log
     @AutomationRule(value = "#taskId", trigger = AutomationRuleConstans.DRAG_TASK)
     @Push(value = PushType.A27, name =PushName.TASK, type = 1)
     @PutMapping("/order")
@@ -326,7 +324,6 @@ public class TaskApi extends BaseController {
      * @param taskName 任务名称
      * @return JSONObject
      */
-    @Log(PushType.A5)
     @Push(value = PushType.A5, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/name")
     public JSONObject upadteTaskName(@PathVariable(value = "taskId") String taskId,
@@ -370,7 +367,6 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @AutomationRule(value = "#taskId", trigger = "settingExecutors", objectValue = "#userId")
-    @Log(PushType.A6)
     @Push(value = PushType.A6, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/executor")
     public JSONObject upadteTaskExecutor(@PathVariable(value = "taskId") String taskId,
@@ -411,7 +407,6 @@ public class TaskApi extends BaseController {
      * @param startTime 任务开始时间
      * @return JSONObject
      */
-    @NotEmpty
     @Push(value = PushType.A7, name =PushName.TASK,type = 3)
     @PutMapping(value = "/{taskId}/starttime")
     public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId") String taskId,
@@ -484,7 +479,6 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @AutomationRule(value = "#taskId", trigger = "repeat", objectValue = "#repeat")
-    @Log(PushType.A9)
     @Push(value = PushType.A9, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/repeat")
     public JSONObject upadteTaskRepeat(@PathVariable(value = "taskId") String taskId,
@@ -518,7 +512,6 @@ public class TaskApi extends BaseController {
      * @param customTime 自定义时间
      * @return
      */
-    @Log(PushType.A24)
     @Push(value = PushType.A24, name =PushName.TASK,type = 1)
     @PutMapping("/{taskId}/remind")
     public JSONObject updateTaskRemind(@PathVariable(value = "taskId") String taskId,
@@ -553,7 +546,6 @@ public class TaskApi extends BaseController {
      * @param id 规则的id
      * @return
      */
-    @Log(PushType.A23)
     @Push(value = PushType.A23,name =PushName.TASK, type = 1)
     @DeleteMapping("/{id}/remind")
     public JSONObject removeRemind(@PathVariable("id") String id) {
@@ -582,7 +574,6 @@ public class TaskApi extends BaseController {
      * @param customTime 自定义时间
      * @return
      */
-    @Log(PushType.A10)
     @Push(value = PushType.A10, name =PushName.TASK,type = 1)
     @PostMapping("/{taskId}/remind")
     public JSONObject addTaskRemind(@PathVariable(value = "taskId") String taskId,
@@ -618,7 +609,6 @@ public class TaskApi extends BaseController {
      * @param users  成员信息
      * @return
      */
-    @Log(PushType.A26)
     @PutMapping("/{taskId}/remind/user")
     public JSONObject updateRemindUsers(@PathVariable String taskId, @RequestParam("users") String users) {
         JSONObject jsonObject = new JSONObject();
@@ -637,7 +627,6 @@ public class TaskApi extends BaseController {
      *
      * @return
      */
-    @Log(PushType.A25)
     @GetMapping("/{taskId}/remind")
     public JSONObject getRemind(@PathVariable String taskId) {
         JSONObject jsonObject = new JSONObject();
@@ -658,7 +647,6 @@ public class TaskApi extends BaseController {
      * @param remarks 任务备注信息
      * @return JSONObject
      */
-    @Log(PushType.A11)
     @Push(value = PushType.A11, name =PushName.TASK,type = 1)
     @PutMapping("/{taskId}/remarks")
     public JSONObject upadteTaskRemarks(@PathVariable(value = "taskId") String taskId,
@@ -695,7 +683,6 @@ public class TaskApi extends BaseController {
      * @return JSONObject
      */
     @AutomationRule(value = "#taskId", trigger = "priority", objectValue = "#priority")
-    @Log(PushType.A12)
     @Push(value = PushType.A12, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/priority")
     public JSONObject upadteTaskPriority(@PathVariable(value = "taskId") String taskId,
@@ -727,7 +714,6 @@ public class TaskApi extends BaseController {
      * @param startTime 子任务的结束时间
      * @return JSONObject
      */
-    @Log(PushType.A13)
     @Push(value = PushType.A13, name =PushName.TASK,type = 3)
     @PostMapping("/{taskId}/addchild")
     public JSONObject addChildTask(@PathVariable(value = "taskId") String taskId,
@@ -833,7 +819,6 @@ public class TaskApi extends BaseController {
      * @param menuId    菜单id
      * @return 是否复制成功
      */
-    @Log(PushType.A15)
     @Push(value = PushType.A15, name =PushName.TASK,type = 1)
     @PostMapping("/{taskId}/copy")
     public JSONObject copyTask(@PathVariable(value = "taskId") String taskId,
@@ -865,7 +850,6 @@ public class TaskApi extends BaseController {
      * @return
      */
     @AutomationRule(value = "#taskId", trigger = AutomationRuleConstans.MOVE_TASK)
-    @Log(PushType.A16)
     @Push(value = PushType.A16, name =PushName.TASK,type = 2)
     @PutMapping("/{taskId}/move")
     public JSONObject moveTask(@PathVariable(value = "taskId") String taskId,
@@ -932,7 +916,6 @@ public class TaskApi extends BaseController {
      * @param taskId 任务id
      * @return
      */
-    @Log(PushType.A18)
     @Push(value = PushType.A18, name =PushName.TASK,type = 1)
     @PutMapping("/{taskId}/privacy")
     public JSONObject taskPrivacy(@PathVariable(value = "taskId") String taskId, @RequestParam Integer privacy) {
@@ -961,7 +944,6 @@ public class TaskApi extends BaseController {
      * @param taskId 任务id
      * @return
      */
-    @Log(PushType.A19)
     @Push(value = PushType.A19)
     @PutMapping("/{taskId}/to_father")
     public JSONObject taskToParent(@PathVariable(value = "taskId") String taskId) {
@@ -988,7 +970,6 @@ public class TaskApi extends BaseController {
      * @param taskId 任务id
      * @return
      */
-    @Log(PushType.A20)
     @Push(value = PushType.A20, name =PushName.TASK,type = 1)
     @PutMapping("/{taskId}/fabulous")
     public JSONObject taskFabulous(@PathVariable(value = "taskId") String taskId) {
@@ -1018,7 +999,6 @@ public class TaskApi extends BaseController {
      *
      * @param projectId 项目id
      */
-    @Log(PushType.A21)
     @Push(value = PushType.A21,name =PushName.TASK, type = 1)
     @PostMapping("/{taskId}/upload")
     public JSONObject uploadFile(
@@ -1051,7 +1031,6 @@ public class TaskApi extends BaseController {
      * @param filename   自定义文件名称
      * @return
      */
-    @Log(PushType.A22)
     @Push(value = PushType.A22,name =PushName.TASK, type = 1)
     @PostMapping("/{taskId}/model")
     public JSONObject uploadModel(

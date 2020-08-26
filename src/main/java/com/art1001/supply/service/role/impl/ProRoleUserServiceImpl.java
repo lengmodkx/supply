@@ -5,6 +5,7 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
+import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.ProRoleUserMapper;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -95,7 +96,7 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
                 .eq(ProRoleUser::getProjectId, projectId)
                 .eq(ProRoleUser::getUId, userId);
 
-        ProRoleUser one = roleUserService.getOne(eq);
+        ProRoleUser one = getOne(eq);
         if(one != null){
             return proRoleService.getById(one.getRoleId());
         }
@@ -103,15 +104,15 @@ public class ProRoleUserServiceImpl extends ServiceImpl<ProRoleUserMapper, ProRo
     }
 
     @Override
-    public ProRole getRoleOnOrgForUser(String projectId, String userId) {
+    public ProRole getRole(String projectId, String userId) {
         ValidatedUtil.filterNullParam(projectId, userId);
 
-        LambdaQueryWrapper<ProRoleUser> getRoleOnOrgRoleInfo = new QueryWrapper<ProRoleUser>().lambda();
-        getRoleOnOrgRoleInfo.eq(ProRoleUser::getProjectId, projectId).eq(ProRoleUser::getUId, userId);
+        LambdaQueryWrapper<ProRoleUser> queryWrapper = new QueryWrapper<ProRoleUser>().lambda();
+        queryWrapper.eq(ProRoleUser::getProjectId, projectId).eq(ProRoleUser::getUId, userId);
 
-        ProRoleUser proRoleUser = this.getOne(getRoleOnOrgRoleInfo);
+        ProRoleUser proRoleUser = getOne(queryWrapper);
 
-        Optional.ofNullable(proRoleUser).orElseThrow(() -> new ServiceException("用户在企业中没有角色!"));
+        Optional.ofNullable(proRoleUser).orElseThrow(() -> new AjaxException("用户在项目中没有角色!"));
 
         return proRoleService.getById(proRoleUser.getRoleId());
     }

@@ -46,7 +46,7 @@ public interface ProRoleUserService extends IService<ProRoleUser> {
      * @param userId 用户id
      * @return 角色信息
      */
-    ProRole getRoleOnOrgForUser(String projectId, String userId);
+    ProRole getRole(String projectId, String userId);
 
     /**
      * 获取角色为（roleId）的用户id列表

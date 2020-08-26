@@ -15,7 +15,6 @@ import com.art1001.supply.service.organization.OrganizationGroupService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.google.gson.JsonObject;
 import io.swagger.client.model.Group;
 import io.swagger.client.model.ModifyGroup;
 import io.swagger.client.model.UserName;

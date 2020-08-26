@@ -1,10 +1,10 @@
 package com.art1001.supply.communication.comm;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import io.swagger.client.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +43,7 @@ public class ResponseHandler {
                 System.out.println(e);
                 logger.error("The server may be faulty. Please try again later");
             }
-            Gson gson = new Gson();
-            Map<String, String> map = gson.fromJson(e.getResponseBody(), Map.class);
+            Map<String, String> map = JSON.parseObject(e.getResponseBody(), new TypeReference<Map<String, String>>(){} );
             logger.error("error_code:{} error_msg:{} error_desc:{}", e.getCode(), e.getMessage(), map.get("error_description"));
         }
         return result;

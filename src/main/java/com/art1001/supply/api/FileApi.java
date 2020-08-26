@@ -1370,7 +1370,7 @@ public class FileApi extends BaseController {
             jsonObject.put("result", 1);
             return jsonObject;
         }
-        String url = "http://www.aldbim.com/model/files/model/change?fileId=" + fileId;
+        String url = "https://work.aldbim.com/model/files/model/change?fileId=" + fileId;
         OkHttpClient client = new OkHttpClient();
         final Request request = new Request.Builder().get().url(url).build();
         Call call = client.newCall(request);

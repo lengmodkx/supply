@@ -1,6 +1,8 @@
 package com.art1001.supply.communication.comm;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.AuthenticationApi;
 import io.swagger.client.model.Token;
@@ -49,8 +51,8 @@ public class TokenUtil {
         } catch (ApiException e) {
             logger.error(e.getMessage());
         }
-        Gson gson = new Gson();
-        Map map = gson.fromJson(resp, Map.class);
+        JSONObject object = new JSONObject();
+        Map map = JSON.parseObject(resp, new TypeReference<Map<String, Object>>(){} );
         ACCESS_TOKEN = " Bearer " + map.get("access_token");
         EXPIREDAT = System.currentTimeMillis() + (Double) map.get("expires_in");
     }

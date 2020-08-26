@@ -2,8 +2,12 @@ package com.art1001.supply.api.aop;
 
 import com.art1001.supply.annotation.ProjectAuth;
 import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.role.ProRole;
+import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.role.ProRoleUserService;
+import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.RedisUtil;
@@ -38,7 +42,10 @@ public class ProjectAuthentizationAspect {
     private RedisUtil redisUtil;
 
     @Resource
-    private ProjectMemberService projectMemberService;
+    private ProRoleUserService proRoleUserService;
+
+    @Resource
+    private TaskService taskService;
 
     /**
      * 需要鉴权的请求切点
@@ -50,8 +57,9 @@ public class ProjectAuthentizationAspect {
     public void doBefore(JoinPoint joinPoint,ProjectAuth projectAuth){
         String key = getKey(projectAuth.value(),joinPoint);
         String userId = ShiroAuthenticationManager.getUserId();
-        ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>().eq("project_id", redisUtil.get("userId:" + userId)).eq("member_id", userId));
-        String roleKey = projectMember.getRoleKey();
+        String projecId = redisUtil.get("userId:" + userId);
+        ProRole role = proRoleUserService.getRole(projecId, userId);
+        taskService.getOne(new QueryWrapper<Task>().eq("task_id",key));
 //        if(StringUtils.equalsIgnoreCase("administrator",roleKey)){
 //
 //        }
