@@ -129,7 +129,7 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 	 * @return 结果
 	 */
 	@Override
-	public Boolean createGroup(OrganizationGroup organizationGroup, String[] memberIds) {
+	public Boolean 	createGroup(OrganizationGroup organizationGroup, String[] memberIds) {
 		if(!organizationService.checkOrgIsExist(organizationGroup.getOrganizationId())){
 			throw new ServiceException("该企业不能存在,不能创建群组!");
 		}

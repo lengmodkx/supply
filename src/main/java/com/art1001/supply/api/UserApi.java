@@ -718,4 +718,7 @@ public class UserApi {
     public Object addBuddyByAccountName(@RequestParam String accountName,@RequestParam String buddyAccountName){
        return imUserService.addFriendSingle(accountName,buddyAccountName);
     }
+
+
+
 }

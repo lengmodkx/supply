@@ -185,6 +185,7 @@ public class File extends Model<File> {
     /** 创建时间
      *
      */
+    @Field(type = FieldType.Long)
     @TableField(fill = FieldFill.INSERT)
     private Long createTime;
 

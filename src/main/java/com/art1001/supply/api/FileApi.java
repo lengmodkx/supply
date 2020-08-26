@@ -7,6 +7,8 @@ import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushName;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
+import com.art1001.supply.common.CommonPage;
+import com.art1001.supply.common.CommonResult;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.*;
@@ -1148,7 +1150,9 @@ public class FileApi extends BaseController {
         jsonObject.put("result", 1);
         jsonObject.put("totle", fileService.getSucaiTotle(fileName));
         jsonObject.put("data", fileService.searchMaterialBaseFile(fileName, pageable));
+
         jsonObject.put("page", pageable.getPageNumber());
+
         return jsonObject;
     }
 
@@ -1186,24 +1190,15 @@ public class FileApi extends BaseController {
     /**
      * 更新ElasticSearch
      */
-    private void getFileToElastic() {
+    @GetMapping("/getFileToElastic/to")
+    public void getFileToElastic() {
         try {
-            List<File> allFile = fileService.list(new QueryWrapper<File>().isNotNull("ext").isNotNull("file_url"));
-            if (allFile.isEmpty()) {
-                System.out.print("文件不存在!");
-            } else {
-                System.out.print("条数==" + allFile.size());
-            }
-            int count = 0;
+            List<File> allFile = fileService.findList();
             for (File f : allFile) {
                 //保存到ElasticSearch
                 fileRepository.save(f);
-                count++;
             }
-            System.out.print("共" + count + "条数据更新成功");
-            // return success(fileService.getProjectAllFolder(one.getFileId()));
         } catch (Exception e) {
-            e.printStackTrace();
             throw new AjaxException("系统异常,更新elasticSearch失败!", e);
         }
     }

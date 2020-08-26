@@ -26,13 +26,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +56,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
@@ -1355,15 +1359,25 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      */
     @Override
     public Integer getSucaiTotle(String fileName) {
-        MatchPhraseQueryBuilder fileName1 = QueryBuilders.matchPhraseQuery("fileName", fileName);
-        Iterable<File> search1 = fileRepository.search(fileName1);
-        Iterator it = search1.iterator();
+//        MatchPhraseQueryBuilder fileName1 = QueryBuilders.matchPhraseQuery("fileName", fileName);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                .withQuery(QueryBuilders.matchPhraseQuery("ext", fileName))
+                .build();
+        Iterable<File> search1 = fileRepository.search(searchQuery);if (Lists.newArrayList(search1).size()==0) {
+            List<File> list = list(new QueryWrapper<File>().eq("catalog", "0").like("file_name", fileName));
+            return list.size();
+        }
+        Integer totalElements = (int) ((org.springframework.data.domain.Page<File>) search1).getTotalElements();
+
+    /*    Iterator it = search1.iterator();
         int count = 0;
         while (it.hasNext()) {
             it.next();
             count++;
         }
-        return count;
+        return count;*/
+    return totalElements;
     }
 
     /**
@@ -1379,10 +1393,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withPageable(of)
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
+                .withQuery(QueryBuilders.matchPhraseQuery("ext", fileName))
+//                .withQuery(QueryBuilders.multiMatchQuery(fileName,"fileName","ext"))
                 .build();
+
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
         //如果在ES查询不到数据，则再从数据库查询一遍
         if (Lists.newArrayList(byFileNameOrTagNameFiles).size() == 0) {
+            PageHelper.startPage(pageable.getPageNumber(),pageable.getPageSize());
             List<File> files = fileService.list(new QueryWrapper<File>().eq("catalog", "0").like("file_name", fileName));
             return Lists.newArrayList(files);
         }
@@ -1390,7 +1408,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         if (files.size() == 0) {
             return null;
         }
-        return files;
+        return Lists.newArrayList(files);
     }
 
     @Override
@@ -1480,7 +1498,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public void downloadSingleFile(File file, HttpServletResponse response) {
         saveDownloadFileInfo(file);
-        if (file.getFilePrivacy().equals(Constants.B_ZERO)||(file.getFilePrivacy().equals(Constants.B_ONE)&&file.getFileUids().contains(ShiroAuthenticationManager.getUserId()))) {
+        if (file.getFilePrivacy().equals(Constants.B_ZERO) || (file.getFilePrivacy().equals(Constants.B_ONE) && file.getFileUids().contains(ShiroAuthenticationManager.getUserId()))) {
             InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(), response);
             // 设置头信息
             // 设置fileName的编码
@@ -1532,10 +1550,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         List<File> files = fileService.list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()));
         if (files != null && files.size() > 0) {
 
+
             //过滤出符合下载条件的文件
             List<File> fileList = files.stream().filter(f -> f.getFilePrivacy().equals(Constants.B_ZERO)
-                    || (f.getFilePrivacy().equals(Constants.B_ONE)
-                    && f.getFileUids().contains(ShiroAuthenticationManager.getUserId())))
+                    || (f.getFilePrivacy().equals(Constants.B_ONE) &&
+                    (StringUtils.isNotEmpty(f.getFileUids()) && f.getFileUids().contains(ShiroAuthenticationManager.getUserId()))))
                     .collect(Collectors.toList());
 
             for (File inFile : fileList) {
@@ -1560,6 +1579,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     /**
      * 保存下载文件信息
+     *
      * @param inFile
      */
     private void saveDownloadFileInfo(File inFile) {
@@ -1602,5 +1622,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<File> findList() {
+        List<File> list = fileMapper.findList();
+        return list;
     }
 }

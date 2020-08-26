@@ -496,4 +496,7 @@ import java.util.List;
 	void downloadSingleFolder(File file, HttpServletResponse response);
 
 	void batchDownLoad(List<File> files, HttpServletResponse response);
+
+	List<File> findList();
+
 }

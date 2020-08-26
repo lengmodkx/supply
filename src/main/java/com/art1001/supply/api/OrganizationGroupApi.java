@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.client.model.Group;
 import io.swagger.client.model.ModifyGroup;
 import io.swagger.client.model.UserName;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,7 +75,9 @@ public class OrganizationGroupApi {
             UserEntity byId = userService.findById(ShiroAuthenticationManager.getUserId());
             List<String> accountNames = userService.list(new QueryWrapper<UserEntity>().in("user_id", memberIds)).stream().map(UserEntity::getAccountName).collect(Collectors.toList());
             UserName userName = new UserName();
-            userName.addAll(accountNames);
+            if (CollectionUtils.isNotEmpty(accountNames)) {
+                userName.addAll(accountNames);
+            }
             group.groupname(organizationGroup.getGroupName()).desc("")._public(true).maxusers(50).approval(false).owner(byId.getAccountName()).members(userName);
 
             String chatGroup = (String)chatGroupAPI.createChatGroup(group);
