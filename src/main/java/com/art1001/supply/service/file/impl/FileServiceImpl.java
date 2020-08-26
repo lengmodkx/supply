@@ -1394,7 +1394,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 .withPageable(of)
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
                 .withQuery(QueryBuilders.matchPhraseQuery("ext", fileName))
-//                .withQuery(QueryBuilders.matchQuery("ext", fileName))
+//                .withQuery(QueryBuilders.multiMatchQuery(fileName,"fileName","ext"))
                 .build();
 
         Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
@@ -1408,7 +1408,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         if (files.size() == 0) {
             return null;
         }
-
         return Lists.newArrayList(files);
     }
 
