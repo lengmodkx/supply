@@ -351,6 +351,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             myFile.setUpdateTime(System.currentTimeMillis());
             save(myFile);
             //保存到ElasticSearch
+            fileEsService.saveFile(myFile);
 //            fileRepository.save(myFile);
             System.out.println(myFile.getFileName() + " 文件ES上传成功");
         }
@@ -692,6 +693,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             file.setFileUids(newJoinId);
             file.setUpdateTime(System.currentTimeMillis());
             updateById(file);
+            fileEsService.saveFile(file);
 //            fileRepository.save(file);
             System.out.println(file.getFileName() + " 文件ES上传成功");
             logService.saveLog(fileId, logContent.toString(), 2);
@@ -837,6 +839,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                     myFile.setPublicLable(0);
                 }
                 fileList.add(myFile);
+                fileEsService.saveFile(myFile);
 //                fileRepository.save(myFile);
                 System.out.println(myFile.getFileName() + " 文件ES上传成功");
                 FileVersion fileVersion = new FileVersion();
