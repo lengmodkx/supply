@@ -139,8 +139,8 @@ public class FileApi extends BaseController {
     /**
      * ElasticSearch 查询接口
      */
-    @Autowired
-    private FileRepository fileRepository;
+ /*   @Autowired
+    private FileRepository fileRepository;*/
 
     @Resource
     private MemberDownloadService memberDownloadService;
@@ -1196,7 +1196,7 @@ public class FileApi extends BaseController {
             List<File> allFile = fileService.findList();
             for (File f : allFile) {
                 //保存到ElasticSearch
-                fileRepository.save(f);
+//                fileRepository.save(f);
             }
         } catch (Exception e) {
             throw new AjaxException("系统异常,更新elasticSearch失败!", e);

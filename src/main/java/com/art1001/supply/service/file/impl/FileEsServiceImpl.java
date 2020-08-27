@@ -33,21 +33,20 @@ public class FileEsServiceImpl implements FileEsService {
     private RestHighLevelClient restHighLevelClient;
 
     @Override
-    public List<File> searchEsFile(String fileName, Integer pageNumber,Integer pageSize) {
+    public List<File> searchEsFile(String fileName/*, Integer pageNumber,Integer pageSize*/) {
         SearchRequest searchRequest = new SearchRequest("file");
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 
-//        sourceBuilder.from(pageNumber);
-//        sourceBuilder.size(pageSize);
+        /*sourceBuilder.from(pageNumber);
+        sourceBuilder.size(pageSize);*/
         sourceBuilder.query(QueryBuilders.multiMatchQuery(fileName,"fileName","ext"));
-
+        sourceBuilder.size(9999);
         searchRequest.source(sourceBuilder);
-        searchRequest.scroll(TimeValue.timeValueMinutes(1L));
         List<File>files= Lists.newArrayList();
 
         try {
             SearchResponse response = restHighLevelClient.search(searchRequest,RequestOptions.DEFAULT);
-            String scrollId = response.getScrollId();
+
             Arrays.asList(response.getHits().getHits()).forEach(r->{
                 File file = JSON.parseObject(r.getSourceAsString(), File.class);
                 files.add(file);

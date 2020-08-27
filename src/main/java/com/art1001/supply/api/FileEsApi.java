@@ -33,7 +33,7 @@ public class FileEsApi {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 1);
         try {
-            List<File> fileList = fileEsService.searchEsFile(fileName, pageNumber, pageSize);
+            List<File> fileList = fileEsService.searchEsFile(fileName/*, pageNumber, pageSize*/);
             jsonObject.put("totle", fileEsService.getSucaiTotle(fileName));
             jsonObject.put("data", fileList);
             jsonObject.put("msg",fileList.size());

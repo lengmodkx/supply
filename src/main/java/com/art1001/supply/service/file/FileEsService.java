@@ -12,7 +12,7 @@ public interface FileEsService {
      * @param fileName
      * @return
      */
-    List<File> searchEsFile(String fileName, Integer pageNumber,Integer pageSize);
+    List<File> searchEsFile(String fileName/*, Integer pageNumber,Integer pageSize*/);
 
     long getSucaiTotle(String fileName) throws IOException;
 }

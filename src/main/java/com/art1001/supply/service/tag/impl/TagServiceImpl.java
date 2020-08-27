@@ -67,9 +67,9 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
     /**
      * ElasticSearch 查询接口
      */
-    @Autowired
+   /* @Autowired
     private FileRepository fileRepository;
-
+*/
     @Resource
 	private ProRoleUserService proRoleUserService;
 
@@ -284,7 +284,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 			tr.setTaskId(publicId);
 		}
 		if(Constants.FILE.equals(publicType)){
-            Optional<File> file = fileRepository.findById(publicId);
+//            Optional<File> file = fileRepository.findById(publicId);
             tr.setFileId(publicId);
 		}if(Constants.SHARE.equals(publicType)){
 			tr.setShareId(publicId);

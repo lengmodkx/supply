@@ -10,10 +10,11 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
+import org.jboss.logging.Field;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
+/*import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.FieldType;*/
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @TableName("prm_file")
-@Document(indexName = "file",type = "docs", shards = 1, replicas = 0)
+//@Document(indexName = "file",type = "docs", shards = 1, replicas = 0)
 public class File extends Model<File> {
 
     private static final long serialVersionUID = 1L;
@@ -41,7 +42,7 @@ public class File extends Model<File> {
      * 文件名
      */
     // analyzer = "ik_max_word"
-    @Field(type = FieldType.text,analyzer = "ik_max_word" )
+//    @Field(type = FieldType.text,analyzer = "ik_max_word" )
     private String fileName;
 
 
@@ -50,48 +51,48 @@ public class File extends Model<File> {
      */
     //analyzer = "ik_max_word"
     @TableField(exist = false)
-    @Field(type = FieldType.text )
+//    @Field(type = FieldType.text )
     private String tagsName;
 
 
     /**
      * 文件后缀名
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String ext;
 
 
     /**
      * 文件路径
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String fileUrl;
 
 
     /**
      * 关联的项目id
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String projectId;
 
     /**
      * 创建者
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String memberId;
 
 
     /**
      * 创建者姓名
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     @TableField(exist = false)
     private String memberName;
 
     /**
      * 创建者头像
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     @TableField(exist = false)
     private String memberImg;
 
@@ -103,14 +104,14 @@ public class File extends Model<File> {
     /**
      * 文件大小
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String size;
 
 
     /**
      * 父级id 0：顶级目录   1：项目的根目录（隐藏目录，在oss上分的文件夹）
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String parentId;
 
     /**
@@ -185,7 +186,7 @@ public class File extends Model<File> {
     /** 创建时间
      *
      */
-    @Field(type = FieldType.Long)
+//    @Field(type = FieldType.Long)
     @TableField(fill = FieldFill.INSERT)
     private Long createTime;
 

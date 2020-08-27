@@ -5,10 +5,11 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.jboss.logging.Field;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
+/*import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.FieldType;*/
 
 import java.io.Serializable;
 
@@ -16,7 +17,7 @@ import java.io.Serializable;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @TableName("prm_material_file")
-@Document(indexName = "file",type = "docs", shards = 1, replicas = 0)
+//@Document(indexName = "file",type = "docs", shards = 1, replicas = 0)
 public class Material extends Model<Material> {
     @Id
     @TableId(value = "file_id",type = IdType.UUID)
@@ -25,44 +26,44 @@ public class Material extends Model<Material> {
     /**
      * 文件名
      */
-    @Field(type = FieldType.text,analyzer = "ik_max_word" )
+//    @Field(type = FieldType.text,analyzer = "ik_max_word" )
     private String fileName;
 
     /**
      * 文件后缀名
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String ext;
 
     /**
      * 文件路径
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String fileUrl;
 
     /**
      * 创建者
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String memberId;
 
     /**
      * 是否目录  1：目录  0：文件
      */
-    @Field(type = FieldType.Integer)
+//    @Field(type = FieldType.Integer)
     private Integer catalog;
 
     /**
      * 文件大小
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String size;
 
 
     /**
      * 父级id 0：顶级目录   1：项目的根目录（隐藏目录，在oss上分的文件夹）
      */
-    @Field(type = FieldType.text)
+//    @Field(type = FieldType.text)
     private String parentId;
 
     /**

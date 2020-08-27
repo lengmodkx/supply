@@ -41,8 +41,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
+/*import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;*/
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,8 +92,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     /**
      * ElasticSearch 查询接口
      */
-    @Autowired
-    private FileRepository fileRepository;
+//    @Autowired
+//    private FileRepository fileRepository;
 
     @Resource
     private MemberDownloadService memberDownloadService;
@@ -226,7 +226,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         //删除文件
         removeById(fileId);
         //删除elasticSearch
-        fileRepository.deleteById(fileId);
+//        fileRepository.deleteById(fileId);
         //删除文件版本信息
         fileVersionService.remove(new QueryWrapper<FileVersion>().eq("file_id", fileId));
     }
@@ -242,7 +242,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         fileVersion.setIsMaster(1);
         fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
         fileVersionService.save(fileVersion);
-        fileRepository.save(file);
+//        fileRepository.save(file);
         //写入日志
         Log log = new Log();
         //设置logId
@@ -346,7 +346,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             myFile.setUpdateTime(System.currentTimeMillis());
             save(myFile);
             //保存到ElasticSearch
-            fileRepository.save(myFile);
+//            fileRepository.save(myFile);
             System.out.println(myFile.getFileName() + " 文件ES上传成功");
         }
     }
@@ -382,7 +382,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             modelFile.setPublicLable(1);
         }
         fileService.save(modelFile);
-        fileRepository.save(modelFile);
+//        fileRepository.save(modelFile);
         System.out.println(modelFile.getFileName() + " 文件ES上传成功");
         //版本历史更新
         FileVersion fileVersion = new FileVersion();
@@ -687,7 +687,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             file.setFileUids(newJoinId);
             file.setUpdateTime(System.currentTimeMillis());
             updateById(file);
-            fileRepository.save(file);
+//            fileRepository.save(file);
             System.out.println(file.getFileName() + " 文件ES上传成功");
             logService.saveLog(fileId, logContent.toString(), 2);
         }
@@ -832,7 +832,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                     myFile.setPublicLable(0);
                 }
                 fileList.add(myFile);
-                fileRepository.save(myFile);
+//                fileRepository.save(myFile);
                 System.out.println(myFile.getFileName() + " 文件ES上传成功");
                 FileVersion fileVersion = new FileVersion();
                 fileVersion.setFileId(myFile.getFileId());
@@ -1301,17 +1301,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         } else {
             of = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
         }
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+      /*  SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
                 .withFilter(QueryBuilders.termQuery("projectId", projectId)).withPageable(of)
                 .build();
-        Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);
+        Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);*/
         //如果ES查询不到数据，从数据库再查询一遍
         /*if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0){
             List<File> files = fileService.seachByName(fileName, projectId);
             return  Lists.newArrayList(files);
         }*/
-        return Lists.newArrayList(byFileNameOrTagNameFiles);
+//        return Lists.newArrayList(byFileNameOrTagNameFiles);
+        return null;
     }
 
     @Override
@@ -1360,15 +1361,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public Integer getSucaiTotle(String fileName) {
 //        MatchPhraseQueryBuilder fileName1 = QueryBuilders.matchPhraseQuery("fileName", fileName);
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+    /*    SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
                 .withQuery(QueryBuilders.matchPhraseQuery("ext", fileName))
                 .build();
         Iterable<File> search1 = fileRepository.search(searchQuery);if (Lists.newArrayList(search1).size()==0) {
             List<File> list = list(new QueryWrapper<File>().eq("catalog", "0").like("file_name", fileName));
             return list.size();
-        }
-        Integer totalElements = (int) ((org.springframework.data.domain.Page<File>) search1).getTotalElements();
+        }*/
+//        Integer totalElements = (int) ((org.springframework.data.domain.Page<File>) search1).getTotalElements();
 
     /*    Iterator it = search1.iterator();
         int count = 0;
@@ -1377,7 +1378,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             count++;
         }
         return count;*/
-    return totalElements;
+//    return totalElements;
+        return null;
     }
 
     /**
@@ -1390,7 +1392,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public ArrayList<File> searchMaterialBaseFile(String fileName, Pageable pageable) {
         PageRequest of = PageRequest.of(pageable.getPageNumber() - 1, pageable.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+    /*    SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withPageable(of)
                 .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
                 .withQuery(QueryBuilders.matchPhraseQuery("ext", fileName))
@@ -1407,8 +1409,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         ArrayList<File> files = Lists.newArrayList(byFileNameOrTagNameFiles);
         if (files.size() == 0) {
             return null;
-        }
-        return Lists.newArrayList(files);
+        }*/
+//        return Lists.newArrayList(files);
+        return null;
     }
 
     @Override
