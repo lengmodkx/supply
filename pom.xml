@@ -50,11 +50,11 @@
             <artifactId>spring-boot-starter-activemq</artifactId>
         </dependency>
 
-        <dependency>
+       <!-- <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
         </dependency>
-
+-->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.data</groupId>-->
 <!--            <artifactId>spring-data-elasticsearch</artifactId>-->
@@ -333,8 +333,25 @@
             <version>4.2.2</version>
         </dependency>
 
+        <!-- Java Low Level REST Client -->
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+            <version>6.8.6</version>
+        </dependency>
 
+        <!-- Java High Level REST Client -->
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>6.8.6</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>6.8.6</version>
+        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
