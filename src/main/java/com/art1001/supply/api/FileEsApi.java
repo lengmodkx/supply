@@ -29,7 +29,7 @@ public class FileEsApi {
     private FileEsService fileEsService;
 
     @GetMapping("/{fileName}/material_base_search")
-    public JSONObject searchEsFile(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName, Integer pageNumber,Integer pageSize) {
+    public JSONObject searchEsFile(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName/*, Integer pageNumber,Integer pageSize*/) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 1);
         try {
