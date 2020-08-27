@@ -14,6 +14,7 @@ import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
 import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
+import com.art1001.supply.service.file.FileEsService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.file.MemberDownloadService;
@@ -93,11 +94,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      * ElasticSearch 查询接口
      */
 //    @Autowired
-//    private FileRepository fileRepository;
+//    private FileRepository fileRepository
 
     @Resource
     private MemberDownloadService memberDownloadService;
 
+    @Resource
+    private FileEsService fileEsService;
 
     /**
      * 公共模型库 常量定义信息
@@ -226,6 +229,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         //删除文件
         removeById(fileId);
         //删除elasticSearch
+        fileEsService.deleteFile(fileId);
 //        fileRepository.deleteById(fileId);
         //删除文件版本信息
         fileVersionService.remove(new QueryWrapper<FileVersion>().eq("file_id", fileId));
@@ -242,6 +246,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         fileVersion.setIsMaster(1);
         fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
         fileVersionService.save(fileVersion);
+        fileEsService.saveFile(file);
 //        fileRepository.save(file);
         //写入日志
         Log log = new Log();

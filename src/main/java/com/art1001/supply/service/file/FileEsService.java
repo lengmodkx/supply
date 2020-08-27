@@ -15,4 +15,8 @@ public interface FileEsService {
     List<File> searchEsFile(String fileName/*, Integer pageNumber,Integer pageSize*/);
 
     long getSucaiTotle(String fileName) throws IOException;
+
+    void deleteFile(String fileId);
+
+    void saveFile(File file);
 }
