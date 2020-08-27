@@ -111,7 +111,7 @@ public class FileEsServiceImpl implements FileEsService {
     @Override
     public void saveFile(File file) {
         try {
-            IndexRequest indexRequest = new IndexRequest("file");
+            IndexRequest indexRequest = new IndexRequest("file","docs");
             Map<String, String> fileMap = BeanUtils.describe(file);
             indexRequest.source(fileMap);
             restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
