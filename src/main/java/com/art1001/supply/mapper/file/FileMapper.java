@@ -322,4 +322,6 @@ public interface FileMapper extends BaseMapper<File> {
 
 	@Select("select * from prm_file")
     List<File> findList();
+
+    void deleteByIds(List<String> fileId);
 }

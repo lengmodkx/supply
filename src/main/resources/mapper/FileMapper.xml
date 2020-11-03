@@ -278,7 +278,7 @@
             and public_lable = #{publicLable}
         </if>
     </select>
-<!--and file_privacy=0-->
+    <!--and file_privacy=0-->
     <select id="findByIds" resultMap="PublicMap">
         select
         <include refid="Base_Column_List"/>
@@ -320,6 +320,14 @@
 		delete from
 		prm_file where file_id = #{fileId}
 	</delete>
+    <!--根据文件id删除文件-->
+    <delete id="deleteByIds">
+        delete from prm_file where file_id in (
+        <foreach collection="list" separator="," item="fileId">
+            #{fileId}
+        </foreach>
+        )
+    </delete>
 
     <update id="updateTagId" parameterType="java.lang.String">
 		update prm_file set tag_id = #{tagIds} where file_id = #{fileId}

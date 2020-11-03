@@ -1640,4 +1640,26 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         List<File> list = fileMapper.findList();
         return list;
     }
+
+    /**
+     * 删除文件夹
+     */
+    @Override
+    public void deleteFileFolder(String fileId) {
+        List<File> files = list(new QueryWrapper<File>().eq("parent_id", fileId));
+        if (CollectionUtils.isNotEmpty(files)) {
+            List<String> fileIds = files.stream().map(File::getFileId).collect(Collectors.toList());
+            for (String f : fileIds) {
+                List<File> f1 = list(new QueryWrapper<File>().eq("parent_id", f));
+                if (CollectionUtils.isNotEmpty(f1)) {
+                    for (File file : f1) {
+                        deleteFileFolder(file.getFileId());
+                    }
+                }
+            }
+            fileMapper.deleteByIds(fileIds);
+            fileMapper.deleteById(fileId);
+        }
+
+    }
 }

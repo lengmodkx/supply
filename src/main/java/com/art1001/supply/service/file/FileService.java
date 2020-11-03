@@ -499,4 +499,9 @@ import java.util.List;
 
 	List<File> findList();
 
+	/**
+	 * 删除文件夹
+	 * @param fileId
+	 */
+	void deleteFileFolder(String fileId);
 }

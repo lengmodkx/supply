@@ -675,6 +675,22 @@ public class FileApi extends BaseController {
     }
 
     /**
+     * 删除文件夹
+     * @param fileId
+     * @return
+     */
+    @DeleteMapping("/deleteFileFolder")
+    public Result deleteFileFolder(@RequestParam(value = "fileId") String fileId){
+        try {
+            fileService.deleteFileFolder(fileId);
+            return Result.success();
+        } catch (Exception e) {
+            log.error("删除文件夹异常:", e);
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
      * 从回收站中恢复文件
      *
      * @param fileId    文件id
@@ -1269,7 +1285,14 @@ public class FileApi extends BaseController {
         }
     }
 
-    //文件设置隐私模式
+    /**
+     * 文件设置隐私模式/文件夹可见性
+     * @param folderId
+     * @param userIds
+     * @param projectId
+     * @param parentId
+     * @return
+     */
     @Push(value = PushType.C8, name = PushName.FILE,type = 1)
     @PutMapping("/folder/look")
     public JSONObject setFolderLook(@RequestParam String folderId,
