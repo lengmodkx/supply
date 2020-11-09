@@ -1721,4 +1721,13 @@ select
         from prm_project where prm_project.project_id=#{projectId}
     </select>
 
+
+    <select id="findTodayTask" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>,r.parent_id as task_group
+        from prm_task  LEFT JOIN prm_relation r on prm_task.task_menu_id = r.relation_id where (SELECT
+        FROM_UNIXTIME(prm_task.finish_time/1000, '%Y-%m-%d')) = ( select CURDATE())
+        and prm_task.project_id = #{projectId}
+    </select>
+
 </mapper>

@@ -68,6 +68,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.bcel.Const;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
@@ -1806,7 +1807,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     /**
      * 查询" 我的" 任务并且按照筛选条件进行筛选
-     * 我的任务就是(当前用户 参与,创建 项目中和当前用户有关的所有任务)
+     * 我的任务就是(当前用户 参与,创建 项
+     * 目中和当前用户有关的所有任务)
      *
      * @param isDone 是否完成
      * @param order  根据 (最近创建时间,截止时间,优先级) 排序
@@ -2195,6 +2197,52 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     @Override
     public List<Task> findTaskIsOk(String projectId) {
         return taskMapper.selectList(new QueryWrapper<Task>().eq("project_id", projectId).eq("task_status", 1));
+    }
+
+    /**
+     * 根据条件查询任务
+     * @param example 条件
+     *                1、全部任务
+     *                2、查询今天的任务
+     *                3、我执行的任务
+     *                4、已完成的任务
+     *                5、待认领的任务
+     *                6、未完成的任务
+     * @param groupId 分组id
+     * @param projectId 项目id
+     * @return
+     */
+    @Override
+    public List<Task> selectTaskByExample(Integer example, String groupId,String projectId) {
+        List<Task> list=Lists.newArrayList();
+        if (Constants.B_ONE.equals(example)) {
+            // 全部任务
+            list = list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId));
+        }else if (Constants.B_TWO.equals(example)){
+            // 今天的任务
+            list = taskMapper.findTodayTask(projectId);
+        }else if(Constants.B_THREE.equals(example)){
+            // 我执行的任务
+            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("executor",ShiroAuthenticationManager.getUserId()));
+        }else if(Constants.B_FOUR.equals(example)){
+            // 已完成的任务
+            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("task_status",1));
+        }else if(Constants.B_FIVE.equals(example)){
+            // 待认领的任务
+            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("executor",0));
+        }else{
+            // 未完成的任务
+            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("task_status",0));
+        }
+        Optional.ofNullable(list).ifPresent(s->s.stream().forEach(r->{
+            if (CollectionUtils.isEmpty(r.getTagList())) {
+                r.setTagList(Lists.newArrayList());
+            }
+            if (CollectionUtils.isEmpty(r.getTaskList())) {
+                r.setTaskList(Lists.newArrayList());
+            }
+        }));
+        return list;
     }
 
 

@@ -782,4 +782,7 @@ public interface TaskMapper extends BaseMapper<Task> {
     List<Task> findCompleteTask(@Param("projectId") String projectId);
 
 	List<Task> findTaskByProjectInfo( @Param("projectId") String projectId);
+
+	List<Task> findTodayTask(String projectId);
+
 }

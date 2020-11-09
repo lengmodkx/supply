@@ -735,4 +735,18 @@ public interface TaskService extends IService<Task> {
 
 	List<Task> findTaskIsOk(String projectId);
 
+	/**
+	 * 根据条件查询任务
+	 * @param example 条件
+	 *                1、全部任务
+	 *                2、查询今天的任务
+	 *                3、我执行的任务
+	 *                4、已完成的任务
+	 *                5、待认领的任务
+	 *                6、未完成的任务
+	 * @param groupId 分组id
+	 * @param projectId 项目id
+	 * @return
+	 */
+	List<Task> selectTaskByExample(Integer example, String groupId,String projectId);
 }

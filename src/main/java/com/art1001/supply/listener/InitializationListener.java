@@ -49,9 +49,6 @@ public class InitializationListener implements ApplicationListener<ContextRefres
 
     private SchedulerFactory schedulerFactory = new StdSchedulerFactory();
 
-    /* (non-Javadoc)
-     * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
-     */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (null == event.getApplicationContext().getParent()) {
