@@ -2220,19 +2220,22 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             list = list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId));
         }else if (Constants.B_TWO.equals(example)){
             // 今天的任务
-            list = taskMapper.findTodayTask(projectId);
+            long startTime = DateUtils.getStartOfDay(new Date()).getTime();
+            long endTime = DateUtils.getEndOfDay(new Date()).getTime();
+
+            list = taskMapper.findTodayTask(projectId,groupId,startTime,endTime);
         }else if(Constants.B_THREE.equals(example)){
             // 我执行的任务
-            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("executor",ShiroAuthenticationManager.getUserId()));
+            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("task_del",0).eq("executor",ShiroAuthenticationManager.getUserId()));
         }else if(Constants.B_FOUR.equals(example)){
             // 已完成的任务
-            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("task_status",1));
+            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("task_del",0).eq("task_status",1));
         }else if(Constants.B_FIVE.equals(example)){
             // 待认领的任务
-            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("executor",0));
+            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("task_del",0).eq("executor",0));
         }else{
             // 未完成的任务
-            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("task_status",0));
+            list=list(new QueryWrapper<Task>().eq("task_group_id", groupId).eq("project_id", projectId).eq("task_del",0).eq("task_status",0));
         }
         Optional.ofNullable(list).ifPresent(s->s.stream().forEach(r->{
             if (CollectionUtils.isEmpty(r.getTagList())) {

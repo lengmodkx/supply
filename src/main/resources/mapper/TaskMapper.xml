@@ -1701,8 +1701,8 @@ select
         join prm_project p
         on prm_task.project_id=p.project_id
         WHERE
-         prm_task.project_id=#{projectId}
-        and task_status=0 and prm_task.executor=0  ORDER by create_time DESC
+        prm_task.project_id=#{projectId}
+        and task_status=0 and prm_task.executor=0 ORDER by create_time DESC
     </select>
 
     <select id="findCompleteTask" resultType="com.art1001.supply.entity.task.Task">
@@ -1721,13 +1721,21 @@ select
         from prm_project where prm_project.project_id=#{projectId}
     </select>
 
-
-    <select id="findTodayTask" resultMap="BaseResultMap">
+    <select id="findTodayTask" resultType="com.art1001.supply.entity.task.Task">
         select
-        <include refid="Base_Column_List"/>,r.parent_id as task_group
-        from prm_task  LEFT JOIN prm_relation r on prm_task.task_menu_id = r.relation_id where (SELECT
-        FROM_UNIXTIME(prm_task.finish_time/1000, '%Y-%m-%d')) = ( select CURDATE())
-        and prm_task.project_id = #{projectId}
+        <include refid="Base_Column_List"/>
+        from prm_task where project_id=#{projectId}
+         and task_del=0 and task_group_id=#{groupId}
+         and end_time between #{startTime} and #{endTime}
     </select>
+
+
+    <!--  <select id="findTodayTask" resultMap="BaseResultMap">
+          select
+          <include refid="Base_Column_List"/>,r.parent_id as task_group
+          from prm_task  LEFT JOIN prm_relation r on prm_task.task_menu_id = r.relation_id where (SELECT
+          FROM_UNIXTIME(prm_task.finish_time/1000, '%Y-%m-%d')) = ( select CURDATE())
+          and prm_task.project_id = #{projectId}
+      </select>-->
 
 </mapper>

@@ -783,6 +783,6 @@ public interface TaskMapper extends BaseMapper<Task> {
 
 	List<Task> findTaskByProjectInfo( @Param("projectId") String projectId);
 
-	List<Task> findTodayTask(String projectId);
+	List<Task> findTodayTask(@Param("projectId") String projectId, @Param("groupId") String groupId,@Param("startTime") long startTime,@Param("endTime") long endTime);
 
 }
