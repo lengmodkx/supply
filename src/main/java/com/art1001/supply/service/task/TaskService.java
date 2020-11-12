@@ -749,4 +749,20 @@ public interface TaskService extends IService<Task> {
 	 * @return
 	 */
 	List<Task> selectTaskByExample(Integer example, String groupId,String projectId);
+
+
+    /**
+     * 根据条件筛选任务
+     * @param keyword 模糊搜索关键字
+     * @param executor 执行者id
+     * @param tagId 标签id
+     * @param startTime 截止时间-开始时间
+     * @param endTime 截止时间-结束时间
+     * @param memberId 创建者id
+     * @param taskUid 参与者id
+     * @param taskStatus 是否完成 0未完成 1已完成
+     * @param priority 优先级 普通 紧急 非常紧急
+     * @return
+     */
+	List<Task> searchTaskByExample(Relation relation,String keyword,String projectId, String executor, Integer tagId, Long startTime, Long endTime, String memberId, String taskUid, Integer taskStatus, String priority);
 }

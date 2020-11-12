@@ -1725,17 +1725,51 @@ select
         select
         <include refid="Base_Column_List"/>
         from prm_task where project_id=#{projectId}
-         and task_del=0 and task_group_id=#{groupId}
-         and end_time between #{startTime} and #{endTime}
+        and task_del=0 and task_group_id=#{groupId}
+        and end_time between #{startTime} and #{endTime}
     </select>
 
 
-    <!--  <select id="findTodayTask" resultMap="BaseResultMap">
-          select
-          <include refid="Base_Column_List"/>,r.parent_id as task_group
-          from prm_task  LEFT JOIN prm_relation r on prm_task.task_menu_id = r.relation_id where (SELECT
-          FROM_UNIXTIME(prm_task.finish_time/1000, '%Y-%m-%d')) = ( select CURDATE())
-          and prm_task.project_id = #{projectId}
-      </select>-->
+    <select id="searchByTaskName" resultType="com.art1001.supply.entity.task.Task">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task where project_id=#{projectId} and task_del=0 and task_name like
+        <![CDATA[ CONCAT('%',#{keyword},'%') ]]> order by prm_task.create_time desc
+    </select>
+
+
+    <select id="searchByExample" resultType="com.art1001.supply.entity.task.Task">
+        select
+        <include refid="Base_Column_List"/>
+        from prm_task
+        <where>
+            prm_task.project_id=#{projectId}
+            <if test="executor !=null and executor != ''">
+               and prm_task.executor=#{executor}
+            </if>
+            <if test="tagId !=null and tagId != ''">
+               and prm_task.tag_id=#{tagId}
+            </if>
+            <if test="startTime !=null and startTime != ''">
+                and prm_task.end_time &gt;= #{startTime}
+            </if>
+            <if test="endTime !=null and endTime != ''">
+                and prm_task.end_time &lt;= #{endTime}
+            </if>
+            <if test="memberId !=null and memberId != ''">
+                and prm_task.member_id=#{memberId}
+            </if>
+            <if test="taskUid !=null and taskUid != ''">
+                and find_in_set(#{taskUid},prm_task.task_uids)
+            </if>
+            <if test="taskStatus !=null and taskStatus != ''">
+                and prm_task.task_status=#{taskStatus}
+            </if>
+            <if test="priority !=null and priority != ''">
+                and prm_task.priority=#{priority}
+            </if>
+        </where>
+    </select>
+
 
 </mapper>

@@ -785,4 +785,28 @@ public interface TaskMapper extends BaseMapper<Task> {
 
 	List<Task> findTodayTask(@Param("projectId") String projectId, @Param("groupId") String groupId,@Param("startTime") long startTime,@Param("endTime") long endTime);
 
+    /**
+     * 根据任务名模糊搜索
+     * @param keyword
+     * @return
+     */
+    List<Task> searchByTaskName(@Param("keyword") String keyword,@Param("projectId") String projectId);
+
+	/**
+	 * 根据条件筛选任务
+	 * @param executor
+	 * @param tagId
+	 * @param startTime
+	 * @param endTime
+	 * @param memberId
+	 * @param taskUid
+	 * @param taskStatus
+	 * @param priority
+	 * @return
+	 */
+    List<Task> searchByExample(@Param("projectId")String projectId,@Param("executor") String executor,
+							   @Param("tagId") Integer tagId,
+							   @Param("startTime") Long startTime, @Param("endTime") Long endTime,
+							   @Param("memberId") String memberId, @Param("taskUid") String taskUid,
+							   @Param("taskStatus") Integer taskStatus,@Param("priority") String priority);
 }

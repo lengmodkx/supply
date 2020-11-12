@@ -21,8 +21,9 @@ public class RedissonConfig {
     @Value("${spring.redis.port}")
     private String port;
 
-    @Value("${spring.redis.password}")
-    private String password;
+    // todo 提交的时候记得改回来
+    /*@Value("${spring.redis.password}")
+    private String password;*/
 
     @Bean
     public RedissonClient getRedisson(){

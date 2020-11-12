@@ -8,6 +8,7 @@ import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.automation.constans.AutomationRuleConstans;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.entity.task.vo.ExecutorVo;
@@ -18,6 +19,7 @@ import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.file.FileService;
+import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskRemindRuleService;
@@ -100,6 +102,9 @@ public class TaskApi extends BaseController {
 
     @Resource
     private ProjectService projectService;
+
+    @Resource
+    private ProjectMemberService projectMemberService;
 
 
     private static final String ZERO = "0";
@@ -1389,6 +1394,7 @@ public class TaskApi extends BaseController {
     public JSONObject selectTaskByExample(@RequestParam Integer example,@RequestParam String groupId,@RequestParam String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
+
             List<Task>tasks=taskService.selectTaskByExample(example,groupId,projectId);
             jsonObject.put("result",1);
             jsonObject.put("data",tasks);
@@ -1398,6 +1404,50 @@ public class TaskApi extends BaseController {
         jsonObject.put("result",0);
         return jsonObject;
 
+    }
+
+    /**
+     * 根据条件筛选任务
+     * @param keyword 模糊搜索关键字
+     * @param projectId 项目id
+     * @param executor 执行者id
+     * @param tagId 标签id
+     * @param startTime 截止时间-开始时间
+     * @param endTime 截止时间-结束时间
+     * @param memberId 创建者id
+     * @param taskUid 参与者id
+     * @param taskStatus 是否完成 0未完成 1已完成
+     * @param priority 优先级 普通 紧急 非常紧急
+     * @return
+     */
+    @GetMapping("/searchTaskByExample")
+    public JSONObject searchTaskByExample(@RequestParam(value = "keyword",required = false) String keyword,
+                                          @RequestParam(value = "projectId") String projectId,
+                                          @RequestParam(value = "executor",required = false)String executor,
+                                          @RequestParam(value = "tagId",required = false)Integer tagId,
+                                          @RequestParam(value = "startTime",required = false)Long startTime,
+                                          @RequestParam(value = "endTime",required = false)Long endTime,
+                                          @RequestParam(value = "memberId",required = false)String memberId,
+                                          @RequestParam(value = "taskUid",required = false)String taskUid,
+                                          @RequestParam(value = "taskStatus",required = false)Integer taskStatus,
+                                          @RequestParam(value = "priority",required = false)String priority
+                                          ){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            String userId = ShiroAuthenticationManager.getUserId();
+            String groupId = projectMemberService.findDefaultGroup(projectId, userId);
+            Relation relation = new Relation();
+            relation.setParentId(groupId);
+            relation.setLable(1);
+
+            List<Task>list=taskService.searchTaskByExample(relation,keyword,projectId,executor,tagId,startTime,endTime,memberId,taskUid,taskStatus,priority);
+            jsonObject.put("result",1);
+            jsonObject.put("data",list);
+        } catch (Exception e) {
+            jsonObject.put("result",0);
+            e.printStackTrace();
+        }
+        return jsonObject;
     }
 
 

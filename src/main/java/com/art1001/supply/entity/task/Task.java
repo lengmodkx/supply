@@ -42,7 +42,7 @@ Task extends Model<Task> {
 	 */
 	private String projectId;
 
-
+	private Integer tagId;
 	/**
 	 * 任务名称
 	 */

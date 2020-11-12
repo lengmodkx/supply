@@ -77,6 +77,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -2245,6 +2246,65 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
                 r.setTaskList(Lists.newArrayList());
             }
         }));
+        return list;
+    }
+
+    /**
+     * 根据条件筛选任务
+     * @param keyword 模糊搜索关键字
+     * @param executor 执行者id
+     * @param tagId 标签id
+     * @param startTime 截止时间-开始时间
+     * @param endTime 截止时间-结束时间
+     * @param memberId 创建者id
+     * @param taskUid 参与者id
+     * @param taskStatus 是否完成 0未完成 1已完成
+     * @param priority 优先级 普通 紧急 非常紧急
+     * @return
+     */
+    @Override
+    public List<Task> searchTaskByExample(Relation relation,String keyword,String projectId, String executor, Integer tagId, Long startTime, Long endTime, String memberId, String taskUid, Integer taskStatus, String priority) {
+        List<Task>list=Lists.newArrayList();
+        List<Relation>task1=Lists.newArrayList();
+        List<Relation> taskMenu = relationService.findRelationAllList(relation);
+        if (StringUtils.isNotEmpty(keyword)) {
+            List<Task> tasks = taskMapper.searchByTaskName(keyword,projectId);
+            list=choiceByExample(tasks,executor,tagId,startTime,endTime,memberId,taskUid,taskStatus,priority);
+//            task1=choiceByExample1(taskMenu,keyword,executor,tagId,startTime,endTime,memberId,taskUid,taskStatus,priority);
+        }else{
+            list=taskMapper.searchByExample(projectId,executor,tagId,startTime,endTime,memberId,taskUid,taskStatus,priority);
+        }
+        return list;
+    }
+
+
+    private List<Task> choiceByExample(List<Task> list, String executor, Integer tagId, Long startTime, Long endTime, String memberId, String taskUid, Integer taskStatus, String priority) {
+        if (CollectionUtils.isNotEmpty(list)) {
+            if (StringUtils.isNotEmpty(executor)) {
+                list=list.stream().filter(r->r.getExecutor().equals(executor)).collect(Collectors.toList());
+            }
+            if (tagId!=null) {
+                list=list.stream().filter(r->r.getTagId().equals(tagId)).collect(Collectors.toList());
+            }
+            if (startTime!=null) {
+                list=list.stream().filter(f->f.getEndTime()!=null && f.getEndTime()>startTime).collect(Collectors.toList());
+            }
+            if (endTime!=null) {
+                list=list.stream().filter(f->f.getEndTime()!=null && f.getEndTime()<endTime).collect(Collectors.toList());
+            }
+            if (StringUtils.isNotEmpty(memberId)) {
+                list=list.stream().filter(r->r.getMemberId().equals(memberId)).collect(Collectors.toList());
+            }
+            if (StringUtils.isNotEmpty(taskUid)) {
+                list=list.stream().filter(f-> Arrays.asList(f.getTaskUIds()).contains(taskUid)).collect(Collectors.toList());
+            }
+            if (taskStatus!=null) {
+                list=list.stream().filter(r->r.getTaskStatus().equals(taskStatus)).collect(Collectors.toList());
+            }
+            if (StringUtils.isNotEmpty(priority)) {
+                list=list.stream().filter(r->r.getPriority().equals(priority)).collect(Collectors.toList());
+            }
+        }
         return list;
     }
 
