@@ -7,7 +7,6 @@ import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.communication.service.AuthTokenAPI;
 import com.art1001.supply.communication.service.IMUserService;
-import com.art1001.supply.communication.service.impl.EasemobAuthToken;
 import com.art1001.supply.entity.CodeMsg;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.user.UserEntity;
@@ -18,7 +17,8 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
-import com.art1001.supply.util.*;
+import com.art1001.supply.util.RedisUtil;
+import com.art1001.supply.util.RegexUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
 import com.art1001.supply.util.crypto.MD5;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -28,32 +28,26 @@ import com.google.common.collect.Lists;
 import io.swagger.client.model.RegisterUsers;
 import io.swagger.client.model.User;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
-import org.junit.Test;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 用户
@@ -166,7 +160,7 @@ public class UserApi {
         userEntity.setCredentialsSalt(user.getCredentialsSalt());
         try {
             //向第三方环信注册用户
-            registerImService(accountName);
+//            registerImService(accountName);
             // 保存用户注册信息
             userService.insert(userEntity, password);
             return Result.success();
