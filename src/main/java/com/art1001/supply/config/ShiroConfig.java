@@ -9,8 +9,6 @@ import com.art1001.supply.shiro.filter.*;
 
 import com.art1001.supply.shiro.service.ChainDefinitionService;
 import com.art1001.supply.shiro.service.impl.ChainDefinitionServiceImpl;
-import lombok.Data;
-import lombok.ToString;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
@@ -36,7 +34,6 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

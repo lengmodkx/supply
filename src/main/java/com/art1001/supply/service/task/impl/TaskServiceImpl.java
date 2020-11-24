@@ -87,6 +87,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * taskServiceImpl
@@ -2249,32 +2250,33 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         return list;
     }
 
-    /**
-     * 根据条件筛选任务
-     * @param keyword 模糊搜索关键字
-     * @param executor 执行者id
-     * @param tagId 标签id
-     * @param startTime 截止时间-开始时间
-     * @param endTime 截止时间-结束时间
-     * @param memberId 创建者id
-     * @param taskUid 参与者id
-     * @param taskStatus 是否完成 0未完成 1已完成
-     * @param priority 优先级 普通 紧急 非常紧急
-     * @return
-     */
     @Override
-    public List<Task> searchTaskByExample(Relation relation,String keyword,String projectId, String executor, Integer tagId, Long startTime, Long endTime, String memberId, String taskUid, Integer taskStatus, String priority) {
-        List<Task>list=Lists.newArrayList();
-        List<Relation>task1=Lists.newArrayList();
-        List<Relation> taskMenu = relationService.findRelationAllList(relation);
-        if (StringUtils.isNotEmpty(keyword)) {
-            List<Task> tasks = taskMapper.searchByTaskName(keyword,projectId);
-            list=choiceByExample(tasks,executor,tagId,startTime,endTime,memberId,taskUid,taskStatus,priority);
-//            task1=choiceByExample1(taskMenu,keyword,executor,tagId,startTime,endTime,memberId,taskUid,taskStatus,priority);
-        }else{
-            list=taskMapper.searchByExample(projectId,executor,tagId,startTime,endTime,memberId,taskUid,taskStatus,priority);
-        }
-        return list;
+    public List<Relation> searchTaskByExample(TaskTmp taskTmp) {
+
+
+
+        List<Relation> relations = relationService.list(new QueryWrapper<Relation>().eq("lable", 1).eq("groupId", taskTmp.getGroupId()).orderByAsc("order"));
+        relations.forEach(r->{
+            LambdaQueryWrapper<Task> wrapper = new LambdaQueryWrapper<Task>().eq(Task::getTaskMenuId,r.getRelationId());
+            wrapper.like(StringUtils.isNotEmpty(taskTmp.getKeyword()),Task::getTaskName,taskTmp.getKeyword());
+            wrapper.eq(StringUtils.isNotEmpty(taskTmp.getExecutor()),Task::getExecutor,taskTmp.getExecutor());
+            wrapper.eq(taskTmp.getStartTime()>0,Task::getStartTime,taskTmp.getStartTime());
+            wrapper.eq(taskTmp.getEndTime()>0,Task::getEndTime,taskTmp.getEndTime());
+            wrapper.eq(StringUtils.isNotEmpty(taskTmp.getMemberId()),Task::getMemberId,taskTmp.getMemberId());
+            wrapper.eq(taskTmp.getTaskStatus()!=null,Task::getTaskStatus,taskTmp.getTaskStatus());
+            List<Task> taskList = taskService.list(wrapper);
+
+            taskList = taskList.stream()
+                    .filter(task -> taskTmp.getPriority() != null && taskTmp.getPriority().contains(task.getPriority()))
+                    .filter(task -> taskTmp.getTagId() != null && tagRelationService.findTaskIds(taskTmp.getTagId()).contains(task.getTaskId()))
+                    .filter(task -> (taskTmp.getTaskUids() != null && task.getTaskUIds() != null) && taskTmp.getTaskUids().retainAll(Arrays.asList(task.getTaskUIds().split(","))))
+                    .collect(Collectors.toList());
+
+
+            r.setTaskList(taskList);
+
+        });
+        return relations;
     }
 
 

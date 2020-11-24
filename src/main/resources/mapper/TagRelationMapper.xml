@@ -36,6 +36,15 @@
 
 	</select>
 
+	<select id="findTaskIds" resultType="java.lang.String">
+		select task_id
+		from prm_tag_relation where tag_id in
+		<foreach collection="tagIds" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+
 	<delete id="deleteTagRelationById" parameterType="java.lang.String">
 		delete from
 		prm_tag_relation where id = #{id}

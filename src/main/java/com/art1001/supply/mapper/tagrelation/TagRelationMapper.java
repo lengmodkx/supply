@@ -77,4 +77,6 @@ public interface TagRelationMapper extends BaseMapper<TagRelation> {
 	 *
 	 * */
     List<TagRelation> findTagRelationByScheduleId(String id);
+
+	List<String> findTaskIds(List<Integer> tagIds);
 }

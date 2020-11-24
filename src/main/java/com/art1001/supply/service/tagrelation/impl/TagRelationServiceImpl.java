@@ -143,4 +143,9 @@ public class TagRelationServiceImpl extends ServiceImpl<TagRelationMapper,TagRel
 
 		return tagRelationMapper.findTagRelationByScheduleId(id);
 	}
+
+	@Override
+	public List<String> findTaskIds(List<Integer> tagIds) {
+		return tagRelationMapper.findTaskIds(tagIds);
+	}
 }

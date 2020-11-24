@@ -76,4 +76,6 @@ public interface TagRelationService extends IService<TagRelation> {
 	 * @return list
 	 */
 	List<TagRelation> findTagRelationByScheduleId(String id);
+
+	List<String> findTaskIds(List<Integer> tagIds);
 }

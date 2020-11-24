@@ -74,15 +74,4 @@ public class Result<T> implements Serializable {
         return new Result<>(msg);
     }
 
-    public int getResult() {
-        return result;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public T getData() {
-        return data;
-    }
 }
