@@ -8,7 +8,6 @@ import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.user.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
