@@ -2,10 +2,12 @@ package com.art1001.supply.service.user;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfo;
 import com.art1001.supply.entity.user.UserVO;
+import com.art1001.supply.entity.user.WorkBenchInfoVo;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -180,4 +182,12 @@ public interface UserService extends IService<UserEntity> {
 	 * @return
 	 */
 	Integer notBindPhone();
+
+	/**
+	 * 工作台信息
+	 * @param orgId
+	 * @param request
+	 * @return
+	 */
+    WorkBenchInfoVo workBenchInfo(String orgId, HttpServletRequest request);
 }

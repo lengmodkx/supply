@@ -8,15 +8,12 @@ import com.art1001.supply.aliyun.message.exception.CodeNotFoundException;
 import com.art1001.supply.application.assembler.WeChatUserInfoAssembler;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.communication.service.IMUserService;
-import com.art1001.supply.entity.CodeMsg;
-import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.organization.Organization;
-import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.partment.Partment;
-import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRole;
+import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -28,6 +25,8 @@ import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.role.ProRoleService;
+import com.art1001.supply.service.role.RoleService;
+import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.service.user.WechatAppIdInfoService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
@@ -38,8 +37,6 @@ import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Lists;
-import io.netty.handler.codec.compression.FastLzFrameEncoder;
 import io.swagger.client.model.RegisterUsers;
 import io.swagger.client.model.User;
 import lombok.extern.slf4j.Slf4j;
@@ -58,11 +55,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -100,6 +95,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     @Resource
     private PartmentService partmentService;
+
+    @Resource
+    private RoleUserService roleUserService;
+
+    @Resource
+    private RoleService roleService;
 
     @Override
     public List<UserEntity> queryListByPage(Map<String, Object> parameter) {
@@ -669,6 +670,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     public Integer notBindPhone() {
         userMapper.notBindPhone(ShiroAuthenticationManager.getUserId());
         return 1;
+    }
+
+    @Override
+    public WorkBenchInfoVo workBenchInfo(String orgId, HttpServletRequest request) {
+        WorkBenchInfoVo workBenchInfoVo = new WorkBenchInfoVo();
+        String userId = ShiroAuthenticationManager.getUserId();
+        Integer roleId = roleUserService.getUserOrgRoleId(userId, orgId);
+        Role byId = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleId));
+        workBenchInfoVo.setRoleName(byId.getRoleName());
+        workBenchInfoVo.setRoleKey(byId.getRoleKey());
+        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("user_id", ShiroAuthenticationManager.getUserId()));
+        workBenchInfoVo.setNickName(userEntity.getUserName());
+        workBenchInfoVo.setImage(userEntity.getImage());
+        workBenchInfoVo.setLoginTime(System.currentTimeMillis());
+        workBenchInfoVo.setLoginIp(IpUtil.getIpAddr(request));
+        return workBenchInfoVo;
     }
 
 
