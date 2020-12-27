@@ -128,14 +128,8 @@ public class Constants {
      */
     public static final String LOCAL_IP = "127.0.0.1";
 
-    /**
-     * 文章消息队列
-     */
-    public static final String SEND_MESSAGE_CHANNEL = "send_message_channel";
-    public static final String GET_MESSAGE_CHANNEL = "get_message_channel";
-    /**
-     * 用户关注队列
-     */
-    public static final String ATTENTION_CHANNEL = "attention_channel";
+    public static final String MEMBER_ID = "member_id:";
+
+
 
 }

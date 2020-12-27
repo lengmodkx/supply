@@ -36,5 +36,9 @@ public interface ArticleService extends IService<Article> {
      */
     Integer attentionUserStatus(String memberId, Integer type);
 
+    /**
+     * 获取文章列表
+     * @return
+     */
     List<Article> listArticle();
 }

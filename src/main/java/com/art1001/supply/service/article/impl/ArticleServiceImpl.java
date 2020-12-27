@@ -5,11 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.article.Article;
-import com.art1001.supply.listener.Redis2;
-import com.art1001.supply.listener.RedisReceiver;
 import com.art1001.supply.mapper.article.ArticleMapper;
 import com.art1001.supply.service.article.ArticleService;
-import com.art1001.supply.service.article.RedisService;
 import com.art1001.supply.service.article.UserAttentionService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.RedisUtil;
@@ -20,7 +17,10 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName articleServiceImpl
@@ -30,18 +30,13 @@ import java.util.List;
  */
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
-
-    @Resource
-    private RedisService redisService;
-
     @Resource
     private UserAttentionService userAttentionService;
 
     @Resource
     private RedisUtil redisUtil;
 
-    @Resource
-    private RedisReceiver redisReceiver;
+
 
 
     @Override
@@ -59,11 +54,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         article.setCreateTime(System.currentTimeMillis());
         article.setUpdateTime(System.currentTimeMillis());
         save(article);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("memberId", ShiroAuthenticationManager.getUserId());
-        jsonObject.put("articleId", article.getArticleId());
-        jsonObject.put("time", System.currentTimeMillis());
-        redisService.sendChannelMess(Constants.SEND_MESSAGE_CHANNEL, jsonObject);
         return 1;
     }
 
@@ -94,36 +84,45 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public Integer attentionUserStatus(String memberId, Integer type) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("feedMemberId", memberId);
-        jsonObject.put("type", type);
-        if (redisUtil.exists("feedMemberId:" + memberId)) {
-
-            redisUtil.remove("feedMemberId:" + memberId);
-
-            String s = redisUtil.get("feedMemberId:" + memberId);
-            List<String> parse = (List<String>) JSON.parse(s);
-            parse.add(ShiroAuthenticationManager.getUserId());
-            JSONObject json = JSONObject.parseObject(parse.toString());
-            redisUtil.set("feedMemberId:" + memberId,json );
-        } else {
-            List<String> set = Lists.newArrayList();
-            set.add(ShiroAuthenticationManager.getUserId());
-            JSONArray objects = JSON.parseArray(set.toString());
-            redisUtil.set("feedMemberId:" + memberId,objects );
+        if (type.equals(Constants.B_ONE)) {
+            if (redisUtil.exists(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId())) {
+                String s = redisUtil.get(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
+                List<String> parse = (List<String>) JSON.parse(s);
+                parse.add(memberId);
+                String str= JSONObject.toJSONString(parse);
+                redisUtil.remove(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
+                redisUtil.set(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId(),str );
+            } else {
+                List<String> list = Lists.newArrayList();
+                list.add(memberId);
+                String str= JSONObject.toJSONString(list);
+                redisUtil.set(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId(),str );
+            }
+        }else {
+            if (redisUtil.exists(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId())) {
+                String s = redisUtil.get(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
+                List<String> parse = (List<String>) JSON.parse(s);
+                List<String> collect = parse.stream().filter(f -> !f.equals(memberId)).collect(Collectors.toList());
+                String str= JSONObject.toJSONString(collect);
+                redisUtil.remove(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
+                redisUtil.set(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId(),str );
+            }
         }
-
-        redisService.sendChannelMess(Constants.ATTENTION_CHANNEL, jsonObject);
         return 1;
     }
 
-    @Resource
-    private Redis2 redis2;
-
     @Override
     public List<Article> listArticle() {
-        String message = redis2.getMsg();
-        return list(new QueryWrapper<Article>().eq("article_id", message));
+        List<Article> list=Lists.newArrayList();
+        if (redisUtil.exists(Constants.MEMBER_ID+ ShiroAuthenticationManager.getUserId())) {
+            String s = redisUtil.get(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
+            List<String> parse = (List<String>) JSON.parse(s);
+            list= list(new QueryWrapper<Article>().in("member_id",parse));
+        }else {
+            list = list(new QueryWrapper<>());
+        }
+        Optional.ofNullable(list).ifPresent(r->r.sort(Comparator.comparing(Article::getCreateTime)));
+        return list;
     }
 
 
