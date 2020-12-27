@@ -84,7 +84,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public Integer attentionUserStatus(String memberId, Integer type) {
+        // 关注
         if (type.equals(Constants.B_ONE)) {
+            // redis中是否存在我关注的列表
             if (redisUtil.exists(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId())) {
                 String s = redisUtil.get(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
                 List<String> parse = (List<String>) JSON.parse(s);
@@ -98,6 +100,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 String str= JSONObject.toJSONString(list);
                 redisUtil.set(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId(),str );
             }
+         // 取关
         }else {
             if (redisUtil.exists(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId())) {
                 String s = redisUtil.get(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
@@ -114,13 +117,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public List<Article> listArticle() {
         List<Article> list=Lists.newArrayList();
+        // redis有就获取我关注的
         if (redisUtil.exists(Constants.MEMBER_ID+ ShiroAuthenticationManager.getUserId())) {
             String s = redisUtil.get(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
             List<String> parse = (List<String>) JSON.parse(s);
             list= list(new QueryWrapper<Article>().in("member_id",parse));
+        // 没有就获取所有
         }else {
             list = list(new QueryWrapper<>());
         }
+        // 根据创建时间排序
         Optional.ofNullable(list).ifPresent(r->r.sort(Comparator.comparing(Article::getCreateTime)));
         return list;
     }
