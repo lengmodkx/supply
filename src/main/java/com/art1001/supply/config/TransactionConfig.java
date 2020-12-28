@@ -1,5 +1,6 @@
 package com.art1001.supply.config;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -18,6 +19,7 @@ public class TransactionConfig implements TransactionManagementConfigurer {
     @Resource
     private DataSource dataSource;
 
+    @NotNull
     @Bean(name = "transactionManager")
     @Override
     public PlatformTransactionManager annotationDrivenTransactionManager() {

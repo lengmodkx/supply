@@ -12,8 +12,6 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.entity.task.TaskTmp;
-import com.art1001.supply.entity.task.vo.ExecutorVo;
-import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.exception.AjaxException;
@@ -32,31 +30,21 @@ import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.wechat.message.service.WeChatAppMessageService;
 import com.art1001.supply.wechat.message.service.WeChatAppMessageTemplateDataBuildService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
-import org.quartz.SchedulerException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.rmi.activation.ActivationGroup_Stub;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 任务增删改查，复制，移动
@@ -560,9 +548,6 @@ public class TaskApi extends BaseController {
             taskService.removeRemind(id);
             jsonObject.put("msg", "移除成功!");
             jsonObject.put("result", 1);
-        } catch (SchedulerException e) {
-            log.error(e.getMessage(), e);
-            throw new AjaxException(e);
         } catch (Exception e) {
             log.error("系统异常,提醒规则移除失败!", e);
             throw new AjaxException("系统异常,提醒规则移除失败!", e);

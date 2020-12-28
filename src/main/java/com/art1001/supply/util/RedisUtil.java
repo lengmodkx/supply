@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -26,6 +25,7 @@ public class RedisUtil {
     @SuppressWarnings("rawtypes")
     @Autowired
     private RedisTemplate redisTemplate;
+
     /**
      * 批量删除对应的value
      *
@@ -284,4 +284,41 @@ public class RedisUtil {
         return set;
     }
 
+    /**
+     * 存储zset
+     * @param key
+     * @param value
+     * @param score 存储时间戳
+     */
+    public void zSet(String key,Object value,double score){
+        try{
+            redisTemplate.opsForZSet().add(key,value,score);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public Long zRank(String key,Object value){
+        return redisTemplate.opsForZSet().rank(key,value);
+    }
+
+    public Long zRem(String key,Object value){
+        return redisTemplate.opsForZSet().remove(key,value);
+    }
+
+    public Set<String> zrevrange(String key, long start, long end){
+        return redisTemplate.opsForZSet().reverseRange(key,start,end);
+    }
+
+    public Long zinterstore(String key, String otherKey, String destKey){
+        return redisTemplate.opsForZSet().intersectAndStore(key,otherKey,destKey);
+    }
+
+    public Set<String> zrange(String key, long start, long end){
+        return redisTemplate.opsForZSet().range(key,start,end);
+    }
+
+    public void del(String key){
+        redisTemplate.opsForZSet().removeRange(key,0,-1);
+    }
 }

@@ -2,15 +2,9 @@
  *
  */
 package com.art1001.supply.listener;
-
-import com.art1001.supply.entity.resource.ProResources;
-import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.service.resource.ResourceService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.RedisUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.apache.commons.collections.CollectionUtils;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
@@ -23,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
