@@ -89,7 +89,7 @@ public class Project extends Model<Project> {
     private String func;
 
     /**
-     * 项目创建的名称
+     * 项目创建人的名称
      */
     @TableField(exist = false)
     private String memberName;

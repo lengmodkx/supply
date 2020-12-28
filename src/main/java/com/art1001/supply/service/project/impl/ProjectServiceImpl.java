@@ -22,6 +22,7 @@ import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.ProjectMapper;
+import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
@@ -83,15 +84,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     private TaskService taskService;
 
     @Resource
-    private ShareService shareService;
-
-    @Resource
-    private ScheduleService scheduleService;
-
-    @Resource
-    private TagService tagService;
-
-    @Resource
     private ProResourcesService proResourcesService;
 
     @Resource
@@ -119,38 +111,19 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     private PartmentMemberService partmentMemberService;
 
     @Resource
-    private PartmentService partmentService;
-
-    @Resource
-    private OrganizationService organizationService;
-
-    @Resource
     private ProjectService projectService;
 
     @Resource
     private ProjectSimpleInfoService projectSimpleInfoService;
 
     @Resource
-    private UserService userService;
+    private UserMapper userMapper;
 
     @Resource
     private RoleService roleService;
 
     @Resource
     private RoleUserService roleUserService;
-
-    private static final String ZERO = "0";
-
-    /**
-     * 查询分页project数据
-     *
-     * @param pager 分页对象
-     * @return
-     */
-    @Override
-    public List<Project> findProjectPagerList(Pager pager) {
-        return projectMapper.findProjectPagerList(pager);
-    }
 
     /**
      * 通过projectId获取单条project数据
@@ -160,13 +133,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      */
     @Override
     public Project findProjectByProjectId(String projectId) {
-        Project project1 = projectMapper.findProjectByProjectId(projectId);
-        Optional.ofNullable(project1).ifPresent(project -> {
-            UserEntity byId = userService.findById(project.getMemberId());
-            project.setImage(byId.getImage());
-            project.setMemberName(byId.getUserName());
+        Project project = getOne(new QueryWrapper<Project>().eq("project_id",projectId).eq("project_del",0));
+        Optional.ofNullable(project).ifPresent(p -> {
+            UserEntity userEntity = userMapper.selectById(p.getMemberId());
+            p.setImage(userEntity.getImage());
+            p.setMemberName(userEntity.getUserName());
         });
-        return project1;
+        return project;
     }
 
     /**
@@ -176,7 +149,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      */
     @Override
     public void deleteProjectByProjectId(String projectId) {
-        projectMapper.deleteProjectByProjectId(projectId);
+        projectMapper.deleteById(projectId);
     }
 
     /**
@@ -186,28 +159,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     public void updateProject(Project project) {
 //        projectMapper.updateById(project);
         projectMapper.updateProject(project);
-    }
-
-    /**
-     * 修改project数据
-     *
-     * @param project
-     */
-/*
-	@Override
-	public void updateProject(Project project){
-		projectMapper.updateProject(project);
-	}
-*/
-
-    /**
-     * 获取所有project数据
-     *
-     * @return
-     */
-    @Override
-    public List<Project> findProjectAllList() {
-        return projectMapper.findProjectAllList();
     }
 
     /**
@@ -293,39 +244,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     }
 
     /**
-     * 查询出当前用户所执行的任务的 任务信息 和 项目信息
-     *
-     * @param id 当前用户id
-     * @return
-     */
-    @Override
-    public List<Project> findProjectAndTaskByExecutorId(String id) {
-        return projectMapper.findProjectAndTaskByExecutorId(id);
-    }
-
-    /**
-     * 查询出当前用户所参与的任务的 任务信息 和 项目信息
-     *
-     * @param id 当前用户id
-     * @return
-     */
-    @Override
-    public List<Project> findProjectAndTaskByUserId(String id) {
-        return projectMapper.findProjectAndTaskByUserId(id);
-    }
-
-    /**
-     * 查询出当前用户所创建的任务的 任务信息 和 项目信息
-     *
-     * @param id 当前用户id
-     * @return
-     */
-    @Override
-    public List<Project> findProjectAndTaskByCreateMember(String id) {
-        return projectMapper.findProjectAndTaskByCreateMember(id);
-    }
-
-    /**
      * 查询出用户参与的所有项目信息
      *
      * @param uId 用户id
@@ -337,18 +255,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     }
 
     /**
-     * 数据:查询出当前用户收藏的所有项目
-     * 功能:添加关联页面展示 星标项目
-     *
-     * @param uId 用户id
-     * @return 用户收藏的所有项目信息
-     */
-    @Override
-    public List<Project> listProjectByUserCollect(String uId) {
-        return projectMapper.listProjectByUserCollect(uId);
-    }
-
-    /**
      * 根据用户id查询所有项目，包含我创建的，我参与的，星标项目，回收站的项目
      *
      * @param userId 用户id
@@ -357,40 +263,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Override
     public List<Project> findProjectByUserId(String userId) {
         return projectMapper.findProjectByUserId(userId);
-    }
-
-    /**
-     * 用于展示回收站的数据
-     *
-     * @param projectId 项目id
-     * @param type      选项卡的类型
-     */
-    @Override
-    public List<RecycleBinVO> recycleBinInfo(String projectId, String type) {
-
-        List<RecycleBinVO> recycleBin = new ArrayList<RecycleBinVO>();
-        if (BindingConstants.BINDING_TASK_NAME.equals(type)) {
-            recycleBin = taskService.findRecycleBin(projectId);
-        }
-        if (BindingConstants.BINDING_FILE_NAME.equals(type)) {
-            recycleBin = fileService.findRecycleBin(projectId, type);
-        }
-        if (BindingConstants.BINDING_SHARE_NAME.equals(type)) {
-            recycleBin = shareService.findRecycleBin(projectId);
-        }
-        if (BindingConstants.BINDING_SCHEDULE_NAME.equals(type)) {
-            recycleBin = scheduleService.findRecycleBin(projectId);
-        }
-        if (BindingConstants.BINDING_TAG_NAME.equals(type)) {
-            recycleBin = tagService.findRecycleBin(projectId);
-        }
-        if (BindingConstants.TASK_GROUP.equals(type)) {
-            recycleBin = relationService.findRecycleBin(projectId);
-        }
-        if (BindingConstants.FOLDER.equals(type)) {
-            recycleBin = fileService.findRecycleBin(projectId, type);
-        }
-        return recycleBin;
     }
 
     @Override
@@ -580,11 +452,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         return !byId.getParentId().equals(Constants.ZERO);
     }
 
-    @Override
-    public void updateAllProject(String userId, String id) {
-        projectMapper.updateAllProject(userId, id);
-    }
-
     /**
      * @Author: 邓凯欣
      * @Email：dengkaixin@art1001.com
@@ -745,7 +612,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         Project project = projectService.getById(projectId);
         int orgExist = organizationMemberService.findOrgMemberIsExist(project.getOrganizationId(), ShiroAuthenticationManager.getUserId());
         if (orgExist == 0) {
-            UserEntity byId = userService.findById(memberId);
+            UserEntity byId = userMapper.selectById(memberId);
             organizationMemberService.saveOrganizationMember2(project.getOrganizationId(), byId);
 
         }

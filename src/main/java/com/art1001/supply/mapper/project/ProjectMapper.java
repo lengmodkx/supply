@@ -1,6 +1,5 @@
 package com.art1001.supply.mapper.project;
 
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -15,21 +14,7 @@ import java.util.List;
 @Mapper
 public interface ProjectMapper extends BaseMapper<Project> {
 
-	/**
-	 * 查询分页project数据
-	 * 
-	 * @param pager 分页对象
-	 * @return
-	 */
-	List<Project> findProjectPagerList(Pager pager);
 
-	/**
-	 * 通过projectId获取单条project数据
-	 * 
-	 * @param projectId
-	 * @return
-	 */
-	Project findProjectByProjectId(String projectId);
 
 	/**
 	 * 通过projectId删除project数据

@@ -87,21 +87,6 @@
 		</where>
 	</sql>
 
-	<select id="findProjectPagerList" resultMap="BaseResultMap"
-		parameterType="com.art1001.supply.entity.base.Pager">
-
-		select <include refid="Base_Column_List" /> from prm_project
-		<include refid="whereStatement" />
-
-		<if test="orderBy == 0">
-			order by project_id desc
-		</if>
-		<if test="orderBy == 1">
-			order by project_id asc
-		</if>
-
-	</select>
-
 	<select id="findProjectAllList" resultMap="BaseResultMap"
 		parameterType="com.art1001.supply.entity.project.Project">
 		SELECT
@@ -113,15 +98,6 @@
 		<if test="orderBy == 1">
 			order by project_id asc
 		</if>
-	</select>
-
-	<select id="findProjectByProjectId" resultMap="BaseResultMap" parameterType="java.lang.String">
-
-		select
-		<include refid="Base_Column_List" />
-		from prm_project
-		where project_id = #{projectId}
-        and project_del = 0
 	</select>
 
 	<delete id="deleteProjectByProjectId" parameterType="java.lang.String">

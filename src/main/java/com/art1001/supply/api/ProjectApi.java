@@ -215,7 +215,6 @@ public class ProjectApi extends BaseController {
         try {
             Project project = new Project();
             project.setProjectId(projectId);
-            project.setProjectId(projectId);
             project.setProjectName(projectName);
             project.setProjectDes(projectDes);
             project.setIsPublic(isPublic);
