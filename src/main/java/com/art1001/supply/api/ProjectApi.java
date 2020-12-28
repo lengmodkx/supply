@@ -9,23 +9,17 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.TimeMap;
-import com.art1001.supply.entity.organization.OrganizationMemberInfo;
-import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.project.*;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.vo.MenuVo;
-import com.art1001.supply.entity.task.vo.TaskDynamicVO;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentService;
-import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.project.ProjectSimpleInfoService;
@@ -35,32 +29,20 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.DateUtil;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.beans.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 项目
@@ -103,12 +85,6 @@ public class ProjectApi extends BaseController {
     private ProResourcesService proResourcesService;
 
     @Resource
-    private UserService userService;
-
-    @Resource
-    private OrganizationMemberInfoService organizationMemberInfoService;
-
-    @Resource
     private OrganizationService organizationService;
 
     @Resource
@@ -126,7 +102,6 @@ public class ProjectApi extends BaseController {
      * @param orgId       企业id
      * @return 是否成功
      */
-//    @RequiresPermissions("create:project")
     @PostMapping
     public JSONObject createProject(@RequestParam(value = "orgId") String orgId,
                                     @RequestParam(value = "projectName") String projectName,
@@ -155,24 +130,6 @@ public class ProjectApi extends BaseController {
         project.setEndTime(endTime);
         project.setMemberId(ShiroAuthenticationManager.getUserId());
         projectService.saveProject(project);
-
-        //新修改  创建企业时将创建者的信息放入到企业成员详情信息表
-       /* String userId = ShiroAuthenticationManager.getUserId();
-        UserEntity user = userService.findById(userId);
-        OrganizationMemberInfo memberInfo = new OrganizationMemberInfo();
-        memberInfo.setId(IdGen.uuid());
-        memberInfo.setMemberLabel("拥有者");
-        memberInfo.setOrganizationId(orgId);
-        memberInfo.setPhone(user.getAccountName());
-        memberInfo.setUserName(user.getUserName());
-        memberInfo.setMemberId(userId);
-        memberInfo.setMemberEmail(user.getEmail());
-        memberInfo.setJob(user.getJob());
-        memberInfo.setProjectId(project.getProjectId());
-        memberInfo.setImage(user.getImage());
-        memberInfo.setCreateTime(String.valueOf(System.currentTimeMillis()));
-        memberInfo.setUpdateTime(String.valueOf(System.currentTimeMillis()));
-        organizationMemberInfoService.save(memberInfo);*/
 
         //写资源表
         object.put("result", 1);
@@ -297,7 +254,6 @@ public class ProjectApi extends BaseController {
      * @param projectId 项目id
      * @return
      */
-//    @RequiresPermissions("delete:project")
 //    @Push(value = PushType.D12,type = 1)
     @DeleteMapping("/{projectId}")
     public JSONObject deleteProject(@PathVariable String projectId) {
