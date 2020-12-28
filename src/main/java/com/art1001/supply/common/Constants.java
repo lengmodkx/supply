@@ -122,4 +122,14 @@ public class Constants {
      * 恢复的动作标识
      */
     public static final String RECOVERY = "recovery";
+
+    /**
+     * 本地ip
+     */
+    public static final String LOCAL_IP = "127.0.0.1";
+
+    public static final String MEMBER_ID = "member_id:";
+
+
+
 }

@@ -12,6 +12,7 @@ import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfo;
 import com.art1001.supply.entity.user.WeChatLoginUtils;
+import com.art1001.supply.entity.user.WorkBenchInfoVo;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.user.UserService;
@@ -713,6 +714,29 @@ public class UserApi {
        return imUserService.addFriendSingle(accountName,buddyAccountName);
     }
 
+
+    /**
+     * 工作台信息
+     * @param orgId
+     * @param request
+     * @return
+     */
+    @GetMapping("/workBenchInfo")
+    public JSONObject workBenchInfo(@RequestParam(value = "orgId") String orgId,
+                                    HttpServletRequest request){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            WorkBenchInfoVo workBenchInfoVo=userService.workBenchInfo(orgId,request);
+            jsonObject.put("result",1);
+            jsonObject.put("data",workBenchInfoVo);
+        } catch (Exception e) {
+            jsonObject.put("result",0);
+            log.error("查询失败");
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+
+    }
 
 
 }
