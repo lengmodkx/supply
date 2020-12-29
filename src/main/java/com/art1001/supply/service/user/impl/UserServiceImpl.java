@@ -102,6 +102,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Resource
     private RoleService roleService;
 
+    @Resource
+    private FollowUtil followUtil;
+
     @Override
     public List<UserEntity> queryListByPage(Map<String, Object> parameter) {
         return null;
@@ -682,9 +685,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         workBenchInfoVo.setRoleKey(byId.getRoleKey());
         UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("user_id", ShiroAuthenticationManager.getUserId()));
         workBenchInfoVo.setNickName(userEntity.getUserName());
+        workBenchInfoVo.setMemberId(userId);
         workBenchInfoVo.setImage(userEntity.getImage());
         workBenchInfoVo.setLoginTime(System.currentTimeMillis());
         workBenchInfoVo.setLoginIp(IpUtil.getIpAddr(request));
+        workBenchInfoVo.setSignature(userEntity.getSignature());
+        Set<String> fans = followUtil.findFans(userId);
+        if (CollectionUtils.isNotEmpty(fans)) {
+            workBenchInfoVo.setFansCount(fans.size());
+        }else {
+            workBenchInfoVo.setFansCount(0);
+        }
+        Set<String> follwings = followUtil.findFollwings(userId);
+        if (CollectionUtils.isNotEmpty(follwings)) {
+            workBenchInfoVo.setFollowCount(follwings.size());
+        }else {
+            workBenchInfoVo.setFollowCount(0);
+        }
         return workBenchInfoVo;
     }
 

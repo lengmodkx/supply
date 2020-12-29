@@ -52,7 +52,7 @@ public class ArticleClassApi {
     }
 
     /**
-     * 保存文章分类
+     * 编辑文章分类
      * @return
      */
     @PostMapping("/edit")

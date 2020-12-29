@@ -57,6 +57,11 @@ public class RedisUtil {
         }
     }
 
+    public void saveSet(final String key,final Set<String> sets){
+        redisTemplate.opsForSet().add(key,sets);
+    }
+
+
     /**
      * 判断缓存中是否有对应的value
      *

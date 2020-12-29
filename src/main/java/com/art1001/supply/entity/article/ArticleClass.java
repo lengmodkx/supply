@@ -1,6 +1,8 @@
 package com.art1001.supply.entity.article;
 
 import com.art1001.supply.util.LongToDeteSerializer;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -26,7 +28,8 @@ public class ArticleClass extends Model<ArticleClass>{
     /**
       * 索引ID
       */
-    private String acId;
+    @TableId(value = "ac_id",type = IdType.AUTO)
+    private Integer acId;
 
     /**
       * 分类标识码

@@ -131,5 +131,10 @@ public class Constants {
     public static final String MEMBER_ID = "member_id:";
 
 
+    public static final String FOLLOWING = "FOLLOWING_";
+    public static final String FANS = "FANS_";
+    public static final String COMMON_KEY = "COMMON_FOLLOWING";
+
+
 
 }

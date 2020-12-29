@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.article.ArticleMapper">
+
+    <update id="editArticle" parameterType="com.art1001.supply.entity.article.Article">
+        update prm_article
+        <set>
+            <if test="coverShow !=null and coverShow !=''">
+                cover_show=#{coverShow},
+            </if>
+            <if test="coverImages != null and coverImages !=''">
+                cover_images=#{coverImages},
+            </if>
+            <if test="articleTitle != null and articleTitle !=''">
+                article_title=#{articleTitle},
+            </if>
+            <if test="articleContent != null and articleContent !=''">
+                article_content=#{articleContent},
+            </if>
+            <if test="headlineContent != null and headlineContent !=''">
+                headline_content=#{headlineContent},
+            </if>
+            <if test="headlineImages != null and headlineImages !=''">
+                headline_images=#{headlineImages}
+            </if>
+            <if test="videoName != null and videoName !=''">
+                video_name=#{videoName},
+            </if>
+            <if test="videoAddress != null and videoAddress !=''">
+                video_address=#{videoAddress},
+            </if>
+            <if test="videoCover != null and videoCover !=''">
+                video_cover=#{videoCover},
+            </if>
+            <if test="updateTime != null and updateTime !=''">
+                update_time=#{updateTime}
+            </if>
+        </set>
+        where article_id=#{articleId}
+    </update>
+</mapper>
