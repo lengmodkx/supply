@@ -8,6 +8,7 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserVO;
 import com.art1001.supply.mapper.organization.InvitationLinkMapper;
+import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.organization.InvitationLinkService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
@@ -50,7 +51,7 @@ public class InvitationLinkServiceImpl extends ServiceImpl<InvitationLinkMapper,
     private InvitationLinkMapper invitationLinkMapper;
 
     @Resource
-    private OrganizationMemberService organizationMemberService;
+    private OrganizationMemberMapper organizationMemberMapper;
 
     @Resource
     private ShortCodeUtils shortCodeUtils;
@@ -101,7 +102,7 @@ public class InvitationLinkServiceImpl extends ServiceImpl<InvitationLinkMapper,
             inviteVO.setProjectId(projectId);
             inviteVO.setOrganizationId(organization_id);
         }
-        List<UserEntity> userList = organizationMemberService.getUserList(orgId);
+        List<UserEntity> userList = organizationMemberMapper.getUserList(orgId);
         this.save(inviteVO);
 
         LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(twoDayLater), ZoneId.systemDefault());

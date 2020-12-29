@@ -8,15 +8,13 @@ import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.file.*;
 import com.art1001.supply.entity.log.Log;
-import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.enums.TaskLogFunction;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.file.FileMapper;
-import com.art1001.supply.mapper.tagrelation.TagRelationMapper;
+import com.art1001.supply.mapper.file.FileVersionMapper;
 import com.art1001.supply.service.file.FileEsService;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.file.FileVersionService;
 import com.art1001.supply.service.file.MemberDownloadService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.user.UserService;
@@ -27,23 +25,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.PageHelper;
-import com.google.common.collect.Lists;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-/*import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;*/
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +47,6 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
@@ -76,25 +65,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     private FileMapper fileMapper;
 
     @Resource
-    private FileService fileService;
-
-    @Resource
-    private FileVersionService fileVersionService;
+    private FileVersionMapper fileVersionMapper;
 
     @Resource
     private UserService userService;
 
     @Resource
     private LogService logService;
-
-    @Resource
-    private TagRelationMapper tagRelationMapper;
-
-    /**
-     * ElasticSearch 查询接口
-     */
-//    @Autowired
-//    private FileRepository fileRepository
 
     @Resource
     private MemberDownloadService memberDownloadService;
@@ -232,7 +209,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         fileEsService.deleteFile(fileId);
 //        fileRepository.deleteById(fileId);
         //删除文件版本信息
-        fileVersionService.remove(new QueryWrapper<FileVersion>().eq("file_id", fileId));
+        fileVersionMapper.delete(new QueryWrapper<FileVersion>().eq("file_id", fileId));
     }
 
     @Override
@@ -245,7 +222,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         fileVersion.setFileId(file.getFileId());
         fileVersion.setIsMaster(1);
         fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
-        fileVersionService.save(fileVersion);
+        fileVersionMapper.insert(fileVersion);
         fileEsService.saveFile(file);
 //        fileRepository.save(file);
         //写入日志
@@ -274,7 +251,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public void uploadFile(String projectId, String fileId, MultipartFile multipartFile) {
         String userId = ShiroAuthenticationManager.getUserId();
-        File originFile = fileService.getOne(new QueryWrapper<File>().eq("file_id", fileId));
+        File originFile = getOne(new QueryWrapper<File>().eq("file_id", fileId));
         UserEntity userEntity = userService.findById(userId);
         // 得到文件名
         String originalFilename = multipartFile.getOriginalFilename();
@@ -301,8 +278,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         file.setSize(FileUtils.convertFileSize(contentLength));
         file.setFileUids(originFile.getFileUids());
         file.setLevel(originFile.getLevel());
-        fileService.save(file);
-
+        save(file);
         // 修改文件版本
         FileVersion fileVersion = new FileVersion();
         fileVersion.setFileId(file.getFileId());
@@ -311,7 +287,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String format = simpleDateFormat.format(time);
         fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
-        fileVersionService.save(fileVersion);
+        fileVersionMapper.insert(fileVersion);
     }
 
 
@@ -370,7 +346,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         modelFile.setFileName(filename);
         //查询出当前文件夹的level
         if (StringUtils.isNotEmpty(parentId)) {
-            File file = fileService.getOne(new QueryWrapper<File>().eq("file_id", parentId));
+            File file = getOne(new QueryWrapper<File>().eq("file_id", parentId));
             modelFile.setLevel(file.getLevel() + 1);
             modelFile.setProjectId(file.getProjectId());
         }
@@ -387,7 +363,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             modelFile.setPublicId(publicId);
             modelFile.setPublicLable(1);
         }
-        fileService.save(modelFile);
+        save(modelFile);
 //        fileRepository.save(modelFile);
         System.out.println(modelFile.getFileName() + " 文件ES上传成功");
         //版本历史更新
@@ -395,7 +371,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         fileVersion.setFileId(modelFile.getFileId());
         fileVersion.setIsMaster(1);
         fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
-        fileVersionService.save(fileVersion);
+        fileVersionMapper.insert(fileVersion);
         return modelFile;
     }
 
@@ -467,7 +443,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     public List<File> findChildFile(String parentId, Integer orderType) {
         String userId = ShiroAuthenticationManager.getUserId();
         List<File> childFile = new ArrayList<>();//fileMapper.findChildFile(parentId,1,9999);
-        if (fileService.isRootFolder(parentId)) {
+        if (isRootFolder(parentId)) {
             File myFolder = this.getMyFolder(ShiroAuthenticationManager.getUserId());
             if (ObjectsUtil.isNotEmpty(myFolder)) {
                 childFile.add(myFolder);
@@ -598,7 +574,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             fileVersion.setInfo(userEntity.getUserName() + " 将文件移动到了 " + file.getFileName());
         }
 
-        fileVersionService.save(fileVersion);
+        fileVersionMapper.insert(fileVersion);
     }
 
 
@@ -655,7 +631,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public void addAndRemoveFileJoin(String fileId, String newJoinId) {
         //查询出当前文件中的 参与者id
-        String joinId = fileService.findJoinId(fileId);
+        String joinId = findJoinId(fileId);
 
         //log日志
         StringBuilder logContent = new StringBuilder();
@@ -778,12 +754,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     public List<File> findProjectFile(String projectId, String fileId) {
         List<File> fileList = new ArrayList<>();
         if ("0".equals(fileId)) {
-            fileList = fileService.findChildFile(fileMapper.selectParentId(projectId), 1);
+            fileList = findChildFile(fileMapper.selectParentId(projectId), 1);
         } else if (PUBLIC_FILE_NAME.equals(fileMapper.findFileNameById(fileId))) {
             //如果用该文件夹名称是 公共模型库  则去公共文件表中查询数据
-            fileList = fileService.findPublicFile(fileService.findFileId());
+            fileList = findPublicFile(findFileId());
         } else {
-            fileList = fileService.findPublicFile(fileId);
+            fileList = findPublicFile(fileId);
         }
         return fileList;
     }
@@ -821,7 +797,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 //文件的层级
                 if (StringUtils.isNotEmpty(parentId)) {
                     //查询出当前文件夹的level
-                    int parentLevel = fileService.getOne(new QueryWrapper<File>().select("level").eq("file_id", parentId)).getLevel();
+                    int parentLevel = getOne(new QueryWrapper<File>().select("level").eq("file_id", parentId)).getLevel();
                     myFile.setLevel(parentLevel + 1);
                     myFile.setParentId(parentId);
                 }
@@ -846,10 +822,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 fileVersion.setFileId(myFile.getFileId());
                 fileVersion.setIsMaster(1);
                 fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
-                versionList.add(fileVersion);
+                fileVersionMapper.insert(fileVersion);
             }
             saveBatch(fileList);
-            fileVersionService.saveBatch(versionList);
+
         }
     }
 
@@ -1020,7 +996,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      */
     @Override
     public List<File> getBindInfo(String id) {
-        return fileService.list(new QueryWrapper<File>().select("file_id fileId", "file_name fileName", "ext ext", "catalog catalog").eq("parent_id", id).eq("file_del", 0));
+        return list(new QueryWrapper<File>().select("file_id fileId", "file_name fileName", "ext ext", "catalog catalog").eq("parent_id", id).eq("file_del", 0));
     }
 
     /**
@@ -1135,7 +1111,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      */
     @Override
     public String getFileUrl(String fileId) {
-        return fileService.getOne(new QueryWrapper<File>().select("file_url").eq("file_id", fileId)).getFileUrl();
+        return getOne(new QueryWrapper<File>().select("file_url").eq("file_id", fileId)).getFileUrl();
     }
 
     @Override
@@ -1245,7 +1221,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     public boolean isRootFolder(String fileId) {
-        File byId = fileService.getById(fileId);
+        File byId = getById(fileId);
         if (byId.getLevel() == 0) {
             return true;
         }
@@ -1474,11 +1450,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     public void ids(List<String> ids, String id) {
         LambdaQueryWrapper<File> a = new QueryWrapper<File>().lambda().eq(File::getParentId, id);
-        List<File> list = fileService.list(a);
+        List<File> list = list(a);
         list.forEach(f -> {
             ids.add(f.getFileId());
             LambdaQueryWrapper<File> subCount = new QueryWrapper<File>().lambda().eq(File::getParentId, f.getFileId());
-            int count = fileService.count(subCount);
+            int count = count(subCount);
             if (count > 0) {
                 this.ids(ids, f.getFileId());
             }
@@ -1558,7 +1534,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     private void compress(File folder, ZipOutputStream out, String dir) throws IOException {
 
-        List<File> files = fileService.list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()));
+        List<File> files = list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()));
         if (files != null && files.size() > 0) {
 
 

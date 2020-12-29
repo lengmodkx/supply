@@ -4,9 +4,9 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.log.LogExportRecord;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.log.LogExportRecordMapper;
+import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.log.LogExportRecordService;
 import com.art1001.supply.service.log.LogService;
-import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
@@ -14,12 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @ClassName LogExportRecordServiceImpl
@@ -34,7 +30,7 @@ public class LogExportRecordServiceImpl extends ServiceImpl<LogExportRecordMappe
     private LogExportRecordMapper logExportRecordMapper;
 
     @Resource
-    private UserService userService;
+    private UserMapper userMapper;
 
     @Resource
     private LogService logService;
@@ -69,11 +65,11 @@ public class LogExportRecordServiceImpl extends ServiceImpl<LogExportRecordMappe
         List<LogExportRecord> logs = logExportRecordMapper.getList();
         if (CollectionUtils.isNotEmpty(logs)) {
             logs.stream().forEach(r->{
-                UserEntity byId = userService.findById(r.getCommitMemberId());
+                UserEntity byId = userMapper.findById(r.getCommitMemberId());
                 r.setCommitImg(byId.getImage());
                 r.setCommitName(byId.getUserName());
                 if (StringUtils.isNotEmpty(r.getExportMemberId())) {
-                    UserEntity byId1 = userService.findById(r.getExportMemberId());
+                    UserEntity byId1 = userMapper.findById(r.getExportMemberId());
                     r.setExportName(byId1.getUserName());
                 }
             });

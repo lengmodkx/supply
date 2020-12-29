@@ -13,6 +13,10 @@ import com.art1001.supply.entity.share.ShareApiBean;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.mapper.binding.BindingMapper;
+import com.art1001.supply.mapper.file.FileMapper;
+import com.art1001.supply.mapper.schedule.ScheduleMapper;
+import com.art1001.supply.mapper.share.ShareMapper;
+import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.schedule.ScheduleService;
@@ -40,13 +44,13 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 	private BindingMapper bindingMapper;
 
 	@Resource
-	private TaskService taskService;
+	private TaskMapper taskMapper;
 	@Resource
-	private FileService fileService;
+	private FileMapper fileMapper;
 	@Resource
-	private ShareService shareService;
+	private ShareMapper shareMapper;
 	@Resource
-	private ScheduleService scheduleService;
+	private ScheduleMapper scheduleMapper;
 
 	/**
 	 * 查询分页binding数据
@@ -181,16 +185,16 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 			//设置绑定的类型
 			binding.setPublicType(publicType);
 			if(publicType.equals(Constants.TASK)){
-				binding.setBindContent(JSON.toJSONString(taskService.findTaskApiBean(id)));
+				binding.setBindContent(JSON.toJSONString(taskMapper.findTaskApiBean(id)));
 			}
 			if(publicType.equals(Constants.SHARE)){
-				binding.setBindContent(JSON.toJSONString(shareService.findShareApiBean(id)));
+				binding.setBindContent(JSON.toJSONString(shareMapper.selectShareApiBean(id)));
 			}
 			if(publicType.equals(Constants.FILE)){
-				binding.setBindContent(JSON.toJSONString(fileService.findFileApiBean(id)));
+				binding.setBindContent(JSON.toJSONString(fileMapper.selectFileApiBean(id)));
 			}
 			if(publicType.equals(Constants.SCHEDULE)){
-				binding.setBindContent(JSON.toJSONString(scheduleService.findScheduleApiBean(id)));
+				binding.setBindContent(JSON.toJSONString(scheduleMapper.selectScheduleApiBean(id)));
 			}
 			binds.add(binding);
 		});
@@ -206,19 +210,19 @@ public class BindingServiceImpl extends ServiceImpl<BindingMapper, Binding> impl
 		File file;
 		Schedule schedule;
 		Share share;
-		if((task = taskService.getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", publicId))) != null){
+		if((task = taskMapper.selectOne(new QueryWrapper<Task>().select("project_id").eq("task_id", publicId))) != null){
 			if(StringUtils.isNotEmpty(task.getProjectId())){
 				return task.getProjectId();
 			}
 		}
 
-		if((share = shareService.getOne(new QueryWrapper<Share>().select("project_id").eq("id",publicId))) != null){
+		if((share = shareMapper.selectOne(new QueryWrapper<Share>().select("project_id").eq("id",publicId))) != null){
 			return share.getProjectId();
 		}
-		if((file = fileService.getOne(new QueryWrapper<File>().select("project_id").eq("file_id",publicId))) != null){
+		if((file = fileMapper.selectOne(new QueryWrapper<File>().select("project_id").eq("file_id",publicId))) != null){
 			return file.getProjectId();
 		}
-		if((schedule = scheduleService.getOne(new QueryWrapper<Schedule>().select("project_id").eq("schedule_id",publicId))) != null){
+		if((schedule = scheduleMapper.selectOne(new QueryWrapper<Schedule>().select("project_id").eq("schedule_id",publicId))) != null){
 			return schedule.getProjectId();
 		}
 		return projectId;

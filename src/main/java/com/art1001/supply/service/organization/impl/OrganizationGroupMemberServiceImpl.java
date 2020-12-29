@@ -1,23 +1,16 @@
 package com.art1001.supply.service.organization.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.communication.service.ChatGroupAPI;
-import com.art1001.supply.communication.service.IMUserService;
 import com.art1001.supply.entity.chat.HxChatNotice;
-import com.art1001.supply.entity.organization.OrganizationGroup;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationGroupMemberMapper;
 import com.art1001.supply.service.chat.HxChatNoticeService;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.organization.OrganizationGroupService;
 import com.art1001.supply.service.user.UserService;
-import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -48,9 +41,6 @@ public class OrganizationGroupMemberServiceImpl extends ServiceImpl<Organization
 
     @Resource
     private UserService userService;
-
-    @Resource
-    private IMUserService imUserService;
 
     @Resource
     private ChatGroupAPI chatGroupAPI;

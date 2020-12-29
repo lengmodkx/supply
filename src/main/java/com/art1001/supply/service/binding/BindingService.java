@@ -21,7 +21,7 @@ public interface BindingService extends IService<Binding> {
 	 * @param pager 分页对象
 	 * @return
 	 */
-	public List<Binding> findBindingPagerList(Pager pager);
+	List<Binding> findBindingPagerList(Pager pager);
 
 	/**
 	 * 通过id获取单条binding数据
@@ -29,7 +29,7 @@ public interface BindingService extends IService<Binding> {
 	 * @param id
 	 * @return
 	 */
-	public Binding findBindingById(String id);
+	Binding findBindingById(String id);
 
 	/**
 	 * 设置绑定信息
@@ -47,28 +47,28 @@ public interface BindingService extends IService<Binding> {
 	 * @param id 当前绑定信息的id
 	 * @param bindingId 被绑定信息的id
 	 */
-	public void deleteBindingById(String id, String bindingId);
+	void deleteBindingById(String id, String bindingId);
 
 	/**
 	 * 修改binding数据
 	 * 
 	 * @param binding
 	 */
-	public void updateBinding(Binding binding);
+	void updateBinding(Binding binding);
 
 	/**
 	 * 保存binding数据
 	 * 
 	 * @param binding
 	 */
-	public void saveBinding(Binding binding);
+	void saveBinding(Binding binding);
 
 	/**
 	 * 获取所有binding数据
 	 * 
 	 * @return
 	 */
-	public List<Binding> findBindingAllList();
+	List<Binding> findBindingAllList();
 
 	/**
 	 * 查询要关联的信息  在库中存不存在

@@ -6,6 +6,8 @@ import com.art1001.supply.entity.chat.HxChatNotice;
 import com.art1001.supply.entity.organization.OrganizationGroupMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.chat.HxChatNoticeMapper;
+import com.art1001.supply.mapper.organization.OrganizationGroupMemberMapper;
+import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.chat.HxChatNoticeService;
 import com.art1001.supply.service.organization.OrganizationGroupMemberService;
 import com.art1001.supply.service.user.UserService;
@@ -31,13 +33,10 @@ import java.util.stream.Collectors;
 public class HxChatNoticeServiceImpl extends ServiceImpl<HxChatNoticeMapper, HxChatNotice> implements HxChatNoticeService {
 
     @Resource
-    private HxChatNoticeMapper hxChatNoticeMapper;
-
-    @Resource
     private OrganizationGroupMemberService organizationGroupMemberService;
 
     @Resource
-    private UserService userService;
+    private UserMapper userMapper;
 
     /**
      * 保存未接收环信消息消息数量
@@ -98,7 +97,7 @@ public class HxChatNoticeServiceImpl extends ServiceImpl<HxChatNoticeMapper, HxC
         List<HxChatNotice> hxChatNoticeList = list(new QueryWrapper<HxChatNotice>().eq("news_to_user", ShiroAuthenticationManager.getUserId()).eq("news_address",0).eq("news_handle",0));
         if (CollectionUtils.isNotEmpty(hxChatNoticeList)) {
             for (HxChatNotice hxChatNotice : hxChatNoticeList) {
-                UserEntity byId = userService.findById(hxChatNotice.getNewsFromUser());
+                UserEntity byId = userMapper.selectById(hxChatNotice.getNewsFromUser());
                 hxChatNotice.setNewsFromUserAccountName(byId.getAccountName());
                 count+=hxChatNotice.getNewsCount();
             }

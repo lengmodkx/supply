@@ -21,5 +21,5 @@ public interface AutomationRuleStartup {
      * @date 2019/8/20 14:29
      * @return 是否执行成功
      */
-    Integer startupAutomation(AutomationRule automationRule, String taskId);
+    void startupAutomation(AutomationRule automationRule, String taskId);
 }

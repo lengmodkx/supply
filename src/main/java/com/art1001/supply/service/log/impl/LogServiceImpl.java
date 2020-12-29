@@ -50,16 +50,10 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
     private LogMapper logMapper;
 
     @Resource
-    private RedisUtil redisUtil;
-
-    @Resource
     private UserService userService;
 
     @Resource
     private LogAssembler logAssembler;
-
-    @Resource
-    private OrganizationService organizationService;
 
     @Resource
     private ProjectService projectService;

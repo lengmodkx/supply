@@ -3,14 +3,10 @@ package com.art1001.supply.service.project.impl;
 import com.art1001.supply.common.AuthToRedis;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.entity.organization.OrganizationMemberInfo;
-import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.Role;
@@ -20,15 +16,12 @@ import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
-import com.art1001.supply.mapper.organization.OrganizationMemberInfoMapper;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentMemberService;
-import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
@@ -41,29 +34,18 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.MyBeanUtils;
 import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import org.apache.commons.codec.language.bm.Languages;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.annotation.Resource;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -134,16 +116,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     private ProRoleUserService proRoleUserService;
 
     @Resource
-    private PartmentService partmentService;
-
-    @Resource
-    private OrganizationMemberInfoService organizationMemberInfoService;
-
-    @Resource
     private PartmentMemberService partmentMemberService;
-
-    @Resource
-    private OrganizationMemberInfoMapper organizationMemberInfoMapper;
 
     @Resource
     private OrganizationMemberMapper organizationMemberMapper;

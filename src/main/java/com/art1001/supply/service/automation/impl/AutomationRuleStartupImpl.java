@@ -1,6 +1,7 @@
 package com.art1001.supply.service.automation.impl;
 
 import com.art1001.supply.entity.task.Task;
+import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.service.automation.AutomationRuleStartup;
 import com.art1001.supply.service.task.TaskService;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +19,7 @@ import javax.annotation.Resource;
 public class AutomationRuleStartupImpl {
 
     @Resource
-    private TaskService taskService;
+    private TaskMapper taskMapper;
 
     /**
      * 返回一个启动automationRule方式的实例
@@ -38,7 +39,7 @@ public class AutomationRuleStartupImpl {
                 task.setTaskMenuId(menuId);
             }
             task.setUpdateTime(System.currentTimeMillis());
-            return taskService.updateById(task) ? 1 : 0;
+            taskMapper.updateById(task);
         };
     }
 }

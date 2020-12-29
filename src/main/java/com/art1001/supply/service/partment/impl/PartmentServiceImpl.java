@@ -49,9 +49,6 @@ public class PartmentServiceImpl extends ServiceImpl<PartmentMapper, Partment> i
     @Resource
     private DepartmentDataAssembler dataAssembler;
 
-    @Resource
-    private OrganizationMemberService organizationMemberService;
-
     /**
      * 查询分页partment数据
      *

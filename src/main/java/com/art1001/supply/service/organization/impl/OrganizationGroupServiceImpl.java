@@ -57,9 +57,6 @@ public class OrganizationGroupServiceImpl extends ServiceImpl<OrganizationGroupM
 	private ChatGroupAPI chatGroupAPI;
 
 	@Resource
-	private UserService userService;
-
-	@Resource
 	private HxChatNoticeService hxChatNoticeService;
 	
 	/**
