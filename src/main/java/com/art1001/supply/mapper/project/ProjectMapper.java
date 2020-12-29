@@ -14,8 +14,7 @@ import java.util.List;
 @Mapper
 public interface ProjectMapper extends BaseMapper<Project> {
 
-
-
+	Project findProjectByProjectId();
 	/**
 	 * 通过projectId删除project数据
 	 * 

@@ -361,6 +361,9 @@
         WHERE
         	pm.member_id = #{memberId} and p.organization_id=#{orgId} and  p.project_del=0 and p.project_status=1 and p.project_name like <![CDATA[ CONCAT('%',#{projectName},'%') ]]> order by p.create_time desc
 	</select>
+	<select id="findProjectByProjectId" resultType="com.art1001.supply.entity.project.Project">
+		select <include refid="Base_Column_List"/> from prm_project where project_del = 0 and project_id = #{projectId}
+	</select>
 
 
 </mapper>
