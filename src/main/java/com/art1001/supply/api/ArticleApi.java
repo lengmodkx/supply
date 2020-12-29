@@ -2,12 +2,11 @@ package com.art1001.supply.api;
 
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.article.Article;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.article.ArticleService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -27,20 +26,32 @@ public class ArticleApi {
 
     /**
      * 保存文章
+     *
      * @param articleTitle    文章标题
      * @param articleContent  文章内容
-     * @param coverShow       封面展示 0为不展示 1单图展示 2三图展示
-     * @param coverImages     封面展示图片
+     * @param acId            分类id 1文章 2微头条 3视频
+     * @param headlineContent 头条内容
+     * @param headlineImages  头条图片
+     * @param videoName       视频名称
+     * @param videoAddress    视频地址
+     * @param videoCover      视频封面
+     * @param coverShow       文章封面展示 0为不展示 1单图展示 2三图展示
+     * @param coverImages     文章封面展示图片
      * @return
      */
-    @GetMapping("/add")
-    public Result addArticle(@RequestParam(value = "articleTitle") String articleTitle,
-                             @RequestParam(value = "articleContent") String articleContent,
-                             @RequestParam(value ="acId" )String acId,
-                             @RequestParam(value = "coverShow") Integer coverShow,
-                             @RequestParam(value = "coverImages") List<String> coverImages){
+    @PostMapping("/add")
+    public Result addArticle(@RequestParam(value = "articleTitle", required = false) String articleTitle,
+                             @RequestParam(value = "articleContent", required = false) String articleContent,
+                             @RequestParam(value = "acId") Integer acId,
+                             @RequestParam(value = "headlineContent", required = false) String headlineContent,
+                             @RequestParam(value = "headlineImages", required = false) List<String> headlineImages,
+                             @RequestParam(value = "videoName", required = false) String videoName,
+                             @RequestParam(value = "videoAddress", required = false) List<String> videoAddress,
+                             @RequestParam(value = "videoCover", required = false) String videoCover,
+                             @RequestParam(value = "coverShow", required = false) Integer coverShow,
+                             @RequestParam(value = "coverImages", required = false) List<String> coverImages) {
         try {
-            articleService.addArticle(articleTitle,articleContent,acId,coverShow,coverImages);
+            articleService.addArticle(articleTitle, articleContent, acId, headlineContent, headlineImages, videoName, videoAddress, videoCover, coverShow, coverImages);
             return Result.success("保存成功");
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -49,21 +60,32 @@ public class ArticleApi {
 
     /**
      * 修改文章
-     * @param articleTitle      文章标题
-     * @param articleContent    文章内容
-     * @param articleId         文章id
-     * @param coverShow         封面展示 0为不展示 1单图展示 2三图展示
-     * @param coverImages       封面展示图片
+     *
+     * @param articleTitle    文章标题
+     * @param articleContent  文章内容
+     * @param articleId       要修改的内容id
+     * @param headlineContent 头条内容
+     * @param headlineImages  头条图片
+     * @param videoName       视频名称
+     * @param videoAddress    视频地址
+     * @param videoCover      视频封面
+     * @param coverShow       文章封面展示 0为不展示 1单图展示 2三图展示
+     * @param coverImages     文章封面展示图片
      * @return
      */
-    @GetMapping("/edit")
-    public Result editArticle(@RequestParam(value = "articleTitle") String articleTitle,
-                              @RequestParam(value = "articleContent") String articleContent,
-                              @RequestParam(value = "articleId" )String articleId,
-                              @RequestParam(value = "coverShow") Integer coverShow,
-                              @RequestParam(value = "coverImages") List<String> coverImages){
+    @PostMapping("/edit")
+    public Result editArticle(@RequestParam(value = "articleTitle", required = false) String articleTitle,
+                              @RequestParam(value = "articleContent", required = false) String articleContent,
+                              @RequestParam(value = "articleId") String articleId,
+                              @RequestParam(value = "headlineContent", required = false) String headlineContent,
+                              @RequestParam(value = "headlineImages", required = false) List<String> headlineImages,
+                              @RequestParam(value = "videoName", required = false) String videoName,
+                              @RequestParam(value = "videoAddress", required = false) List<String> videoAddress,
+                              @RequestParam(value = "videoCover", required = false) String videoCover,
+                              @RequestParam(value = "coverShow", required = false) Integer coverShow,
+                              @RequestParam(value = "coverImages", required = false) List<String> coverImages) {
         try {
-            articleService.editArticle(articleTitle,articleContent,articleId,coverShow,coverImages);
+            articleService.editArticle(articleTitle, articleContent, articleId, headlineContent, headlineImages, videoName, videoAddress, videoCover, coverShow, coverImages);
             return Result.success("修改成功");
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -72,29 +94,82 @@ public class ArticleApi {
 
     /**
      * 关注/取消关注 用户
-     * @param memberId   被关注人id
-     * @param type       关注状态 0取消关注 1关注
+     *
+     * @param memberId 被关注人id
      * @return
      */
     @GetMapping("/attentionUserStatus")
-    public Result attentionUserStatus(@RequestParam(value = "memberId") String memberId,
-                                      @RequestParam(value = "type") Integer type){
+    public Result attentionUserStatus(@RequestParam(value = "memberId") String memberId) {
         try {
-            articleService.attentionUserStatus(memberId,type);
-            return Result.success("已成功");
+            int i = articleService.attentionUserStatus(memberId);
+            if (i == 1) {
+                return Result.success("已关注");
+            } else {
+                return Result.success("已取消关注");
+            }
         } catch (Exception e) {
             throw new AjaxException(e);
         }
     }
 
-    @GetMapping("/list")
-    public Result listArticle(){
+    /**
+     * 我关注的文章列表
+     *
+     * @param pageNum
+     * @param pageSize
+     * @param acId
+     * @return
+     */
+    @GetMapping("/attentionListArticle")
+    public Result attentionListArticle(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                       @RequestParam(value = "pageSize", defaultValue = "999") Integer pageSize,
+                                       @RequestParam(value = "acId", required = false) String acId) {
         try {
-            List<Article>list=articleService.listArticle();
-            return Result.success(list);
+            IPage<Article> page = articleService.attentionListArticle(pageNum, pageSize, acId);
+            return Result.success(page);
         } catch (Exception e) {
             throw new AjaxException(e);
         }
     }
+
+    /**
+     * 所有文章
+     *
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @GetMapping("/allArtile")
+    public Result allArtile(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                            @RequestParam(value = "acId", required = false) String acId) {
+        try {
+            IPage<Article> page = articleService.allArtile(pageNum, pageSize, acId);
+            return Result.success(page);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
+     * 所有粉丝/所有关注
+     *
+     * @param pageNum
+     * @param pageSize
+     * @param type     1所有粉丝 2所有关注
+     * @return
+     */
+    @GetMapping("/allConnectionUser")
+    public Result allConnectionUser(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                                    @RequestParam(value = "type") Integer type) {
+        try {
+            IPage<UserEntity> page = articleService.allConnectionUser(pageNum, pageSize, type);
+            return Result.success(page);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
 
 }

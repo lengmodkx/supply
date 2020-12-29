@@ -6,4 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface ArticleMapper extends BaseMapper<Article> {
+
+    /**
+     * 修改文章
+     * @param article
+     */
+    void editArticle(Article article);
 }

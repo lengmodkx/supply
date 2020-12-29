@@ -12,6 +12,7 @@ import lombok.Data;
  */
 @Data
 public class WorkBenchInfoVo {
+    private String memberId;
     private String roleKey;
     private String roleName;
     private String image;
@@ -19,4 +20,14 @@ public class WorkBenchInfoVo {
     private String loginIp;
     @JsonSerialize(using = LongToDeteSerializer.class)
     private Long loginTime;
+
+    /**
+     * 签名
+     */
+    private String signature;
+
+    private Integer fansCount;
+
+    private Integer followCount;
+
 }

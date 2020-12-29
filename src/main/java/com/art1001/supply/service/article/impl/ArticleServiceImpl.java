@@ -1,26 +1,26 @@
 package com.art1001.supply.service.article.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.article.Article;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.article.ArticleMapper;
+import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.article.ArticleService;
-import com.art1001.supply.service.article.UserAttentionService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.FollowUtil;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 /**
  * @ClassName articleServiceImpl
@@ -30,31 +30,103 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
-    @Resource
-    private UserAttentionService userAttentionService;
 
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private FollowUtil followUtil;
+
+    @Resource
+    private ArticleMapper articleMapper;
+
+    @Resource
+    private UserMapper userMapper;
+
+    private static final String FOLLOWING = "FOLLOWING_";
+    private static final String FANS = "FANS_";
+    private static final String COMMON_KEY = "COMMON_FOLLOWING";
 
 
-
+    /**
+     * 保存文章
+     *
+     * @param articleTitle    文章标题
+     * @param articleContent  文章内容
+     * @param acId            分类id 1文章 2微头条 3视频
+     * @param headlineContent 头条内容
+     * @param headlineImages  头条图片
+     * @param videoName       视频名称
+     * @param videoAddress    视频地址
+     * @param videoCover      视频封面
+     * @param coverShow       文章封面展示 0为不展示 1单图展示 2三图展示
+     * @param coverImages     文章封面展示图片
+     * @return
+     */
     @Override
-    public Integer addArticle(String articleTitle, String articleContent, String acId, Integer coverShow, List<String> coverImages) {
+    public void addArticle(String articleTitle, String articleContent, Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages) {
         Article article = new Article();
+        if (acId.equals(Constants.B_ONE)) {
+            article.setArticleTitle(articleTitle);
+            article.setArticleContent(articleContent);
+            article.setCoverShow(coverShow);
+            if (CollectionUtils.isNotEmpty(coverImages)) {
+                StringBuilder images = listToString(coverImages);
+                article.setCoverImages(images.toString());
+            }
+        }
+        if (acId.equals(Constants.B_TWO)) {
+            article.setHeadlineContent(headlineContent);
+            StringBuilder images = listToString(headlineImages);
+            article.setHeadlineImages(images.toString());
+        }
+        if (acId.equals(Constants.B_THREE)) {
+            article.setVideoName(videoName);
+            StringBuilder videos = listToString(videoAddress);
+            article.setVideoAddress(videos.toString());
+            article.setVideoCover(videoCover);
+        }
         article.setAcId(acId);
-        article.setArticleTitle(articleTitle);
-        article.setArticleContent(articleContent);
-        article.setCoverShow(coverShow);
         article.setMemberId(ShiroAuthenticationManager.getUserId());
-        StringBuilder images = listToString(coverImages);
-        article.setCoverImages(images.toString());
         article.setIsDel(0);
         article.setArticleShow(1);
         article.setCreateTime(System.currentTimeMillis());
         article.setUpdateTime(System.currentTimeMillis());
         save(article);
-        return 1;
+    }
+
+    /**
+     * 修改文章
+     *
+     * @param articleTitle    文章标题
+     * @param articleContent  文章内容
+     * @param articleId       要修改的内容id
+     * @param headlineContent 头条内容
+     * @param headlineImages  头条图片
+     * @param videoName       视频名称
+     * @param videoAddress    视频地址
+     * @param videoCover      视频封面
+     * @param coverShow       文章封面展示 0为不展示 1单图展示 2三图展示
+     * @param coverImages     文章封面展示图片
+     * @return
+     */
+    @Override
+    public void editArticle(String articleTitle, String articleContent, String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages) {
+        Article article = Article.builder().articleTitle(articleTitle).articleContent(articleContent)
+                .articleId(articleId).headlineContent(headlineContent)
+                .videoName(videoName).videoCover(videoCover)
+                .coverShow(coverShow).updateTime(System.currentTimeMillis())
+                .build();
+        if (CollectionUtils.isNotEmpty(headlineImages)) {
+            article.setHeadlineImages(listToString(headlineImages).toString());
+        }
+        if (CollectionUtils.isNotEmpty(coverImages)) {
+            article.setCoverImages(listToString(coverImages).toString());
+        }
+        if (CollectionUtils.isNotEmpty(videoAddress)) {
+            article.setVideoAddress(listToString(videoAddress).toString());
+        }
+        articleMapper.editArticle(article);
     }
 
     @NotNull
@@ -70,66 +142,71 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         return images;
     }
 
+
     @Override
-    public Integer editArticle(String articleTitle, String articleContent, String articleId, Integer coverShow, List<String> coverImages) {
-        Article article = new Article();
-        article.setArticleId(articleId);
-        article.setArticleTitle(articleTitle);
-        article.setCoverShow(coverShow);
-        article.setCoverImages(listToString(coverImages).toString());
-        article.setUpdateTime(System.currentTimeMillis());
-        updateById(article);
-        return 1;
+    public int attentionUserStatus(String memberId) {
+        if (StringUtils.isEmpty(memberId)) {
+            return -1;
+        }
+        // 0 = 取消关注 1 = 关注
+        int isFollow = 0;
+        String followingKey = FOLLOWING + ShiroAuthenticationManager.getUserId();
+        String fansKey = FANS + memberId;
+
+        Long rank = redisUtil.zRank(followingKey, memberId);
+        // 说明当前登录人没有关注过memberId
+        if (rank == null) {
+            redisUtil.zSet(followingKey, memberId, System.currentTimeMillis());
+            redisUtil.zSet(fansKey, ShiroAuthenticationManager.getUserId(), System.currentTimeMillis());
+            isFollow = 1;
+            // 取消关注
+        } else {
+            redisUtil.zRem(followingKey, memberId);
+            redisUtil.zRem(fansKey, ShiroAuthenticationManager.getUserId());
+        }
+        return isFollow;
     }
 
     @Override
-    public Integer attentionUserStatus(String memberId, Integer type) {
-        // 关注
+    public IPage<Article> attentionListArticle(Integer pageNum, Integer pageSize, String acId) {
+        Page<Article> page = new Page<>(pageNum, pageSize);
+        Set<String> follwings = followUtil.findFollwings(ShiroAuthenticationManager.getUserId());
+        if (CollectionUtils.isNotEmpty(follwings)) {
+            QueryWrapper<Article> query = new QueryWrapper<>();
+            query.in("member_id", follwings);
+            if (StringUtils.isNotEmpty(acId)) {
+                query.eq("ac_id", acId);
+            }
+            return articleMapper.selectPage(page, query);
+        }
+        return null;
+    }
+
+    @Override
+    public IPage<Article> allArtile(Integer pageNum, Integer pageSize, String acId) {
+        Page<Article> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<Article> query = new QueryWrapper<>();
+        if (StringUtils.isNotEmpty(acId)) {
+            query.eq("ac_id", acId);
+        }
+        return articleMapper.selectPage(page, query);
+    }
+
+    @Override
+    public IPage<UserEntity> allConnectionUser(Integer pageNum, Integer pageSize, Integer type) {
+        Page<UserEntity> page = new Page<>(pageNum, pageSize);
         if (type.equals(Constants.B_ONE)) {
-            // redis中是否存在我关注的列表
-            if (redisUtil.exists(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId())) {
-                String s = redisUtil.get(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
-                List<String> parse = (List<String>) JSON.parse(s);
-                parse.add(memberId);
-                String str= JSONObject.toJSONString(parse);
-                redisUtil.remove(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
-                redisUtil.set(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId(),str );
-            } else {
-                List<String> list = Lists.newArrayList();
-                list.add(memberId);
-                String str= JSONObject.toJSONString(list);
-                redisUtil.set(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId(),str );
-            }
-         // 取关
-        }else {
-            if (redisUtil.exists(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId())) {
-                String s = redisUtil.get(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
-                List<String> parse = (List<String>) JSON.parse(s);
-                List<String> collect = parse.stream().filter(f -> !f.equals(memberId)).collect(Collectors.toList());
-                String str= JSONObject.toJSONString(collect);
-                redisUtil.remove(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
-                redisUtil.set(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId(),str );
+            Set<String> fans = followUtil.findFans(ShiroAuthenticationManager.getUserId());
+            if (CollectionUtils.isNotEmpty(fans)) {
+                return userMapper.selectPage(page, new QueryWrapper<UserEntity>().in("user_id", fans));
             }
         }
-        return 1;
-    }
-
-    @Override
-    public List<Article> listArticle() {
-        List<Article> list=Lists.newArrayList();
-        // redis有就获取我关注的
-        if (redisUtil.exists(Constants.MEMBER_ID+ ShiroAuthenticationManager.getUserId())) {
-            String s = redisUtil.get(Constants.MEMBER_ID + ShiroAuthenticationManager.getUserId());
-            List<String> parse = (List<String>) JSON.parse(s);
-            list= list(new QueryWrapper<Article>().in("member_id",parse));
-        // 没有就获取所有
-        }else {
-            list = list(new QueryWrapper<>());
+        if (type.equals(Constants.B_TWO)) {
+            Set<String> follow = followUtil.findFollwings(ShiroAuthenticationManager.getUserId());
+            if (CollectionUtils.isNotEmpty(follow)) {
+                return userMapper.selectPage(page, new QueryWrapper<UserEntity>().in("user_id", follow));
+            }
         }
-        // 根据创建时间排序
-        Optional.ofNullable(list).ifPresent(r->r.sort(Comparator.comparing(Article::getCreateTime)));
-        return list;
+        return null;
     }
-
-
 }

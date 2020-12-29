@@ -3,13 +3,13 @@ package com.art1001.supply.entity.article;
 import com.art1001.supply.util.LongToDeteSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
 
@@ -34,7 +34,7 @@ public class Article extends Model<Article>{
     /**
       * 分类id
       */
-    private String acId;
+    private Integer acId;
 
     /**
       * 是否显示，0为否，1为是，默认为1
@@ -57,12 +57,12 @@ public class Article extends Model<Article>{
     private String coverImages;
 
     /**
-      * 标题
+      * 文章标题
       */
     private String articleTitle;
 
     /**
-      * 内容
+      * 文章内容
       */
     private String articleContent;
 
@@ -71,6 +71,29 @@ public class Article extends Model<Article>{
       */
     private Integer isDel;
 
+    /**
+     * 微头条内容
+     */
+    private String headlineContent;
+
+    /**
+     * 微头条图片
+     */
+    private String headlineImages;
+
+    /**
+     * 视频名称
+     */
+    private String videoName;
+    /**
+     * 视频地址
+     */
+    private String videoAddress;
+
+    /**
+     * 视频封面
+     */
+    private String videoCover;
     /**
       * 创建时间
       */
