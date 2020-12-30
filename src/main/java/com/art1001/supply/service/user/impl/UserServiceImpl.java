@@ -128,6 +128,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             Organization byId = organizationService.getById(orgByUserId);
             info.setOrgName(byId.getOrganizationName());
         }
+        redisUtil.set(USER_INFO + info.getUserId(), info);
         return info;
     }
 

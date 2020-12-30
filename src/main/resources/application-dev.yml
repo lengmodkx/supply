@@ -2,8 +2,8 @@ spring:
   datasource:
     #阿里巴巴数据源连接池配置
     druid:
-      url: jdbc:mysql://rm-2ze0z93hgk53405zn6o.mysql.rds.aliyuncs.com:3306/supply?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
-      username: supply
+      url: jdbc:mysql://rm-2zenla571lw922s0aro.mysql.rds.aliyuncs.com:3306/supply?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+      username: supply01
       password: Wangyafeng123456
       driver-class-name: com.mysql.cj.jdbc.Driver
       initial-size: 5
@@ -32,9 +32,9 @@ spring:
   redis:
     database: 0
 #    host: r-2zef2711285108e4pd.redis.rds.aliyuncs.com
-    host: localhost
+    host: r-2zef2711285108e4pd.redis.rds.aliyuncs.com
     port: 6379
-#    password: 1qaz2wsx#EDC
+    password: 1qaz2wsx#EDC
   #配置JSON时区和空值处理
   jackson:
     time-zone: GMT+8

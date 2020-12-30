@@ -14,18 +14,20 @@ import java.util.Map;
 
 public interface UserService extends IService<UserEntity> {
 
-	public List<UserEntity> queryListByPage(Map<String, Object> parameter);
+	String USER_INFO = "userInfo:";
 
-	public UserEntity findByName(String accountName);
+	List<UserEntity> queryListByPage(Map<String, Object> parameter);
+
+	UserEntity findByName(String accountName);
 
 	//查询部分用户信息
 	UserInfo findInfo(String accountName);
 
-	public void insert(UserEntity userEntity, String password);
+	void insert(UserEntity userEntity, String password);
 	
-	public UserEntity findById(String id);
+	UserEntity findById(String id);
 	
-	public int updatePassword(UserEntity userEntity, String password) throws ServiceException;
+	int updatePassword(UserEntity userEntity, String password) throws ServiceException;
 
 	/**
 	 * 根据id查询多个用户

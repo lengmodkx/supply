@@ -27,7 +27,6 @@ import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
-import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.RedisUtil;

@@ -22,28 +22,6 @@ import java.util.List;
  */
 public class ShiroAuthenticationManager {
 
-	/*
-	 * 用户权限管理
-	 */
-	public static final MyDBRealm myDBRealm = SpringContextUtil.getBean("dbRealm", MyDBRealm.class);
-
-
-	public static final JWTShiroRealm jWTShiroRealm = SpringContextUtil.getBean("jwtRealm", JWTShiroRealm.class);
-
-	/*
-	 * 用户session管理
-	 */
-	//public static final UserSessionService userSessionService = SpringContextUtil.getBean("userSessionService", UserSessionService.class);
-
-	/**
-	 * 获取shiro的session
-	 * 
-	 * @return
-	 */
-	public static Session getSession() {
-		return SecurityUtils.getSubject().getSession();
-	}
-
 	/**
 	 * 获取shiro Subject
 	 * 
@@ -72,35 +50,7 @@ public class ShiroAuthenticationManager {
 	public static String getUserId() {
 		return getUserEntity().getUserId();
 	}
-	
-	/**
-	 * 获取用户id
-	 * 
-	 * @return
-	 */
-	public static String getUserAccountName() {
-		return getUserEntity() == null ? null : getUserEntity().getAccountName();
-	}
 
-	/**
-	 * 把值放入到当前登录用户的Session里
-	 * 
-	 * @param key
-	 * @param value
-	 */
-	public static void setSessionAttribute(Object key, Object value) {
-		getSession().setAttribute(key, value);
-	}
-
-	/**
-	 * 从当前登录用户的Session里取值
-	 * 
-	 * @param key
-	 * @return
-	 */
-	public static Object getSessionAttribute(Object key) {
-		return getSession().getAttribute(key);
-	}
 
 	/**
 	 * 判断是否登录
@@ -118,69 +68,8 @@ public class ShiroAuthenticationManager {
 		SecurityUtils.getSubject().logout();
 	}
 
-	/**
-	 * 获取验证码，获取后删除
-	 * 
-	 * @return
-	 */
-	public static String getKaptcha(String key) {
-		String kaptcha = getSessionAttribute(key).toString();
-		getSession().removeAttribute(key);
-		return kaptcha;
-	}
-
 	
-	/**
-	 * 
-	 * @Description 根据UserIds清空权限信息
-	 * @param userIds	用户ids
-	 *
-	 * @author wjggwm
-	 * @data 2017年1月5日 下午6:07:45
-	 */
-	public static void clearUserAuthByUserId(String...userIds){
-		
-//		if(null == userIds || userIds.length == 0)	{
-//			return ;
-//		}
-//		List<SimplePrincipalCollection> result = userSessionService.getSimplePrincipalCollectionByUserId(userIds);
-//
-//		for (SimplePrincipalCollection simplePrincipalCollection : result) {
-//			myDBRealm.clearCachedAuthorizationInfo(simplePrincipalCollection);
-//		}
-	}
 
-
-	/**
-	 * 
-	 * @Description 根据UserIds清空权限信息
-	 * @param userIds	用户ids
-	 *
-	 * @author wjggwm
-	 * @data 2017年1月5日 下午6:08:01
-	 */
-	public static void clearUserAuthByUserId(List<Long> userIds) {
-		if(null == userIds || userIds.size() == 0){
-			return ;
-		}
-		clearUserAuthByUserId(userIds.toArray(new String[0]));
-	}
-	
-	/**
-	 * 
-	 * @Description 清空所有用户权限信息
-	 *
-	 * @author wjggwm
-	 * @data 2017年1月5日 下午6:08:01
-	 */
-	public static void clearAllUserAuth() {
-//		List<UserSessionEntity> list = userSessionService.getAllUser();
-//		List<String> userIds = new ArrayList<String>();
-//		list.forEach(user -> {
-//			userIds.add(user.getUserId());
-//		});
-//		clearUserAuthByUserId(userIds.toArray(new String[0]));
-	}
 	
 
 }
