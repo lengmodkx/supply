@@ -42,7 +42,7 @@ public class CodeGenerator {
 
             // 数据源配置
             DataSourceConfig dataSourceConfig = new DataSourceConfig();
-            dataSourceConfig.setUrl("jdbc:mysql://rm-2ze0z93hgk53405zn6o.mysql.rds.aliyuncs.com:3306/bim5d?useSSL=false&serverTimezone=GMT%2B8&characterEncoding=utf8&rewriteBatchedStatements=true");
+            dataSourceConfig.setUrl("jdbc:mysql://rm-2zenla571lw922s0aro.mysql.rds.aliyuncs.com:3306/bim5d?useSSL=false&serverTimezone=GMT%2B8&characterEncoding=utf8&rewriteBatchedStatements=true");
             dataSourceConfig.setDriverName("com.mysql.cj.jdbc.Driver");
             dataSourceConfig.setUsername("supply");
             dataSourceConfig.setPassword("Wangyafeng123456");
