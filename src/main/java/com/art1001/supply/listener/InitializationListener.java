@@ -2,9 +2,12 @@
  *
  */
 package com.art1001.supply.listener;
+import com.art1001.supply.entity.resource.ProResources;
+import com.art1001.supply.entity.resource.ResourceEntity;
 import com.art1001.supply.service.resource.ProResourcesService;
 import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.util.RedisUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -46,7 +50,16 @@ public class InitializationListener implements ApplicationListener<ContextRefres
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (null == event.getApplicationContext().getParent()) {
 
-            List<String> allResources = redisUtil.getList(String.class, "allResources");
+            //获取所有的企业资源
+            List<ResourceEntity> allResourceList = resourceService.list(new QueryWrapper<ResourceEntity>()
+                    .lambda().ne(ResourceEntity::getResourceLevel, 1));
+            List<String> allResources = allResourceList.stream().map(ResourceEntity::getResourceKey).collect(Collectors.toList());
+
+            //获取所有的项目资源
+            allResources.addAll(proResourcesService.list(new QueryWrapper<ProResources>()
+                    .lambda().ne(ProResources::getSLevel, 1)).stream()
+                    .map(ProResources::getSSourceKey).collect(Collectors.toList()));
+
             redisUtil.lset("allResources", allResources);
             logger.info("所有资源key信息查询完毕,存储进redis.");
 

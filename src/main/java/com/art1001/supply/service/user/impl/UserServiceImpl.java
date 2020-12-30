@@ -104,6 +104,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     @Resource
     private FollowUtil followUtil;
+    @Resource
+    private RedisUtil redisUtil;
+
+    @Resource
+    private WechatAppIdInfoService wechatAppIdInfoService;
 
     @Override
     public List<UserEntity> queryListByPage(Map<String, Object> parameter) {
@@ -137,12 +142,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     public UserEntity findById(String id) {
         return getById(id);
     }
-
-    @Resource
-    private RedisUtil redisUtil;
-
-    @Resource
-    private WechatAppIdInfoService wechatAppIdInfoService;
 
     /**
      * 重写用户插入
