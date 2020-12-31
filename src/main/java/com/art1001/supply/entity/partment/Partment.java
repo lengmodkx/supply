@@ -1,6 +1,5 @@
 package com.art1001.supply.entity.partment;
 
-import com.art1001.supply.entity.organization.OrganizationMember;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -28,7 +27,7 @@ public class Partment extends Model<Partment> {
 	/**
 	 * 部门id
 	 */
-	@TableId(type = IdType.UUID)
+	@TableId(type = IdType.ASSIGN_UUID)
 	private String partmentId;
 
 
@@ -74,7 +73,8 @@ public class Partment extends Model<Partment> {
 	@TableField(exist = false)
 	private Boolean hasPartment;
 
-
+	@TableField(exist = false)
+	private List<Partment> subPartments;
 
 	@Override
 	protected Serializable pkVal() {

@@ -4,6 +4,7 @@ import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.statistics.StatisticsResultVO;
+import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskApiBean;
@@ -809,4 +810,9 @@ public interface TaskMapper extends BaseMapper<Task> {
 							   @Param("startTime") Long startTime, @Param("endTime") Long endTime,
 							   @Param("memberId") String memberId, @Param("taskUid") String taskUid,
 							   @Param("taskStatus") Integer taskStatus,@Param("priority") String priority);
+
+    void updateTag(String taskId,Tag tag);
+
+
+
 }

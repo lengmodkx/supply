@@ -1,15 +1,15 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.common.CommonPage;
 import com.art1001.supply.common.CommonResult;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.pagehelper.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -192,14 +192,14 @@ public class NewsApi {
      * @return
      */
     @GetMapping("/userNewsByCondition")
-    public CommonResult<CommonPage<UserNews>> userNewsByCondition(@RequestParam(value = "keyword", required = false) String keyword,
-                                                                  @RequestParam(value = "startTime", required = false) Long startTime,
-                                                                  @RequestParam(value = "endTime", required = false) Long endTime,
-                                                                  @RequestParam(value = "pageSize",defaultValue = "10")Integer pageSize,
-                                                                  @RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum,
-                                                                  @RequestParam(value = "param",defaultValue = "0")Integer param) {
+    public Result<Page<UserNews>> userNewsByCondition(@RequestParam(value = "keyword", required = false) String keyword,
+                                                      @RequestParam(value = "startTime", required = false) Long startTime,
+                                                      @RequestParam(value = "endTime", required = false) Long endTime,
+                                                      @RequestParam(value = "pageSize",defaultValue = "10")Integer pageSize,
+                                                      @RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum,
+                                                      @RequestParam(value = "param",defaultValue = "0")Integer param) {
         try {
-            return CommonResult.success(CommonPage.restPage(userNewsService.userNewsByCondition(keyword, startTime, endTime,pageSize,pageNum,param)));
+            return Result.success(userNewsService.userNewsByCondition(keyword, startTime, endTime,pageSize,pageNum,param));
         } catch (Exception e) {
             throw new AjaxException(e);
         }
