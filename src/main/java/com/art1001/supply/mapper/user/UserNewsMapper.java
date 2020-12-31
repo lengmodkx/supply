@@ -3,6 +3,7 @@ package com.art1001.supply.mapper.user;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.user.UserNews;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -118,7 +119,7 @@ public interface UserNewsMapper extends BaseMapper<UserNews> {
 	 */
 	UserNews findUserNewsByToUser(@Param("userId") String userId, @Param("publicId") String publicId);
 
-	List<UserNews> userNewsByCondition(@Param("keyword") String keyword, @Param("startTime") Long startTime, @Param("endTime") Long endTime,@Param("param") Integer param,@Param("userId") String userId);
+	Page<UserNews> userNewsByCondition(@Param("keyword") String keyword, @Param("startTime") Long startTime, @Param("endTime") Long endTime, @Param("param") Integer param, @Param("userId") String userId);
 
 	void removeCount(@Param("userId") String userId);
 }

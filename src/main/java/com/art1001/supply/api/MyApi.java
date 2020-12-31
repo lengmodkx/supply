@@ -1,13 +1,9 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.common.CommonPage;
 import com.art1001.supply.common.CommonResult;
-import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.task.Task;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
@@ -19,7 +15,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -72,16 +67,16 @@ public class MyApi {
     }*/
 
     @GetMapping("/task")
-    public CommonResult<CommonPage<Task>> getExecute2(@RequestParam(value = "pageSize", defaultValue = "999") Integer pageSize,
-                                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                                      @RequestParam(required = false) String order,
-                                                      @RequestParam Integer isDone,
-                                                      @RequestParam String type) {
+    public Result<List<Task>> getExecute2(@RequestParam(value = "pageSize", defaultValue = "999") Integer pageSize,
+                                          @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                          @RequestParam(required = false) String order,
+                                          @RequestParam Integer isDone,
+                                          @RequestParam String type) {
         try {
 //            if (Constants.PROJECT.equals(order)) {
 //                return CommonResult.success(CommonPage.restPage(taskService.findExecuteOrderProject(isDone,pageNum,pageSize)));
 //            } else {
-                return CommonResult.success(CommonPage.restPage(taskService.findMeAndOrder(isDone, type,order,pageSize,pageNum)));
+                return Result.success(taskService.findMeAndOrder(isDone, type,order,pageSize,pageNum));
 //            }
         } catch (Exception e) {
             throw new AjaxException("系统异常,获取信息失败!", e);

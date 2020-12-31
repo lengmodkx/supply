@@ -39,25 +39,25 @@ public class TaskRemindRule extends Model<TaskRemindRule> {
     /**
      * 任务提醒规则
      */
-    @TableField(strategy=FieldStrategy.IGNORED)
+    @TableField(insertStrategy=FieldStrategy.IGNORED,updateStrategy = FieldStrategy.IGNORED)
     private String remindType;
 
     /**
      * 显示的数量
      */
-    @TableField(strategy=FieldStrategy.IGNORED)
+    @TableField(insertStrategy=FieldStrategy.IGNORED,updateStrategy = FieldStrategy.IGNORED)
     private Integer num;
 
     /**
      * 时间单位
      */
-    @TableField(strategy=FieldStrategy.IGNORED)
+    @TableField(insertStrategy=FieldStrategy.IGNORED,updateStrategy = FieldStrategy.IGNORED)
     private String timeType;
 
     /**
      * 自定义时间
      */
-    @TableField(strategy=FieldStrategy.IGNORED)
+    @TableField(insertStrategy=FieldStrategy.IGNORED,updateStrategy = FieldStrategy.IGNORED)
     private String customTime;
 
     /**

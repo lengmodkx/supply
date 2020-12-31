@@ -10,6 +10,7 @@ import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -23,7 +24,7 @@ import java.util.List;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@TableName("prm_task")
+@TableName(value = "prm_task",autoResultMap = true)
 public class
 Task extends Model<Task> {
 	
@@ -33,7 +34,7 @@ Task extends Model<Task> {
 	/**
 	 * task_id
 	 */
-	@TableId(value = "task_id",type = IdType.UUID)
+	@TableId(value = "task_id",type = IdType.ASSIGN_UUID)
 	private String taskId;
 
 
@@ -42,7 +43,9 @@ Task extends Model<Task> {
 	 */
 	private String projectId;
 
-	private Integer tagId;
+	@TableField(typeHandler = FastjsonTypeHandler.class)
+	private List<Tag> tagId;
+
 	/**
 	 * 任务名称
 	 */

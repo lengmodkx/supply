@@ -55,8 +55,8 @@ import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.ValidatedUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.PageHelper;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -1804,8 +1804,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      */
     @Override
     public List<Task> findMeAndOrder(Integer isDone, String type, String order, Integer pageSize, Integer pageNum) {
-        PageHelper.startPage(pageNum, pageSize);
         List<Task> tasks = Lists.newArrayList();
+        Page<Task> page = new Page<Task>(pageNum,pageSize);
+
         if (Constants.EXECUTE.equals(type)) {
             tasks = taskMapper.selectExecuteAndOrder(isDone, ShiroAuthenticationManager.getUserId(), order);
         }
@@ -1832,7 +1833,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      */
     @Override
     public List<Project> findExecuteOrderProject(Integer isDone, Integer pageNum, Integer pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
         return taskMapper.selectExecuteOrderProject(isDone, ShiroAuthenticationManager.getUserId());
     }
 

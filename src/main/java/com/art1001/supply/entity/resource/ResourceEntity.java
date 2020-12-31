@@ -33,7 +33,6 @@ public class ResourceEntity extends Model<ResourceEntity> {
 	 * 资源id
 	 */
 	@TableId(value = "s_id",type = IdType.AUTO)
-	@TableField("s_id")
 	public Integer resourceId;
 
 	/**

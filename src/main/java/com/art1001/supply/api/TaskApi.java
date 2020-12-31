@@ -135,14 +135,6 @@ public class TaskApi extends BaseController {
             jsonObject.put("data", task.getProjectId());
             jsonObject.put("result", 1);
             //jsonObject.put("task", taskService.getById(task.getTaskId()));
-
-//            //推送微信小程序消息给多个用户
-//            WeChatAppMessageTemplate weChatAppMessageTemplate = WeChatAppMessageTemplateBuild.createTask();
-//            weChatAppMessageService.pushToMultipleUsers(
-//                    Arrays.asList(task.getTaskUIds().split(",")),
-//                    weChatAppMessageTemplate,
-//                    updateTaskJoinInfo
-//            );
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException("系统异常任务创建失败!", e);

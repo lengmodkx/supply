@@ -1,10 +1,8 @@
 package com.art1001.supply.service.user.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.BindingConstants;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.mapper.user.UserNewsMapper;
 import com.art1001.supply.service.file.FileService;
@@ -12,16 +10,14 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
-import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -54,9 +50,6 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 	/** 分享逻辑层接口 */
 	@Resource
 	private ShareService shareService;
-
-	@Resource
-	private UserService userService;
 
 	/** 用于订阅推送消息 */
 	@Resource
@@ -265,11 +258,15 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 	}
 
 	@Override
-	public List<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime,Integer pageSize,Integer pageNum,Integer param) {
-		PageHelper.startPage(pageNum, pageSize);
-		List<UserNews> userNews = userNewsMapper.userNewsByCondition(keyword, startTime, endTime,param,ShiroAuthenticationManager.getUserId());
-
-		return userNews;
+	public Page<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime,Integer pageSize,Integer pageNum,Integer param) {
+		Page<UserNews> page = new Page(pageNum,pageSize);
+		QueryWrapper<UserNews> query = new QueryWrapper<UserNews>().eq("news_to_user",ShiroAuthenticationManager.getUserId())
+				.eq(StringUtils.isNotEmpty(keyword),"news_name",keyword).or()
+				.eq(StringUtils.isNotEmpty(keyword),"news_content",keyword)
+				.ge(startTime!=null,"create_time",startTime)
+				.lt(endTime!=null,"create_time",endTime)
+				.eq(param!=null,"news_handle",param);
+		return userNewsMapper.selectPage(page, query);
 	}
 
 	@Override
