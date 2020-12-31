@@ -23,7 +23,7 @@ public interface ArticleService extends IService<Article> {
      * @param coverImages       文章封面展示图片
      * @return
      */
-    void addArticle(String articleTitle, String articleContent,Integer acId,String headlineContent,List<String> headlineImages,String videoName,List<String> videoAddress,String videoCover, Integer coverShow, List<String> coverImages);
+    void addArticle(String articleTitle, String articleContent,String articlePureContent,Integer acId,String headlineContent,List<String> headlineImages,String videoName,List<String> videoAddress,String videoCover, Integer coverShow, List<String> coverImages);
 
     /**
      * 修改文章
@@ -40,7 +40,7 @@ public interface ArticleService extends IService<Article> {
      * @param coverImages     文章封面展示图片
      * @return
      */
-    void editArticle(String articleTitle, String articleContent, String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages);
+    void editArticle(String articleTitle, String articleContent, String articlePureContent,String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages);
 
     /**
      * 关注/取消关注 用户
@@ -71,4 +71,11 @@ public interface ArticleService extends IService<Article> {
      */
     IPage<UserEntity> allConnectionUser(Integer pageNum, Integer pageSize,Integer type);
 
+    /**
+     * 我的文章
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    IPage<Article> myArticle(Integer pageNum, Integer pageSize);
 }

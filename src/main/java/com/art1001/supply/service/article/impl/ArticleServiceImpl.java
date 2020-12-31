@@ -7,6 +7,7 @@ import com.art1001.supply.mapper.article.ArticleMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.article.ArticleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.FollowUtil;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -15,7 +16,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -64,26 +64,24 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      * @return
      */
     @Override
-    public void addArticle(String articleTitle, String articleContent, Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages) {
+    public void addArticle(String articleTitle, String articleContent, String articlePureContent,Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages) {
         Article article = new Article();
         if (acId.equals(Constants.B_ONE)) {
             article.setArticleTitle(articleTitle);
             article.setArticleContent(articleContent);
+            article.setArticlePureContent(articlePureContent);
             article.setCoverShow(coverShow);
             if (CollectionUtils.isNotEmpty(coverImages)) {
-                StringBuilder images = listToString(coverImages);
-                article.setCoverImages(images.toString());
+                article.setCoverImages(CommonUtils.listToString(coverImages));
             }
         }
         if (acId.equals(Constants.B_TWO)) {
             article.setHeadlineContent(headlineContent);
-            StringBuilder images = listToString(headlineImages);
-            article.setHeadlineImages(images.toString());
+            article.setHeadlineImages(CommonUtils.listToString(headlineImages));
         }
         if (acId.equals(Constants.B_THREE)) {
             article.setVideoName(videoName);
-            StringBuilder videos = listToString(videoAddress);
-            article.setVideoAddress(videos.toString());
+            article.setVideoAddress(CommonUtils.listToString(videoAddress));
             article.setVideoCover(videoCover);
         }
         article.setAcId(acId);
@@ -111,35 +109,23 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      * @return
      */
     @Override
-    public void editArticle(String articleTitle, String articleContent, String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages) {
+    public void editArticle(String articleTitle, String articleContent, String articlePureContent,String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages) {
         Article article = Article.builder().articleTitle(articleTitle).articleContent(articleContent)
+                .articlePureContent(articlePureContent )
                 .articleId(articleId).headlineContent(headlineContent)
                 .videoName(videoName).videoCover(videoCover)
                 .coverShow(coverShow).updateTime(System.currentTimeMillis())
                 .build();
         if (CollectionUtils.isNotEmpty(headlineImages)) {
-            article.setHeadlineImages(listToString(headlineImages).toString());
+            article.setHeadlineImages(CommonUtils.listToString(headlineImages));
         }
         if (CollectionUtils.isNotEmpty(coverImages)) {
-            article.setCoverImages(listToString(coverImages).toString());
+            article.setCoverImages(CommonUtils.listToString(coverImages));
         }
         if (CollectionUtils.isNotEmpty(videoAddress)) {
-            article.setVideoAddress(listToString(videoAddress).toString());
+            article.setVideoAddress(CommonUtils.listToString(videoAddress));
         }
         articleMapper.editArticle(article);
-    }
-
-    @NotNull
-    private StringBuilder listToString(List<String> coverImages) {
-        StringBuilder images = new StringBuilder();
-        for (int i = 0; i < coverImages.size(); i++) {
-            if (i != coverImages.size() - 1) {
-                images.append(coverImages.get(i)).append(",");
-            } else {
-                images.append(coverImages.get(i));
-            }
-        }
-        return images;
     }
 
 
@@ -189,7 +175,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (StringUtils.isNotEmpty(acId)) {
             query.eq("ac_id", acId);
         }
-        return articleMapper.selectPage(page, query);
+        IPage<Article> articleIPage = articleMapper.selectPage(page, query);
+        List<Article> records = articleIPage.getRecords();
+        if (CollectionUtils.isNotEmpty(records)) {
+            records.stream().forEach(r -> {
+                UserEntity byId = userMapper.findById(r.getMemberId());
+                r.setMemberImage(byId.getImage());
+                r.setUserName(byId.getUserName());
+            });
+        }
+        return articleIPage;
     }
 
     @Override
@@ -208,5 +203,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             }
         }
         return null;
+    }
+
+    @Override
+    public IPage<Article> myArticle(Integer pageNum, Integer pageSize) {
+        Page<Article> page = new Page<>(pageNum, pageSize);
+        return page(page, new QueryWrapper<Article>().eq("member_id", ShiroAuthenticationManager.getUserId()));
     }
 }
