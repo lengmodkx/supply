@@ -112,6 +112,11 @@ public class Article extends Model<Article>{
      * 视频封面
      */
     private String videoCover;
+
+    /**
+     * 内容状态 1待发布 2待审核 3已发布
+     */
+    private Integer state;
     /**
       * 创建时间
       */

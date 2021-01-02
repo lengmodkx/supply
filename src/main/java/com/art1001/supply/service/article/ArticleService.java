@@ -53,7 +53,7 @@ public interface ArticleService extends IService<Article> {
      * 我关注的文章列表
      * @return
      */
-    IPage<Article> attentionListArticle(Integer pageNum, Integer pageSize,String acId);
+    List<Article> attentionListArticle(Integer pageNum);
 
     /**
      * 所有文章列表
@@ -74,8 +74,7 @@ public interface ArticleService extends IService<Article> {
     /**
      * 我的文章
      * @param pageNum
-     * @param pageSize
      * @return
      */
-    IPage<Article> myArticle(Integer pageNum, Integer pageSize);
+    List<Article> myArticle(Integer pageNum);
 }

@@ -31,9 +31,9 @@ spring:
   #阿里云redis连接配置
   redis:
     database: 0
-    host: r-2zef2711285108e4pd.redis.rds.aliyuncs.com
+    host: localhost
     port: 6379
-    password: 1qaz2wsx#EDC
+#    password: 1qaz2wsx#EDC
   #配置JSON时区和空值处理
   jackson:
     time-zone: GMT+8

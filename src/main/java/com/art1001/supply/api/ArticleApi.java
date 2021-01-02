@@ -117,14 +117,12 @@ public class ArticleApi {
     /**
      * 我的文章
      * @param pageNum
-     * @param pageSize
      * @return
      */
     @GetMapping("/myArticle")
-    public Result myArticle(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize){
+    public Result myArticle(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
         try {
-            IPage<Article> page =articleService.myArticle(pageNum,pageSize);
+            List<Article> page =articleService.myArticle(pageNum);
             return Result.success(page);
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -135,16 +133,12 @@ public class ArticleApi {
      * 我关注的文章列表
      *
      * @param pageNum
-     * @param pageSize
-     * @param acId
      * @return
      */
     @GetMapping("/attentionListArticle")
-    public Result attentionListArticle(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-                                       @RequestParam(value = "acId", required = false) String acId) {
+    public Result attentionListArticle(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         try {
-            IPage<Article> page = articleService.attentionListArticle(pageNum, pageSize, acId);
+            List<Article> page = articleService.attentionListArticle(pageNum);
             return Result.success(page);
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -160,7 +154,7 @@ public class ArticleApi {
      */
     @GetMapping("/allArtile")
     public Result allArtile(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                            @RequestParam(value = "pageSize", defaultValue = "25") Integer pageSize,
                             @RequestParam(value = "acId", required = false) String acId) {
         try {
             IPage<Article> page = articleService.allArtile(pageNum, pageSize, acId);
