@@ -43,8 +43,11 @@ Task extends Model<Task> {
 	 */
 	private String projectId;
 
+	/**
+	 * 标签
+	 */
 	@TableField(typeHandler = FastjsonTypeHandler.class)
-	private List<Tag> tagId;
+	private List<Tag> tagList;
 
 	/**
 	 * 任务名称
@@ -100,12 +103,6 @@ Task extends Model<Task> {
 	 * 优先级
 	 */
 	private String priority;
-
-	/**
-	 * 标签
-	 */
-	@TableField(exist = false)
-	private List<Tag> tagList;
 
 	/**
 	 * 任务的层级

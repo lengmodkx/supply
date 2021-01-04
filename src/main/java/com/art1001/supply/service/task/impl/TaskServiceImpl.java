@@ -234,6 +234,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         //设置创建者
         task.setMemberId(ShiroAuthenticationManager.getUserId());
         task.setTaskUIds(ShiroAuthenticationManager.getUserId());
+        task.setTagList(new ArrayList<>());
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
         task.setOrder(++maxOrder);
@@ -2271,7 +2272,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
                 list=list.stream().filter(r->r.getExecutor().equals(executor)).collect(Collectors.toList());
             }
             if (tagId!=null) {
-                list=list.stream().filter(r->r.getTagId().equals(tagId)).collect(Collectors.toList());
+                //list=list.stream().filter(r->r.getTagId().equals(tagId)).collect(Collectors.toList());
             }
             if (startTime!=null) {
                 list=list.stream().filter(f->f.getEndTime()!=null && f.getEndTime()>startTime).collect(Collectors.toList());

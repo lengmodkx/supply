@@ -1,6 +1,5 @@
 package com.art1001.supply.service.tag;
 
-import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.exception.ServiceException;
@@ -17,14 +16,6 @@ import java.util.Map;
 public interface TagService extends IService<Tag> {
 
 	/**
-	 * 查询分页tag数据
-	 * 
-	 * @param pager 分页对象
-	 * @return
-	 */
-	public List<Tag> findTagPagerList(Pager pager);
-
-	/**
 	 * 通过tagId获取单条tag数据
 	 * 
 	 * @param tagId
@@ -37,28 +28,21 @@ public interface TagService extends IService<Tag> {
 	 * 
 	 * @param tagId
 	 */
-	public void deleteTagByTagId(Long tagId);
+	void deleteTagByTagId(Long tagId);
 
 	/**
 	 * 修改tag数据
 	 * 
 	 * @param tag
 	 */
-	public void updateTag(Tag tag) throws ServiceException;
+	void updateTag(Tag tag) throws ServiceException;
 
 	/**
 	 * 保存tag数据
 	 *
 	 * @param tag
 	 */
-	public Tag saveTag(Tag tag);
-
-	/**
-	 * 获取所有tag数据
-	 * 
-	 * @return
-	 */
-	public List<Tag> findTagAllList();
+	Tag saveTag(Tag tag);
 
 	/**
 	 * 根据tag名称查询tag的数量  去重
