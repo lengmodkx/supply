@@ -31,4 +31,16 @@ public class CommonUtils {
         return collection == null || collection.isEmpty();
     }
 
+    public static String listToString(List<String> coverImages) {
+        StringBuilder images = new StringBuilder();
+        for (int i = 0; i < coverImages.size(); i++) {
+            if (i != coverImages.size() - 1) {
+                images.append(coverImages.get(i)).append(",");
+            } else {
+                images.append(coverImages.get(i));
+            }
+        }
+        return images.toString();
+    }
+
 }

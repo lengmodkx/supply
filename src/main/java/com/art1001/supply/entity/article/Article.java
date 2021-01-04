@@ -2,6 +2,7 @@ package com.art1001.supply.entity.article;
 
 import com.art1001.supply.util.LongToDeteSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -47,6 +48,18 @@ public class Article extends Model<Article>{
     private String memberId;
 
     /**
+     * 作者头像
+     */
+    @TableField(exist = false)
+    private String memberImage;
+
+    /**
+     * 用户名
+     */
+    @TableField(exist = false)
+    private String userName;
+
+    /**
      * 封面展示 0为不展示 1单图展示 2三图展示
      */
     private Integer coverShow;
@@ -65,6 +78,11 @@ public class Article extends Model<Article>{
       * 文章内容
       */
     private String articleContent;
+
+    /**
+     * 无html标签的内容
+     */
+    private String articlePureContent;
 
     /**
       * 0:未删除;1.已删除
@@ -94,6 +112,11 @@ public class Article extends Model<Article>{
      * 视频封面
      */
     private String videoCover;
+
+    /**
+     * 内容状态 1待发布 2待审核 3已发布
+     */
+    private Integer state;
     /**
       * 创建时间
       */

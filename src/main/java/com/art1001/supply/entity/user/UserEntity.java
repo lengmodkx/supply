@@ -27,6 +27,7 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @TableName("tb_user")
+
 public class UserEntity extends Model<UserEntity> {
 
 	private static final long serialVersionUID = -6743567631108323096L;

@@ -23,7 +23,7 @@ public interface ArticleService extends IService<Article> {
      * @param coverImages       文章封面展示图片
      * @return
      */
-    void addArticle(String articleTitle, String articleContent,Integer acId,String headlineContent,List<String> headlineImages,String videoName,List<String> videoAddress,String videoCover, Integer coverShow, List<String> coverImages);
+    void addArticle(String articleTitle, String articleContent,String articlePureContent,Integer acId,String headlineContent,List<String> headlineImages,String videoName,List<String> videoAddress,String videoCover, Integer coverShow, List<String> coverImages);
 
     /**
      * 修改文章
@@ -40,7 +40,7 @@ public interface ArticleService extends IService<Article> {
      * @param coverImages     文章封面展示图片
      * @return
      */
-    void editArticle(String articleTitle, String articleContent, String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages);
+    void editArticle(String articleTitle, String articleContent, String articlePureContent,String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages);
 
     /**
      * 关注/取消关注 用户
@@ -53,7 +53,7 @@ public interface ArticleService extends IService<Article> {
      * 我关注的文章列表
      * @return
      */
-    IPage<Article> attentionListArticle(Integer pageNum, Integer pageSize,String acId);
+    List<Article> attentionListArticle(Integer pageNum);
 
     /**
      * 所有文章列表
@@ -66,9 +66,14 @@ public interface ArticleService extends IService<Article> {
     /**
      * 所有粉丝
      * @param pageNum
-     * @param pageSize
      * @return
      */
-    IPage<UserEntity> allConnectionUser(Integer pageNum, Integer pageSize,Integer type);
+    List<UserEntity> allConnectionUser(Integer pageNum,Integer type);
 
+    /**
+     * 我的文章
+     * @param pageNum
+     * @return
+     */
+    List<Article> myArticle(Integer pageNum);
 }
