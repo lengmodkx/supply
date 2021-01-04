@@ -168,16 +168,14 @@ public class ArticleApi {
      * 所有粉丝/所有关注
      *
      * @param pageNum
-     * @param pageSize
-     * @param type     1所有粉丝 2所有关注
+     * @param type     1所有粉丝 2所有关注 3互粉
      * @return
      */
     @GetMapping("/allConnectionUser")
     public Result allConnectionUser(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                                     @RequestParam(value = "type") Integer type) {
         try {
-            IPage<UserEntity> page = articleService.allConnectionUser(pageNum, pageSize, type);
+            List<UserEntity> page = articleService.allConnectionUser(pageNum, type);
             return Result.success(page);
         } catch (Exception e) {
             throw new AjaxException(e);

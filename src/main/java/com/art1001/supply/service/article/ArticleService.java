@@ -66,10 +66,9 @@ public interface ArticleService extends IService<Article> {
     /**
      * 所有粉丝
      * @param pageNum
-     * @param pageSize
      * @return
      */
-    IPage<UserEntity> allConnectionUser(Integer pageNum, Integer pageSize,Integer type);
+    List<UserEntity> allConnectionUser(Integer pageNum,Integer type);
 
     /**
      * 我的文章
