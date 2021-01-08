@@ -1,4 +1,5 @@
 package com.art1001.supply.service.user;
+
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.entity.user.UserInfo;
 import com.art1001.supply.entity.user.UserVO;
@@ -16,15 +17,39 @@ public interface UserService extends IService<UserEntity> {
 
 	String USER_INFO = "userInfo:";
 
+	/**
+	 * 我关注的
+	 */
+	String FOLLOWING = "FOLLOWING_:";
+	/**
+	 * 我的粉丝
+	 */
+	String FANS = "FANS_:";
+	/**
+	 * 我的互粉
+	 */
+	String MUTUAL_FANS = "MUTUAL_FANS_:";
+	/**
+	 * 我关注的人的文章
+	 */
+	String FOLLOWED_ARTICLE = "FOLLOWED_ARTICLE_:";
+	/**
+	 * 我写的文章
+	 */
+	String MY_ARTICLE = "MY_ARTICLE_:";
+
 	List<UserEntity> queryListByPage(Map<String, Object> parameter);
 
 	UserEntity findByName(String accountName);
 
-	//查询部分用户信息
+	/**
+	 * 查询部分用户信息
+	 */
 	UserInfo findInfo(String accountName);
 
 	void insert(UserEntity userEntity, String password);
-	
+
+
 	UserEntity findById(String id);
 	
 	int updatePassword(UserEntity userEntity, String password) throws ServiceException;
