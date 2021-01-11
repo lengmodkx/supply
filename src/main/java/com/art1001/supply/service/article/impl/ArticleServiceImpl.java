@@ -309,16 +309,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             default:
                 return null;
         }
-        /*if (type.equals(Constants.B_ONE)) {
-
-        }
-        if (type.equals(Constants.B_TWO)) {
-            list = getUserEntities(pageNum, list, FOLLOWING);
-        }
-        if (type.equals(Constants.B_THREE)) {
-            list = getUserEntities(pageNum, list, MUTUAL_FANS);
-        }*/
-//        return list;
     }
 
     private List<UserEntity> getUserEntities(Integer pageNum, List<UserEntity> list, String prefix) {
