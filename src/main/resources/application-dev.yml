@@ -25,6 +25,7 @@ spring:
         login-password: 1qaz2wsx#EDC
         reset-enable: false
         url-pattern: /druid/*
+        enabled: true
       web-stat-filter:
         url-pattern: /*
         exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
@@ -33,18 +34,11 @@ spring:
     database: 0
     host: localhost
     port: 6379
-#    password: 1qaz2wsx#EDC
+  #password: 1qaz2wsx#EDC
   #配置JSON时区和空值处理
   jackson:
     time-zone: GMT+8
     default-property-inclusion: non_null
-  #配置搜索引擎
-  data:
-    elasticsearch:
-      cluster-name: docker-cluster
-      cluster-nodes: 39.105.7.73:9300
-      repositories:
-        enabled: true
 #mybatis-plus配置
 mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml

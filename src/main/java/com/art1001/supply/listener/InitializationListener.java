@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.art1001.supply.listener;
 import com.art1001.supply.entity.resource.ProResources;
 import com.art1001.supply.entity.resource.ResourceEntity;
@@ -52,16 +49,16 @@ public class InitializationListener implements ApplicationListener<ContextRefres
 
             //获取所有的企业资源
             List<ResourceEntity> allResourceList = resourceService.list(new QueryWrapper<ResourceEntity>()
-                    .lambda().ne(ResourceEntity::getResourceLevel, 1));
+                    .lambda().eq(ResourceEntity::getResourceLevel, 2));
             List<String> allResources = allResourceList.stream().map(ResourceEntity::getResourceKey).collect(Collectors.toList());
 
             //获取所有的项目资源
             allResources.addAll(proResourcesService.list(new QueryWrapper<ProResources>()
-                    .lambda().ne(ProResources::getSLevel, 1)).stream()
+                    .lambda().eq(ProResources::getSLevel, 2)).stream()
                     .map(ProResources::getSSourceKey).collect(Collectors.toList()));
 
             redisUtil.lset("allResources", allResources);
-            logger.info("所有资源key信息查询完毕,存储进redis.");
+            logger.info("complete all keys query ,store in redis.");
 
 
             /**

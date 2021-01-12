@@ -14,7 +14,8 @@ public class MemberViewResult {
     private String userId;
 
     private String userName;
-
+    private String accountName;
+    private String image;
     private List<Task> taskList;
 
 }
