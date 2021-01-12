@@ -8,8 +8,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.netty.handler.codec.compression.FastLzFrameEncoder;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -170,6 +171,12 @@ public class UserEntity extends Model<UserEntity> {
 
 	@TableField(exist = false)
 	private Boolean visible = false;
+
+	/**
+	 * 是否关注 0否 1是
+	 */
+	@TableField(exist = false)
+	private Integer isAttention;
 	/***
 	 * 用户默认所在的企业
 	 */

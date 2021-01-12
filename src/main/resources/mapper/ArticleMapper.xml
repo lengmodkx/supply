@@ -17,6 +17,9 @@
             <if test="articleContent != null and articleContent !=''">
                 article_content=#{articleContent},
             </if>
+            <if test="articlePureContent != null and articlePureContent != ''">
+                article_pure_content=#{articlePureContent},
+            </if>
             <if test="headlineContent != null and headlineContent !=''">
                 headline_content=#{headlineContent},
             </if>
@@ -38,4 +41,28 @@
         </set>
         where article_id=#{articleId}
     </update>
+    <select id="selectByExample" resultType="com.art1001.supply.entity.article.Article">
+        select pa.*,
+        tu.image as memberImage,
+        tu.user_name as userName
+        from prm_article pa
+        left join tb_user tu
+        on pa.member_id=tu.user_id
+        <where>
+        and pa.is_del=0
+            <if test="acId != null and acId != ''">
+                and pa.ac_id=#{acId}
+            </if>
+        </where>
+        order by pa.create_time desc
+    </select>
+    <select id="selectArticlePage" resultType="com.art1001.supply.entity.article.Article">
+        select pa.*,
+        tu.image as memberImage,
+        tu.user_name as userName
+        from prm_article pa
+        left join tb_user tu
+        on pa.member_id = tu.user_id
+        ${ew.customSqlSegment}
+    </select>
 </mapper>

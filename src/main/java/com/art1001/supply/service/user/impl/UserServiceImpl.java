@@ -558,7 +558,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     @Override
-    public UserVO getHeadUserInfo(String userId,String orgId) {
+    public UserVO getHeadUserInfo(String userId, String orgId) {
         UserVO headUserInfo = userMapper.getHeadUserInfo(userId);
         List<Partment> orgPartmentInfo = partmentService.findOrgPartmentInfo(orgId);
         Optional.ofNullable(orgPartmentInfo).ifPresent(headUserInfo::setPartments);
@@ -653,6 +653,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     /**
      * 注册并加入企业
+     *
      * @param captcha
      * @param accountName
      * @param password
@@ -690,24 +691,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         workBenchInfoVo.setLoginTime(System.currentTimeMillis());
         workBenchInfoVo.setLoginIp(IpUtil.getIpAddr(request));
         workBenchInfoVo.setSignature(userEntity.getSignature());
-        Set<String> fans = followUtil.findFans(userId);
-        if (CollectionUtils.isNotEmpty(fans)) {
-            workBenchInfoVo.setFansCount(fans.size());
-        }else {
-            workBenchInfoVo.setFansCount(0);
-        }
-        Set<String> follwings = followUtil.findFollwings(userId);
-        if (CollectionUtils.isNotEmpty(follwings)) {
-            workBenchInfoVo.setFollowCount(follwings.size());
-        }else {
-            workBenchInfoVo.setFollowCount(0);
-        }
+
+        Set<String> followIds = redisUtil.zrange(FOLLOWING + userId, 0, -1);
+        Set<String> fansIds = redisUtil.zrange(FANS + userId, 0, -1);
+        Set<String> mutualFansIds = redisUtil.zrange(MUTUAL_FANS + userId, 0, -1);
+
+
+        workBenchInfoVo.setFollowCount(followIds.size());
+        workBenchInfoVo.setFansCount(fansIds.size());
+        workBenchInfoVo.setMutualFansCount(mutualFansIds.size());
         return workBenchInfoVo;
     }
 
 
     /**
      * 注册用户
+     *
      * @param accountName
      * @param password
      * @param userName

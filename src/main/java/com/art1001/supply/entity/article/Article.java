@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @ClassName Article
@@ -82,6 +83,7 @@ public class Article extends Model<Article>{
     /**
      * 无html标签的内容
      */
+    @TableField(value ="article_pure_content" )
     private String articlePureContent;
 
     /**
@@ -128,6 +130,18 @@ public class Article extends Model<Article>{
       */
     @JsonSerialize(using = LongToDeteSerializer.class)
     private Long updateTime;
+
+    /**
+     * 评论数
+     */
+    @TableField(exist = false)
+    private Integer commentCount;
+
+    /**
+     * 评论列表
+     */
+    @TableField(exist = false)
+    private List<Comment>comments;
 
     @Override
     protected Serializable pkVal() {

@@ -323,6 +323,9 @@ public class RedisUtil {
         return redisTemplate.opsForZSet().range(key,start,end);
     }
 
+    public  Long setCount(String key){
+        return redisTemplate.opsForZSet().size(key);
+    }
     public void del(String key){
         redisTemplate.opsForZSet().removeRange(key,0,-1);
     }

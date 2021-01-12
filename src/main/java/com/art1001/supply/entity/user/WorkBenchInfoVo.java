@@ -26,8 +26,19 @@ public class WorkBenchInfoVo {
      */
     private String signature;
 
+    /**
+     * 我的粉丝数
+     */
     private Integer fansCount;
 
+    /**
+     * 我的关注数
+     */
     private Integer followCount;
+
+    /**
+     * 我的互粉数
+     */
+    private Integer mutualFansCount;
 
 }
