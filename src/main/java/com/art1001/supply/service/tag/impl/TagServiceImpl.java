@@ -75,17 +75,6 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 
 
 	/**
-	 * 查询分页tag数据
-	 *
-	 * @param pager 分页对象
-	 * @return
-	 */
-	@Override
-	public List<Tag> findTagPagerList(Pager pager){
-		return tagMapper.findTagPagerList(pager);
-	}
-
-	/**
 	 * 通过tagId获取单条tag数据
 	 *
 	 * @param tagId
@@ -144,15 +133,6 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
         tagMapper.saveTag(tag);
         return tag;
     }
-	/**
-	 * 获取所有tag数据
-	 *
-	 * @return
-	 */
-	@Override
-	public List<Tag> findTagAllList(){
-		return tagMapper.findTagAllList();
-	}
 
 	@Override
 	public int findCountByTagName(String projectId, String tagName) {

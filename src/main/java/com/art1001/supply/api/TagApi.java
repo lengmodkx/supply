@@ -28,11 +28,11 @@ import java.util.Map;
  * @Title: TagApi
  * @Description: TODO 标签api
  * @date 2018/9/12 13:42
- * [POST]   // 新增
- * [GET]    // 查询
- * [PATCH]  // 更新
- * [PUT]    // 覆盖，全部更新
- * [DELETE] // 删除
+ * [POST] 新增
+ * [GET] 查询
+ * [PATCH] 更新
+ * [PUT] 覆盖，全部更新
+ * [DELETE] 删除
  **/
 @Slf4j
 @RequestMapping("tags")

@@ -1100,6 +1100,11 @@
     where
         task_id = #{taskId}
     </update>
+    <select id="selectTag">
+        select task_list->'$.tagId' form prm_task where
+    </select>
+
+
     <!-- 根据用户查询出该用户执行的和创建的所有任务 -->
     <select id="findTaskByCalendar" resultMap="BaseResultMap">
         select
