@@ -1,7 +1,7 @@
 package com.art1001.supply.annotation;
 
 public enum EsRuleType {
-    ARTICLE("article"),COMMEMT("comment"),DEFAULT("");
+    ARTICLE("article"),COMMEMT("comment"),QUESTION("question"),REPLY("reply"),DEFAULT("");
     private String name;
 
     EsRuleType(String name) {

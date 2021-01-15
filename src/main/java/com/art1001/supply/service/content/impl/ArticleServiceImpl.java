@@ -1,25 +1,27 @@
-package com.art1001.supply.service.article.impl;
+package com.art1001.supply.service.content.impl;
 
-import com.art1001.supply.entity.article.Article;
-import com.art1001.supply.entity.article.Comment;
+import com.art1001.supply.entity.content.Article;
+import com.art1001.supply.entity.content.Comment;
+import com.art1001.supply.entity.content.Topic;
 import com.art1001.supply.entity.fans.Attention;
 import com.art1001.supply.entity.fans.Fans;
 import com.art1001.supply.entity.fans.MutualFans;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.mapper.article.ArticleMapper;
-import com.art1001.supply.mapper.article.CommentMapper;
+import com.art1001.supply.mapper.content.ArticleMapper;
+import com.art1001.supply.mapper.content.CommentMapper;
+import com.art1001.supply.mapper.content.TopicMapper;
 import com.art1001.supply.mapper.fans.AttentionMapper;
 import com.art1001.supply.mapper.fans.FansMapper;
 import com.art1001.supply.mapper.fans.MutualFansMapper;
 import com.art1001.supply.mapper.user.UserMapper;
-import com.art1001.supply.service.article.ArticleService;
+import com.art1001.supply.service.content.ArticleService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.EsUtil;
+import com.art1001.supply.util.PatternUtils;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
@@ -80,6 +82,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Resource
     private EsUtil<Article> esUtil;
+
+    @Resource
+    private TopicMapper topicMapper;
 
 
     /**
@@ -168,7 +173,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (CollectionUtils.isNotEmpty(videoAddress)) {
             article.setVideoAddress(CommonUtils.listToString(videoAddress));
         }
-        articleMapper.editArticle(article);
+        updateById(article);
+
     }
 
 
@@ -236,7 +242,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             for (String articleId : articleIds) {
                 sourceBuilder.query(QueryBuilders.matchQuery("articleId", articleId));
                 Article article = esUtil.search(Article.class, sourceBuilder, ARTICLE);
-                if (article!=null)list.add(article);
+                if (article != null) list.add(article);
             }
         }
 
@@ -277,42 +283,40 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public IPage<Article> allArtile(Integer pageNum, Integer pageSize, String acId) {
-        IPage<Article> page = new Page<>(pageNum, pageSize);
-
-        List<Article> list = Lists.newArrayList();
+    public Page<Article> allArtile(Integer pageNum, Integer pageSize, String acId) {
+        Page<Article> page = new Page<>();
 
         SearchSourceBuilder source = new SearchSourceBuilder();
-        source.query(QueryBuilders.matchQuery("isDel", 0)).from(pageNum).size(pageSize);
+        source.query(QueryBuilders.matchQuery("isDel", 0));
 
-        list = esUtil.searchList(Article.class, source, ARTICLE);
+        page = esUtil.searchListByPage(Article.class, source, ARTICLE, pageNum);
 
-        if (CollectionUtils.isEmpty(list)) {
-            list = articleMapper.selectByExample(page, acId);
+        if (CollectionUtils.isEmpty(page.getRecords())) {
+            page.setRecords(articleMapper.selectByExample(page, acId));
         }
         setComment(page.getRecords());
-        page.setRecords(list);
+        page.setCurrent(pageNum);
+        page.setSize(20);
         return page;
     }
 
     @Override
-    public List<UserEntity> allConnectionUser(Integer pageNum, Integer type) {
+    public List<UserEntity> allConnectionUser(Integer pageNum, Integer type, String memberId) {
 
         List<UserEntity> list = Lists.newArrayList();
         switch (type) {
             case 1:
-                return getUserEntities(pageNum, list, FANS);
+                return getUserEntities(pageNum, list, FANS, memberId);
             case 2:
-                return getUserEntities(pageNum, list, FOLLOWING);
+                return getUserEntities(pageNum, list, FOLLOWING, memberId);
             case 3:
-                return getUserEntities(pageNum, list, MUTUAL_FANS);
+                return getUserEntities(pageNum, list, MUTUAL_FANS, memberId);
             default:
                 return null;
         }
     }
 
-    private List<UserEntity> getUserEntities(Integer pageNum, List<UserEntity> list, String prefix) {
-        String userId = ShiroAuthenticationManager.getUserId();
+    private List<UserEntity> getUserEntities(Integer pageNum, List<UserEntity> list, String prefix, String userId) {
         Set<String> memberIds = redisUtil.zrevrange(prefix + userId, pageNum * (pageNum - 1) * 20, (pageNum * 20) - 1);
         if (CollectionUtils.isNotEmpty(memberIds)) {
             for (String memberId : memberIds) {
@@ -328,64 +332,47 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime) {
+    public Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime, String memberId) {
         Page<Article> page = new Page<>();
         // es查询
         try {
-//            SearchRequest searchRequest = new SearchRequest();
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+            boolQueryBuilder.must(QueryBuilders.matchQuery("memberId", memberId));
             if (StringUtils.isNotEmpty(keyword)) {
-                // 分词查询
-                boolQueryBuilder.should(QueryBuilders.matchQuery("articleTitle", keyword).boost(2f));
                 // 模糊查询
-                boolQueryBuilder.should(QueryBuilders.wildcardQuery("articleTitle", "*" + keyword + "*").boost(2f));
+                boolQueryBuilder.must(QueryBuilders.wildcardQuery("articleTitle", "*" + keyword + "*").boost(2f));
             }
-            boolQueryBuilder.should(QueryBuilders.typeQuery(DOCS));
-            // 时间范围查询
+
             if (startTime != null && endTime != null) {
-                boolQueryBuilder.should(QueryBuilders.rangeQuery("createTime").from(startTime).to(endTime));
+                boolQueryBuilder.must(QueryBuilders.rangeQuery("createTime").from(startTime).to(endTime));
             }
             // 根据分类查询
             if (StringUtils.isNotEmpty(acId)) {
-                boolQueryBuilder.should(QueryBuilders.termQuery("acId", acId));
+                boolQueryBuilder.must(QueryBuilders.matchQuery("acId", acId));
             }
-            boolQueryBuilder.should(QueryBuilders.multiMatchQuery("memberId", ShiroAuthenticationManager.getUserId()));
-            sourceBuilder.query(boolQueryBuilder);
-            // 分页设置
-            sourceBuilder.from(pageNum);
-            sourceBuilder.size(pageNum * 20);
 
-            List<Article> list = esUtil.searchList(Article.class, sourceBuilder, ARTICLE);
-            if (CollectionUtils.isNotEmpty(list)) {
-                setComment(list);
+            sourceBuilder.query(boolQueryBuilder);
+//
+            page = esUtil.searchListByPage(Article.class, sourceBuilder, ARTICLE, pageNum);
+
+            if (CollectionUtils.isEmpty(page.getRecords())) {
+                QueryWrapper<Article> wrapper = new QueryWrapper<Article>().eq(StringUtils.isNotEmpty(acId), "ac_Id", acId)
+                        .gt(startTime != null, "create_time", startTime)
+                        .lt(endTime != null, "create_time", endTime)
+                        .eq("member_Id", memberId)
+                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword);
+                Page<Article> articlePage = articleMapper.selectArticlePage(page, wrapper);
+                //es 没有就存进去
+                Optional.ofNullable(articlePage.getRecords()).ifPresent(l -> l.forEach(r -> esUtil.save(ARTICLE, DOCS, r, "articleId")));
+                if (CollectionUtils.isNotEmpty(page.getRecords())) {
+                    setComment(page.getRecords());
+                }
+                return articlePage;
             }
-            page.setRecords(list);
-            page.setCurrent(pageNum);
-            page.setSize(pageNum * 20);
-            page.setTotal(list.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // es没有就查询数据库
-        if (CollectionUtils.isEmpty(page.getRecords())) {
-            page.setCurrent(pageNum);
-            page.setSize(pageNum * 20);
-            QueryWrapper<Article> wrapper = new QueryWrapper<Article>().eq(StringUtils.isNotEmpty(acId), "ac_Id", acId)
-                    .gt(startTime != null, "create_time", startTime)
-                    .lt(endTime != null, "create_time", endTime)
-                    .eq("member_Id", ShiroAuthenticationManager.getUserId())
-                    .like(StringUtils.isNotEmpty(keyword), "article_title", keyword);
-            Page<Article> articlePage = articleMapper.selectArticlePage(page, wrapper);
-            //es 没有就存进去
-            Optional.ofNullable(articlePage.getRecords()).ifPresent(l -> l.forEach(r -> esUtil.save(ARTICLE, DOCS, r, "articleId")));
-            if (CollectionUtils.isNotEmpty(page.getRecords())) {
-                setComment(page.getRecords());
-            }
-            return articlePage;
-        }
-
         return page;
     }
 
@@ -400,6 +387,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(r -> {
                 try {
+                    UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id", r.getMemberId()));
+                    r.setMemberImage(userEntity.getImage());
+                    r.setUserName(userEntity.getUserName());
                     // 构建查询
                     SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
                     // 索引查询
@@ -426,5 +416,46 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             });
         }
     }
+
+    /**
+     * 审核文章
+     *
+     * @param articleId       文章id
+     * @param state           1审核通过 2审核不通过
+     * @param checkFailReason 审核失败原因
+     * @return
+     */
+    @Override
+    public void checkArticle(String articleId, Integer state, String checkFailReason) {
+        Article article = getOne(new QueryWrapper<Article>().eq("article_id", articleId));
+        if (state.equals(ONE)) {
+            article.setState(2);
+            List<String> topIds = Lists.newArrayList();
+            Optional.ofNullable(PatternUtils.parsingTags(article.getArticleContent())).ifPresent(topics -> topics.forEach(r -> {
+                if (topicMapper.selectCount(new QueryWrapper<Topic>().eq(TOPIC_NAME, r)).equals(ZERO)) {
+                    Topic topic = Topic.builder().topicName(r).createTime(System.currentTimeMillis())
+                            .updateTime(System.currentTimeMillis()).build();
+                    topicMapper.insert(topic);
+                    topIds.add(topic.getTopicId());
+                }
+            }));
+            List<String> memberIds = Lists.newArrayList();
+            Optional.ofNullable(PatternUtils.parsingNickName(article.getArticleContent())).ifPresent(nickNames -> nickNames.forEach(r -> {
+                if (!userMapper.selectCount(new QueryWrapper<UserEntity>().eq(NICK_NAME, r)).equals(ZERO)) {
+                    String memberId = userMapper.selectOne(new QueryWrapper<UserEntity>().eq(NICK_NAME, r)).getUserId();
+                    memberIds.add(memberId);
+                }
+            }));
+            if(CollectionUtils.isNotEmpty(topIds))article.setTopicIds(topIds);
+            if(CollectionUtils.isNotEmpty(memberIds))article.setTopicIds(memberIds);
+        }
+        if (state.equals(TWO)) {
+            article.setState(3);
+            if(StringUtils.isNotEmpty(checkFailReason))article.setCheckFailReason(checkFailReason);
+        }
+        updateById(article);
+
+    }
+
 
 }

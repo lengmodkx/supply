@@ -1,9 +1,11 @@
 package com.art1001.supply.entity.demand;
 
+import com.art1001.supply.util.LongToDeteSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,7 +50,7 @@ public class Demand extends Model<Demand>{
     /**
       * 附件
       */
-    private String demandFile;
+    private String demandFiles;
 
     /**
       * 需求预算
@@ -81,9 +83,19 @@ public class Demand extends Model<Demand>{
     private BigDecimal hostingMoney;
 
     /**
-      * 需求状态 1 需求已提交 2 需求待领取 3需求已完成
+      * 需求状态 1 需求未发布 2 需求已发布 3需求已承接 4需求已取消 5需求已完成
       */
     private Integer demandState;
+
+    /**
+     * 是否审核 0否1是
+     */
+    private Integer isCheck;
+
+    /**
+     * 审核失败原因
+     */
+    private String checkFailReason;
 
     /**
       * 是否加急 0否 1是
@@ -98,11 +110,13 @@ public class Demand extends Model<Demand>{
     /**
       * null
       */
+    @JsonSerialize(using = LongToDeteSerializer.class)
     private Long createTime;
 
     /**
       * null
       */
+    @JsonSerialize(using = LongToDeteSerializer.class)
     private Long updateTime;
 
     @Override

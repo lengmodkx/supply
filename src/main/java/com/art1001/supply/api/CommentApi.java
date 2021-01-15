@@ -4,10 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.EsRule;
 import com.art1001.supply.annotation.EsRuleType;
 import com.art1001.supply.entity.Result;
-import com.art1001.supply.entity.article.Comment;
+import com.art1001.supply.entity.content.Comment;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.service.article.CommentService;
+import com.art1001.supply.service.content.CommentService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,7 +39,7 @@ public class CommentApi {
     @EsRule(sort = 1,type = EsRuleType.COMMEMT)
     @GetMapping("/add")
     public JSONObject addComment(@RequestParam(value ="commentName" ) String commentName,
-                             @RequestParam(value = "articleId") String articleId){
+                                 @RequestParam(value = "articleId") String articleId){
         try {
             JSONObject jsonObject = new JSONObject();
             String commentId = commentService.addComment(commentName, articleId);
@@ -55,12 +56,28 @@ public class CommentApi {
      * @param commentIds
      * @return
      */
-    @EsRule(sort = 3, type = EsRuleType.ARTICLE)
+    @EsRule(sort = 2, type = EsRuleType.ARTICLE)
     @GetMapping("/remove")
     public Result removeComment(@RequestParam(value ="commentIds" ) List<String> commentIds){
         try {
             commentService.removeComment(commentIds);
             return Result.success("已删除");
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
+     * 根据文章id查询评论列表
+     * @param articleId
+     * @return
+     */
+    @GetMapping("/commentListByArticleId")
+    public Result commentListByArticleId(@RequestParam("articleId") String articleId,
+                                         @RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum){
+        try {
+            Page<Comment> page=commentService.commentListByArticleId(articleId,pageNum);
+            return Result.success(page);
         } catch (Exception e) {
             throw new AjaxException(e);
         }
@@ -106,6 +123,11 @@ public class CommentApi {
         }
     }
 
+    @GetMapping("/dateToEs")
+    public Result dateToEs(){
+        commentService.dateToEs();
+        return Result.success();
+    }
 
 
 }

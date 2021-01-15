@@ -1,8 +1,8 @@
-package com.art1001.supply.service.article.impl;
+package com.art1001.supply.service.content.impl;
 
-import com.art1001.supply.entity.article.ArticleClass;
-import com.art1001.supply.mapper.article.ArticleClassMapper;
-import com.art1001.supply.service.article.ArticleClassService;
+import com.art1001.supply.entity.content.ArticleClass;
+import com.art1001.supply.mapper.content.ArticleClassMapper;
+import com.art1001.supply.service.content.ArticleClassService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

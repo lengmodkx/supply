@@ -677,24 +677,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     @Override
-    public WorkBenchInfoVo workBenchInfo(String orgId, HttpServletRequest request) {
+    public WorkBenchInfoVo workBenchInfo(String orgId,String memberId, HttpServletRequest request) {
         WorkBenchInfoVo workBenchInfoVo = new WorkBenchInfoVo();
-        String userId = ShiroAuthenticationManager.getUserId();
-        Integer roleId = roleUserService.getUserOrgRoleId(userId, orgId);
+        Integer roleId = roleUserService.getUserOrgRoleId(memberId, orgId);
         Role byId = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleId));
         workBenchInfoVo.setRoleName(byId.getRoleName());
         workBenchInfoVo.setRoleKey(byId.getRoleKey());
-        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("user_id", ShiroAuthenticationManager.getUserId()));
+        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("user_id", memberId));
         workBenchInfoVo.setNickName(userEntity.getUserName());
-        workBenchInfoVo.setMemberId(userId);
+        workBenchInfoVo.setMemberId(memberId);
         workBenchInfoVo.setImage(userEntity.getImage());
         workBenchInfoVo.setLoginTime(System.currentTimeMillis());
         workBenchInfoVo.setLoginIp(IpUtil.getIpAddr(request));
         workBenchInfoVo.setSignature(userEntity.getSignature());
 
-        Set<String> followIds = redisUtil.zrange(FOLLOWING + userId, 0, -1);
-        Set<String> fansIds = redisUtil.zrange(FANS + userId, 0, -1);
-        Set<String> mutualFansIds = redisUtil.zrange(MUTUAL_FANS + userId, 0, -1);
+        Set<String> followIds = redisUtil.zrange(FOLLOWING + memberId, 0, -1);
+        Set<String> fansIds = redisUtil.zrange(FANS + memberId, 0, -1);
+        Set<String> mutualFansIds = redisUtil.zrange(MUTUAL_FANS + memberId, 0, -1);
 
 
         workBenchInfoVo.setFollowCount(followIds.size());

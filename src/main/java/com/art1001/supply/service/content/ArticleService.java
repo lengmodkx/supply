@@ -1,8 +1,7 @@
-package com.art1001.supply.service.article;
+package com.art1001.supply.service.content;
 
-import com.art1001.supply.entity.article.Article;
+import com.art1001.supply.entity.content.Article;
 import com.art1001.supply.entity.user.UserEntity;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +36,9 @@ public interface ArticleService extends IService<Article> {
     String COMMENT = "comment";
 
     String DOCS = "docs";
+
+    String TOPIC_NAME = "topic_name";
+    String NICK_NAME = "nick_name";
 
     Integer ZERO=0;
     Integer ONE= 1;
@@ -100,7 +102,7 @@ public interface ArticleService extends IService<Article> {
      * @param pageSize
      * @return
      */
-    IPage<Article> allArtile(Integer pageNum, Integer pageSize, String acId);
+    Page<Article> allArtile(Integer pageNum, Integer pageSize, String acId);
 
     /**
      * 所有粉丝
@@ -108,7 +110,7 @@ public interface ArticleService extends IService<Article> {
      * @param pageNum
      * @return
      */
-    List<UserEntity> allConnectionUser(Integer pageNum, Integer type);
+    List<UserEntity> allConnectionUser(Integer pageNum, Integer type,String memberId);
 
     /**
      * 我的文章
@@ -116,7 +118,7 @@ public interface ArticleService extends IService<Article> {
      * @param pageNum
      * @return
      */
-    Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime);
+    Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime,String memberId);
 
     /**
      * 删除文章
@@ -125,4 +127,12 @@ public interface ArticleService extends IService<Article> {
     void deleteArticle(String articleId);
 
     void dateToEs();
+
+    /**
+     * 审核文章
+     * @param articleId
+     * @param state               1审核通过 2审核不通过
+     * @param checkFailReason     审核失败原因
+     */
+    void checkArticle(String articleId,Integer state,String checkFailReason);
 }

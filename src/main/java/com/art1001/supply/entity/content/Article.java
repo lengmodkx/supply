@@ -1,4 +1,4 @@
-package com.art1001.supply.entity.article;
+package com.art1001.supply.entity.content;
 
 import com.art1001.supply.util.LongToDeteSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,13 +25,13 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "prm_article")
+@TableName(value = "prm_article",autoResultMap = true)
 public class Article extends Model<Article>{
 
     /**
       * 索引id
       */
-    @TableId(value = "article_id",type = IdType.UUID)
+    @TableId(value = "article_id",type = IdType.ASSIGN_UUID)
     private String articleId;
 
     /**
@@ -116,9 +117,14 @@ public class Article extends Model<Article>{
     private String videoCover;
 
     /**
-     * 内容状态 1待发布 2待审核 3已发布
+     * 内容状态 1待审核 2审核通过 3审核未通过
      */
     private Integer state;
+
+    /**
+     * 审核失败原因
+     */
+    private String checkFailReason;
     /**
       * 创建时间
       */
@@ -136,6 +142,17 @@ public class Article extends Model<Article>{
      */
     @TableField(exist = false)
     private Integer commentCount;
+    /**
+     * @人的id
+     */
+    @TableField(typeHandler = FastjsonTypeHandler.class)
+    private List<String> mentionIds;
+
+    /**
+     * 话题id
+     */
+    @TableField(typeHandler = FastjsonTypeHandler.class)
+    private List<String> topicIds;
 
     /**
      * 评论列表

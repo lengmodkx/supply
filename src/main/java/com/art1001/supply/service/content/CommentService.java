@@ -1,13 +1,16 @@
-package com.art1001.supply.service.article;
+package com.art1001.supply.service.content;
 
-import com.art1001.supply.entity.article.Comment;
+import com.art1001.supply.entity.content.Comment;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
 public interface CommentService extends IService<Comment> {
 
+    String COMMENT="comment";
+    String DOCS="docs";
     /**
      * 添加评论
      * @param commentName
@@ -39,4 +42,13 @@ public interface CommentService extends IService<Comment> {
      * @param checkFailReason
      */
     void updateCommentState(Integer commentState, String commentId, String checkFailReason);
+
+    /**
+     * 根据文章id查询评论列表
+     * @param articleId
+     * @return
+     */
+    Page<Comment> commentListByArticleId(String articleId,Integer pageNum);
+
+    void dateToEs();
 }

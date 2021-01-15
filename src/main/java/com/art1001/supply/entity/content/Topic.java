@@ -1,45 +1,38 @@
-package com.art1001.supply.entity.article;
+package com.art1001.supply.entity.content;
 
 import com.art1001.supply.util.LongToDeteSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
-
-import java.io.Serializable;
 
 /**
- * @ClassName ArticleClass
+ * @ClassName Topic
  * @Author lemon lengmodkx@163.com
- * @Discription 文章分类表
+ * @Discription 话题表
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "prm_article_class")
-public class ArticleClass extends Model<ArticleClass>{
+@TableName(value = "prm_topic")
+public class Topic extends Model<Topic>{
 
     /**
-      * 索引ID
+      * 话题id
       */
-    @TableId(value = "ac_id",type = IdType.AUTO)
-    private Integer acId;
+    @TableId(value = "topic_id",type = IdType.ASSIGN_UUID)
+    private String topicId;
 
     /**
-      * 分类标识码
+      * 话题名称
       */
-    private String acCode;
-
-    /**
-      * 分类名称
-      */
-    private String acName;
+    private String topicName;
 
     /**
       * 创建时间
@@ -53,9 +46,4 @@ public class ArticleClass extends Model<ArticleClass>{
     @JsonSerialize(using = LongToDeteSerializer.class)
     private Long updateTime;
 
-
-    @Override
-    protected Serializable pkVal() {
-        return this.acId;
-    }
 }

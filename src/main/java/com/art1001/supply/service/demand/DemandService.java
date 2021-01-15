@@ -45,5 +45,14 @@ public interface DemandService extends IService<Demand> {
      * @param dcId
      * @return
      */
-    IPage<Demand> getList(Integer pageNum, Integer pageSize, String dcId);
+    IPage<Demand> getList(Integer pageNum, Integer pageSize, String dcId,Integer type);
+
+    /**
+     * 审核/发布需求
+     * @param demandId
+     * @param isCheck   审核是否通过 0否1是
+     * @param reason    审核失败原因
+     * @return
+     */
+    void checkDemand(String demandId,Integer isCheck, String reason);
 }

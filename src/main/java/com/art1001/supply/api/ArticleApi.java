@@ -4,11 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.EsRule;
 import com.art1001.supply.annotation.EsRuleType;
 import com.art1001.supply.entity.Result;
-import com.art1001.supply.entity.article.Article;
+import com.art1001.supply.entity.content.Article;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.service.article.ArticleService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.art1001.supply.service.content.ArticleService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,6 +67,8 @@ public class ArticleApi {
             throw new AjaxException(e);
         }
     }
+
+
 
     /**
      * 修改文章
@@ -129,7 +130,7 @@ public class ArticleApi {
     }
 
     /**
-     * 我的文章
+     * 根据用户id获取用户自己的文章
      *
      * @param pageNum
      * @return
@@ -139,11 +140,11 @@ public class ArticleApi {
                             @RequestParam(value = "acId", required = false) String acId,
                             @RequestParam(value = "keyword",required = false) String keyword,
                             @RequestParam(value = "startTime",required = false) Long startTime,
-                            @RequestParam(value = "endTime",required = false) Long endTime) {
-
+                            @RequestParam(value = "endTime",required = false) Long endTime,
+                            @RequestParam(value = "memberId") String memberId) {
         {
             try {
-                Page<Article> page = articleService.myArticle(pageNum, acId, keyword, startTime, endTime);
+                Page<Article> page = articleService.myArticle(pageNum, acId, keyword, startTime, endTime,memberId);
                 return Result.success(page);
             } catch (Exception e) {
                 throw new AjaxException(e);
@@ -153,8 +154,7 @@ public class ArticleApi {
     }
 
     /**
-     * 我关注的文章列表
-     *
+     * 根据用户id获取关注的文章列表
      * @param pageNum
      * @return
      */
@@ -181,7 +181,7 @@ public class ArticleApi {
                             @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
                             @RequestParam(value = "acId", required = false) String acId) {
         try {
-            IPage<Article> page = articleService.allArtile(pageNum, pageSize, acId);
+            Page<Article> page = articleService.allArtile(pageNum, pageSize, acId);
             return Result.success(page);
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -194,7 +194,7 @@ public class ArticleApi {
      * @param articleId
      * @return
      */
-    @EsRule(sort = 3, type = EsRuleType.ARTICLE)
+    @EsRule(sort = 2, type = EsRuleType.ARTICLE)
     @GetMapping("/deleteArticle")
     public JSONObject deleteArticle(@RequestParam(value = "articleId") String articleId) {
         try {
@@ -217,10 +217,35 @@ public class ArticleApi {
      */
     @GetMapping("/allConnectionUser")
     public Result allConnectionUser(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                    @RequestParam(value = "type") Integer type) {
+                                    @RequestParam(value = "type") Integer type,
+                                    @RequestParam(value = "memberId")String memberId) {
         try {
-            List<UserEntity> page = articleService.allConnectionUser(pageNum, type);
+            List<UserEntity> page = articleService.allConnectionUser(pageNum, type,memberId);
             return Result.success(page);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
+     * 审核文章
+     * @param articleId         文章id
+     * @param state             1审核通过 2审核不通过
+     * @param checkFailReason   审核失败原因
+     * @return
+     */
+    @EsRule(sort = 2, type = EsRuleType.ARTICLE)
+    @GetMapping("/checkArticle")
+    public JSONObject checkArticle(@RequestParam("articleId") String articleId,
+                                   @RequestParam("state") Integer state,
+                                   @RequestParam(value = "checkFailReason",required = false) String checkFailReason){
+        JSONObject jsonObject=new JSONObject();
+        try {
+            articleService.checkArticle(articleId,state,checkFailReason);
+            jsonObject.put("result",1);
+            jsonObject.put("message","已审核");
+            jsonObject.put("data",articleId);
+            return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
         }

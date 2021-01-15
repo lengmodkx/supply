@@ -44,7 +44,7 @@ public class DemandClassApi {
      */
     @PostMapping("/add")
     public Result add(@RequestParam(value = "dcName") String dcName,
-                      @RequestParam(value = "parentId") String parentId) {
+                      @RequestParam(value = "parentId",defaultValue = "0") String parentId) {
         try {
             demandClassService.add(dcName, parentId);
             return Result.success("保存成功");

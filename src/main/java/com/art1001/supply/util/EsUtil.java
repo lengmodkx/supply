@@ -1,16 +1,22 @@
 package com.art1001.supply.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Component;
@@ -18,9 +24,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 
 /**
  * @ClassName EsUtil
@@ -28,6 +34,7 @@ import java.util.Map;
  * @Date 2021/1/7 14:07
  * @Discription es工具类
  */
+@Slf4j
 @Component
 public class EsUtil<T> {
 
@@ -51,7 +58,7 @@ public class EsUtil<T> {
             builder.query(QueryBuilders.matchQuery(indices, fileMap.get(indices)));
             request.source(builder);
             SearchResponse search = esClient.search(request, RequestOptions.DEFAULT);
-            if (search.getHits().getTotalHits()==0) {
+            if (search.getHits().getTotalHits() == 0) {
                 IndexRequest indexRequest = new IndexRequest(indexName, type);
                 indexRequest.source(fileMap);
                 esClient.index(indexRequest, RequestOptions.DEFAULT);
@@ -60,8 +67,6 @@ public class EsUtil<T> {
             e.printStackTrace();
         }
     }
-
-
 
 
     /**
@@ -108,7 +113,8 @@ public class EsUtil<T> {
     }
 
     /**
-     * 查询列表
+     * 查询某一个对象
+     *
      * @param clazz
      * @param sourceBuilder
      * @param indices
@@ -134,6 +140,7 @@ public class EsUtil<T> {
 
     /**
      * 查询列表
+     *
      * @param clazz
      * @param sourceBuilder
      * @param indices
@@ -146,13 +153,63 @@ public class EsUtil<T> {
             searchRequest.source(sourceBuilder);
             SearchResponse search = esClient.search(searchRequest, RequestOptions.DEFAULT);
             if (search.getHits().getTotalHits() != 0) {
-                Arrays.stream(search.getHits().getHits()).forEach(r -> list.add(JSONObject.parseObject(r.getSourceAsString(), clazz)));
+                for (SearchHit hit : search.getHits().getHits()) {
+                    list.add(JSONObject.parseObject(hit.getSourceAsString(), clazz));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return list;
     }
+
+    /**
+     * 查询列表
+     *
+     * @param clazz
+     * @param sourceBuilder
+     * @param indices
+     * @return
+     */
+    public Page<T> searchListByPage(Class<T> clazz, SearchSourceBuilder sourceBuilder, String indices,Integer pageNum) {
+        Page<T> page = new Page<>(pageNum,20);
+        try {
+            SearchRequest searchRequest=new SearchRequest(indices);
+            Scroll scroll = new Scroll(timeValueMillis(10L));
+            searchRequest.scroll(scroll);
+            searchRequest.source(sourceBuilder);
+            SearchResponse searchResponse = esClient.search(searchRequest,RequestOptions.DEFAULT);
+            String scrollId = searchResponse.getScrollId();
+            SearchHit[] hits = searchResponse.getHits().getHits();
+            List<SearchHit> resultSearchHit  = new ArrayList<>();
+            page.setTotal(searchResponse.getHits().getTotalHits());
+            while (ArrayUtils.isNotEmpty(hits)) {
+                resultSearchHit.addAll(Arrays.asList(hits));
+                SearchScrollRequest searchScrollRequest = new SearchScrollRequest(scrollId);
+                searchScrollRequest.scroll(scroll);
+                SearchResponse searchScrollResponse = esClient.scroll(searchScrollRequest,RequestOptions.DEFAULT);
+                scrollId = searchScrollResponse.getScrollId();
+                hits = searchScrollResponse.getHits().getHits();
+                page.setRecords(hitsToObject(hits,clazz));
+            }
+            //及时清除es快照，释放资源
+            ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
+            clearScrollRequest.addScrollId(scrollId);
+            esClient.clearScroll(clearScrollRequest,RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return page;
+    }
+
+    private List<T> hitsToObject(SearchHit[] hits,Class<T> clazz) {
+        List<T>list=Lists.newArrayList();
+        Optional.ofNullable(hits).ifPresent(l-> Arrays.stream(l).forEach(r->{
+            list.add(JSONObject.parseObject(r.getSourceAsString(),clazz));
+        }));
+        return list;
+    }
+
 
     /**
      * 根据id查询列表
