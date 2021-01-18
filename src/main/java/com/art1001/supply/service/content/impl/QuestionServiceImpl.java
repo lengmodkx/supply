@@ -2,8 +2,10 @@ package com.art1001.supply.service.content.impl;
 
 import com.art1001.supply.entity.content.Question;
 import com.art1001.supply.entity.content.Reply;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.content.QuestionMapper;
 import com.art1001.supply.mapper.content.ReplyMapper;
+import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.content.QuestionService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.EsUtil;
@@ -42,6 +44,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
 
     @Resource
     private ReplyMapper replyMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
 
     @Override
@@ -103,6 +108,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         boolQueryBuilder.must(QueryBuilders.matchQuery("isIncognito",isIncognito).operator(Operator.AND))
                 .must(QueryBuilders.matchQuery("isDraft",isDraft).operator(Operator.AND))
                 .must(QueryBuilders.matchQuery("isDel",isDel).operator(Operator.AND));
+        sourceBuilder.size(20);
         sourceBuilder.query(boolQueryBuilder);
         page=esUtil.searchListByPage(Question.class,sourceBuilder,QUESTION,pageNum);
         // 按照时间排序排序
@@ -118,10 +124,16 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             page.setCurrent(pageNum);
             page.setSize(20);
             QueryWrapper<Question> query = new QueryWrapper<>();
-            query.eq("pq.is_incognito",isIncognito).eq("pq.is_draft",isDraft).eq("pq.is_del",isDel).orderByDesc("pq.create_time").groupBy("pq.question_id");
-            Page<Question> listByPage = questionMapper.listByPage(page, query);
-            Optional.ofNullable(listByPage.getRecords()).ifPresent(list-> list.forEach(r->esUtil.save(QUESTION,DOCS,r,"questionId")));
-            return listByPage;
+            query.eq("is_incognito",isIncognito).eq("is_draft",isDraft).eq("is_del",isDel).orderByDesc("create_time").groupBy("question_id");
+            List<Question> list1 = list(query);
+            Optional.ofNullable(list1).ifPresent(list->list.forEach(r->{
+                UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id", r.getQuestionMemberId()));
+                r.setQuestionMemberName(userEntity.getUserName());
+                r.setQuestionMemberImage(userEntity.getImage());
+                r.setReplyCount(replyMapper.selectCount(new QueryWrapper<Reply>().eq("question_id", r.getQuestionId())));
+            }));
+            page.setRecords(list1);
+            return page;
         }
         page.setCurrent(pageNum);
         page.setSize(20);

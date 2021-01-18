@@ -95,6 +95,21 @@ public class ReplyApi {
     }
 
     /**
+     * 根据id获取回答详情
+     * @param replyId 回答id
+     * @return Reply
+     */
+    @GetMapping("/getReplyById")
+    public Result getReplyById(String replyId){
+        try {
+            Reply byId = replyService.getReplyById(replyId);
+            return Result.success(byId);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
      * 所有回答列表
      * @param isIncognito  是否匿名 0否 1是
      * @param isDraft      是否草稿 0否 1是

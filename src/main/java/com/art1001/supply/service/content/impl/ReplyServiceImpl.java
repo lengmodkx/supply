@@ -91,4 +91,13 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply>implements 
         return page;
 
     }
+
+    @Override
+    public Reply getReplyById(String replyId) {
+        Reply byId = getById(replyId);
+        UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id", byId.getReplyMemberId()));
+        byId.setReplyMemberName(userEntity.getUserName());
+        byId.setReplyMemberImage(userEntity.getImage());
+        return byId;
+    }
 }

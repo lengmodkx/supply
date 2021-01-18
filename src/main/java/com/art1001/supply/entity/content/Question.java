@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 @TableName(value = "prm_question",autoResultMap = true)
 public class Question extends Model<Question>{
 
@@ -47,6 +49,7 @@ public class Question extends Model<Question>{
       * 问题描述图片
       */
     @TableField(typeHandler = FastjsonTypeHandler.class)
+//    @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> questionDepictImages;
 
     /**

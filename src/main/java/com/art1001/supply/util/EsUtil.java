@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.ClearScrollRequest;
@@ -178,20 +177,45 @@ public class EsUtil<T> {
             Scroll scroll = new Scroll(timeValueMillis(10L));
             searchRequest.scroll(scroll);
             searchRequest.source(sourceBuilder);
+
+            // 发起请求并接收响应
             SearchResponse searchResponse = esClient.search(searchRequest,RequestOptions.DEFAULT);
+
+            // 初始化查询结果List
+            List<String> jsonStringList=Lists.newArrayList();
+
+            // 获取ScrollId
             String scrollId = searchResponse.getScrollId();
+
+            // 获取第一页的查询结果
             SearchHit[] hits = searchResponse.getHits().getHits();
-            List<SearchHit> resultSearchHit  = new ArrayList<>();
-            page.setTotal(searchResponse.getHits().getTotalHits());
-            while (ArrayUtils.isNotEmpty(hits)) {
-                resultSearchHit.addAll(Arrays.asList(hits));
-                SearchScrollRequest searchScrollRequest = new SearchScrollRequest(scrollId);
-                searchScrollRequest.scroll(scroll);
-                SearchResponse searchScrollResponse = esClient.scroll(searchScrollRequest,RequestOptions.DEFAULT);
-                scrollId = searchScrollResponse.getScrollId();
-                hits = searchScrollResponse.getHits().getHits();
-                page.setRecords(hitsToObject(hits,clazz));
+            for (SearchHit hit : hits) {
+                jsonStringList.add(hit.getSourceAsString());
             }
+
+            // 设置总数
+            page.setTotal(searchResponse.getHits().getTotalHits());
+
+            // 返回结果不为空则滚动查询
+            while (hits.length > 0) {
+
+                // 初始化scroll查询
+                SearchScrollRequest searchScrollRequest=new SearchScrollRequest(scrollId);
+                searchScrollRequest.scroll(scroll);
+
+                // 发起请求并接收响应
+                searchResponse = esClient.scroll(searchScrollRequest,RequestOptions.DEFAULT);
+
+                // 更新ScrollId
+                scrollId = searchResponse.getScrollId();
+                // 更新查询结果
+                hits = searchResponse.getHits().getHits();
+                // 放入List
+                for (SearchHit hit : hits) {
+                    jsonStringList.add(hit.getSourceAsString());
+                }
+            }
+            page.setRecords(hitsToObject(jsonStringList,clazz));
             //及时清除es快照，释放资源
             ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
             clearScrollRequest.addScrollId(scrollId);
@@ -202,11 +226,11 @@ public class EsUtil<T> {
         return page;
     }
 
-    private List<T> hitsToObject(SearchHit[] hits,Class<T> clazz) {
+    private List<T> hitsToObject(List<String> jsonStringList,Class<T> clazz) {
         List<T>list=Lists.newArrayList();
-        Optional.ofNullable(hits).ifPresent(l-> Arrays.stream(l).forEach(r->{
-            list.add(JSONObject.parseObject(r.getSourceAsString(),clazz));
-        }));
+        Optional.ofNullable(jsonStringList).ifPresent(l-> l.forEach(r->
+                list.add(JSONObject.parseObject(r,clazz))
+        ));
         return list;
     }
 

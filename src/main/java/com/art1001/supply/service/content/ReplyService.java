@@ -13,7 +13,6 @@ public interface ReplyService extends IService<Reply> {
     /**
      * 新增回答
      * @param questionId       问题id
-     * @param replyMemberId    回答人id
      * @param replyContent     回答内容
      * @param isIncognito      是否匿名0否1是
      * @param isDraft          是否草稿0否1是
@@ -45,4 +44,12 @@ public interface ReplyService extends IService<Reply> {
      * @return
      */
     Page<Reply> listAll(Integer isIncognito, Integer isDraft, Integer isDel, Integer pageNum);
+
+
+    /**
+     * 根据id获取回答详情
+     * @param replyId 回答id
+     * @return Reply
+     */
+    Reply getReplyById(String replyId);
 }
