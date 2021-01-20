@@ -94,13 +94,29 @@ public class ReplyApi {
         }
     }
 
+
+    /**
+     * 根据问题id获取回答列表
+     * @param questionId 问题id
+     * @return Page page
+     */
+    @GetMapping("/getReplyListByQuetionId")
+    public Result getReplyListByQuetionId(@RequestParam(value = "questionId") String questionId,
+                                          @RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum){
+        try {
+            Page page=replyService.getReplyListByQuetionId(questionId,pageNum);
+            return Result.success(page);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
     /**
      * 根据id获取回答详情
      * @param replyId 回答id
      * @return Reply
      */
     @GetMapping("/getReplyById")
-    public Result getReplyById(String replyId){
+    public Result getReplyById(@RequestParam(value = "replyId") String replyId){
         try {
             Reply byId = replyService.getReplyById(replyId);
             return Result.success(byId);

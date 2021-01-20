@@ -17,8 +17,12 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName ReplyServiceImpl
@@ -99,5 +103,35 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply>implements 
         byId.setReplyMemberName(userEntity.getUserName());
         byId.setReplyMemberImage(userEntity.getImage());
         return byId;
+    }
+
+    @Override
+    public Page getReplyListByQuetionId(String questionId,Integer pageNum) {
+        Page<Reply> page ;
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        BoolQueryBuilder bool = new BoolQueryBuilder();
+        bool.must(QueryBuilders.matchQuery("questionId",questionId));
+        sourceBuilder.size(20);
+        sourceBuilder.query(bool);
+        page= esUtil.searchListByPage(Reply.class, sourceBuilder, REPLY, pageNum);
+
+        if (CollectionUtils.isNotEmpty(page.getRecords())) {
+            page.setRecords(page.getRecords().stream()
+                    .sorted(Comparator.comparingLong(Reply::getCreateTime).reversed())
+                    .collect(Collectors.toList()));
+        }
+
+        if (CollectionUtils.isEmpty(page.getRecords())) {
+            List<Reply> list = list(new QueryWrapper<Reply>().eq("question_id", questionId));
+            Optional.ofNullable(list).ifPresent(l->l.stream()
+                    .sorted(Comparator.comparing(Reply::getCreateTime).reversed())
+                    .forEach(r->{
+                UserEntity byId = userMapper.findById(r.getReplyMemberId());
+                r.setReplyMemberImage(byId.getImage());
+                r.setReplyMemberName(byId.getUserName());
+            }));
+            page.setRecords(list);
+        }
+        return page;
     }
 }

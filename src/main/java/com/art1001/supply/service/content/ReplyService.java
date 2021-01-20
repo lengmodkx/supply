@@ -52,4 +52,11 @@ public interface ReplyService extends IService<Reply> {
      * @return Reply
      */
     Reply getReplyById(String replyId);
+
+    /**
+     * 根据问题id获取回答列表
+     * @param questionId 问题id
+     * @return Page page
+     */
+    Page  getReplyListByQuetionId(String questionId,Integer pageNum);
 }
