@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
  * @Discription
  */
 @Service
-public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply>implements ReplyService {
+public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements ReplyService {
 
     @Resource
     private EsUtil<Reply> esUtil;
@@ -68,7 +67,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply>implements 
 
     @Override
     public void delete(String replyId) {
-        update(new UpdateWrapper<Reply>().set("is_del",1).eq("reply_id",replyId));
+        update(new UpdateWrapper<Reply>().set("is_del", 1).eq("reply_id", replyId));
     }
 
     @Override
@@ -76,9 +75,9 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply>implements 
         Page<Reply> page;
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-        boolQueryBuilder.must(QueryBuilders.matchQuery("isIncognito",isIncognito))
-                .must(QueryBuilders.matchQuery("isDraft",isDraft))
-                .must(QueryBuilders.matchQuery("isDel",isDel));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("isIncognito", isIncognito))
+                .must(QueryBuilders.matchQuery("isDraft", isDraft))
+                .must(QueryBuilders.matchQuery("isDel", isDel));
         sourceBuilder.query(boolQueryBuilder);
         page = esUtil.searchListByPage(Reply.class, sourceBuilder, REPLY, pageNum);
 
@@ -87,7 +86,7 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply>implements 
             page.setSize(20);
             QueryWrapper<Reply> query = new QueryWrapper<Reply>().eq("is_incognito", isIncognito).eq("is_draft", isDraft).eq("is_del", isDel);
             Page<Reply> replyPage = replyMapper.queryByExample(page, query);
-            Optional.ofNullable(replyPage.getRecords()).ifPresent(list->list.forEach(r->esUtil.save(REPLY,DOCS,r,"replyId")));
+            Optional.ofNullable(replyPage.getRecords()).ifPresent(list -> list.forEach(r -> esUtil.save(REPLY, DOCS, r, "replyId")));
             return replyPage;
         }
         page.setCurrent(pageNum);
@@ -106,14 +105,14 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply>implements 
     }
 
     @Override
-    public Page getReplyListByQuetionId(String questionId,Integer pageNum) {
-        Page<Reply> page ;
+    public Page getReplyListByQuetionId(String questionId, Integer pageNum) {
+        Page<Reply> page;
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder bool = new BoolQueryBuilder();
-        bool.must(QueryBuilders.matchQuery("questionId",questionId));
-        sourceBuilder.size(20);
+        bool.must(QueryBuilders.matchQuery("questionId", questionId));
+
         sourceBuilder.query(bool);
-        page= esUtil.searchListByPage(Reply.class, sourceBuilder, REPLY, pageNum);
+        page = esUtil.searchListByPage(Reply.class, sourceBuilder, REPLY, pageNum);
 
         if (CollectionUtils.isNotEmpty(page.getRecords())) {
             page.setRecords(page.getRecords().stream()
@@ -122,15 +121,17 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply>implements 
         }
 
         if (CollectionUtils.isEmpty(page.getRecords())) {
-            List<Reply> list = list(new QueryWrapper<Reply>().eq("question_id", questionId));
-            Optional.ofNullable(list).ifPresent(l->l.stream()
+            page.setCurrent(pageNum);
+            page.setSize(20);
+            page = replyMapper.selectPage(page, new QueryWrapper<Reply>().eq("question_id", questionId));
+            Optional.ofNullable(page.getRecords()).ifPresent(l -> l.stream()
                     .sorted(Comparator.comparing(Reply::getCreateTime).reversed())
-                    .forEach(r->{
-                UserEntity byId = userMapper.findById(r.getReplyMemberId());
-                r.setReplyMemberImage(byId.getImage());
-                r.setReplyMemberName(byId.getUserName());
-            }));
-            page.setRecords(list);
+                    .forEach(r -> {
+                        UserEntity byId = userMapper.findById(r.getReplyMemberId());
+                        r.setReplyMemberImage(byId.getImage());
+                        r.setReplyMemberName(byId.getUserName());
+                    }));
+
         }
         return page;
     }
