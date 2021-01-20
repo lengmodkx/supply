@@ -2,17 +2,9 @@ package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
-import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.entity.organization.OrganizationMemberInfo;
-import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.role.ProRole;
-import com.art1001.supply.entity.role.ProRoleUser;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
@@ -22,16 +14,12 @@ import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -297,20 +285,9 @@ public class MemberInvitationApi extends BaseController {
                                  @RequestParam(value = "memberId") String memberId,
                                  @RequestParam(value = "orgId") String orgId) {
         JSONObject object = new JSONObject();
-
         try {
-            //判断用户是否在企业
-            if (organizationMemberService.findOrgMemberIsExist(orgId, memberId) != 0) {
-                projectMemberService.saveMember(projectId, memberId, orgId);
-            } else {
-                UserEntity byId = userService.findById(memberId);
-                OrganizationMember organizationMember = OrganizationMember.builder().job(byId.getJob())
-                        .createTime(System.currentTimeMillis()).image(byId.getImage()).memberEmail(byId.getEmail())
-                        .memberId(memberId).organizationId(orgId).phone(byId.getAccountName()).updateTime(System.currentTimeMillis())
-                        .userName(byId.getUserName()).build();
-                organizationMemberService.save(organizationMember);
-                projectMemberService.saveMember(projectId, memberId, orgId);
-            }
+            // todo
+            projectService.addProjectMember(projectId,memberId,orgId);
             object.put("result", 1);
             object.put("msg", "添加成功");
             return object;

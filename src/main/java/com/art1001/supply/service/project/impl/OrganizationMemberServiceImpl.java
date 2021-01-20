@@ -1,21 +1,19 @@
 package com.art1001.supply.service.project.impl;
 
-import com.alibaba.druid.sql.visitor.functions.If;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.organization.InvitationLink;
 import com.art1001.supply.entity.organization.Organization;
-import com.art1001.supply.entity.organization.OrganizationMemberInfo;
-import com.art1001.supply.entity.partment.PartmentMember;
-import com.art1001.supply.entity.project.ProjectMemberDTO;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.partment.Partment;
+import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
+import com.art1001.supply.mapper.role.RoleMapper;
+import com.art1001.supply.mapper.role.RoleUserMapper;
 import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentMemberService;
@@ -28,25 +26,27 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.ExcelUtils;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.ValidatedUtil;
-import com.art1001.supply.util.crypto.ShortCodeUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.System.currentTimeMillis;
@@ -96,6 +96,12 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private RoleMapper roleMapper;
+
+    @Resource
+    private RoleUserMapper roleUserMapper;
 
 
     private String orgId;
@@ -551,7 +557,9 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
      * 根据电话号邀请企业成员
      *
      * @param orgId
-     * @param phone
+     * @param phone       电话号列联表
+     * @param memberEmail 邮箱列表
+     * @param  param  1外部成员 0成员
      * @return
      */
     @Override
@@ -566,11 +574,12 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                 if (integer == 0) {
                     OrganizationMember organizationMember = saveOrganizationMemberInfo(orgId, userEntity);
                     organizationMember.setMemberLabel("外部成员");
+
                     if (param == 0) {
                         organizationMember.setMemberLabel("成员");
                     }
                     this.save(organizationMember);
-                    saveOrgRoleUser(orgId, userEntity, organizationMember.getMemberLabel());
+                    setRoleUser(organizationMember.getMemberLabel(),orgId,userEntity.getUserId());
                     result = "添加成功";
                 } else {
                     result = "该成员已在企业中";
@@ -590,7 +599,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                         organizationMember.setMemberLabel("成员");
                     }
                     this.save(organizationMember);
-                    saveOrgRoleUser(orgId, userEntity, organizationMember.getMemberLabel());
+                    setRoleUser(organizationMember.getMemberLabel(),orgId,userEntity.getUserId());
                     result = "添加成功";
                 } else {
                     result = "该成员已在企业中";
@@ -721,15 +730,6 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         return organizationMember;
     }
 
-    private void saveOrgRoleUser(String orgId, UserEntity userEntity, String memberLabel) {
-        RoleUser roleUser = new RoleUser();
-        roleUser.setOrgId(orgId);
-        roleUser.setUId(userEntity.getUserId());
-        roleUser.setTCreateTime(LocalDateTime.now());
-        Role one = roleService.getOne(new QueryWrapper<Role>().eq("organization_id", orgId).eq("role_name", "外部成员"));
-        roleUser.setRoleId(one.getRoleId());
-        roleUserService.save(roleUser);
-    }
 
     /**
      * @param orgMembers
@@ -770,16 +770,21 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                         r.setParentName(partment1.getPartmentName());
                     }
                 }
-                /*PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(r.getPartmentId(), r.getMemberId());
-                if (partmentMember != null) {
-                    r.setDeptName(partmentMember.getPartmentName());
-                    if (partmentMember.getIsMaster()) {
-                        partmentName = partmentMember.getPartmentName();
-                    }
-                }
-                if (!"".equals(partmentName)) {
-                    r.setParentName(partmentName);
-                }*/
+            }
+        }
+    }
+
+    private void setRoleUser(String roleName,String orgId,String userId){
+        Role role = roleMapper.selectOne(new QueryWrapper<Role>().eq("role_name", roleName).eq("organization_id",orgId));
+        if (role!=null) {
+            Integer integer = roleUserMapper.selectCount(new QueryWrapper<RoleUser>().eq("role_id", role.getRoleId()).eq("org_id", orgId).eq("u_id", userId));
+            if (integer.equals(0)) {
+                RoleUser roleUser = new RoleUser();
+                roleUser.setOrgId(orgId);
+                roleUser.setRoleId(role.getRoleId());
+                roleUser.setUId(userId);
+                roleUser.setTCreateTime(LocalDateTime.now());
+                roleUserMapper.insert(roleUser);
             }
         }
     }
