@@ -216,5 +216,5 @@ public interface UserService extends IService<UserEntity> {
 	 * @param request
 	 * @return
 	 */
-    WorkBenchInfoVo workBenchInfo(String orgId, HttpServletRequest request);
+    WorkBenchInfoVo workBenchInfo(String orgId,String memberId, HttpServletRequest request);
 }

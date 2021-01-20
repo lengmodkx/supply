@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.content.QuestionMapper">
+
+    <select id="listByPage" resultType="com.art1001.supply.entity.content.Question">
+     SELECT
+	   pq.*,
+	   IFNULL( COUNT( pr.reply_id ), 0 ) replyCount,
+	   tu.user_name AS questionMemberName,
+	   tu.image AS questionMemberImage
+     FROM
+	   prm_question pq
+	   LEFT JOIN tb_user tu ON pq.question_member_id = tu.user_id
+	   LEFT JOIN prm_reply pr
+	   on pr.question_id = pq.question_id
+       ${ew.customSqlSegment}
+    </select>
+</mapper>

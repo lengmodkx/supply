@@ -2,11 +2,15 @@ package com.art1001.supply.api.aop;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.EsRule;
-import com.art1001.supply.entity.article.Article;
-import com.art1001.supply.entity.article.Comment;
+import com.art1001.supply.entity.content.Article;
+import com.art1001.supply.entity.content.Comment;
+import com.art1001.supply.entity.content.Question;
+import com.art1001.supply.entity.content.Reply;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.service.article.ArticleService;
-import com.art1001.supply.service.article.CommentService;
+import com.art1001.supply.service.content.ArticleService;
+import com.art1001.supply.service.content.CommentService;
+import com.art1001.supply.service.content.QuestionService;
+import com.art1001.supply.service.content.ReplyService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.EsUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -46,11 +50,21 @@ public class EsRuleAspect {
     private UserService userService;
 
     @Resource
+    private QuestionService questionService;
+
+    @Resource
+    private ReplyService replyService;
+
+    @Resource
     private EsUtil esUtil;
 
     private final static String ARTICLE = "article";
 
     private final static String COMMENT = "comment";
+
+    private final static String QUESTION = "question";
+
+    private final static String REPLY = "reply";
 
     private final static String DOCS = "docs";
 
@@ -74,9 +88,11 @@ public class EsRuleAspect {
         if (esRule.sort() == ONE) {
             this.save(esRule, jsonObject);
         }
+        // 修改
         if (esRule.sort() == TWO) {
             this.update(esRule, jsonObject);
         }
+        // 删除
         if (esRule.sort() == THREE) {
             this.delete(esRule, jsonObject);
         }
@@ -84,41 +100,90 @@ public class EsRuleAspect {
     }
 
     private void delete(EsRule esRule, JSONObject jsonObject) {
-        if (esRule.type().getName().equals(ARTICLE)) {
-            esUtil.delete(ARTICLE,DOCS,"articleId",jsonObject.get("data").toString());
-        }
-        if (esRule.type().getName().equals(COMMENT)) {
-            esUtil.delete(COMMENT,DOCS,"commentId",jsonObject.get("data").toString());
+        switch (esRule.type().getName()) {
+            case ARTICLE:
+                esUtil.delete(ARTICLE, DOCS, "articleId", jsonObject.get("data").toString());
+                break;
+            case COMMENT:
+                esUtil.delete(COMMENT, DOCS, "commentId", jsonObject.get("data").toString());
+                break;
+            case QUESTION:
+                esUtil.delete(QUESTION, DOCS, "questionId", jsonObject.get("data").toString());
+                break;
+            case REPLY:
+                esUtil.delete(REPLY, DOCS, "replyId", jsonObject.get("data").toString());
+                break;
+            default:
+                break;
         }
     }
 
 
     private void update(EsRule esRule, JSONObject jsonObject) {
-        if (esRule.type().getName().equals(ARTICLE)) {
-            Article article = getArticle(jsonObject);
-            esUtil.update(ARTICLE, DOCS, "articleId", jsonObject.get("data").toString(), article);
+        UserEntity byId;
+        switch (esRule.type().getName()) {
+            case ARTICLE:
+                Article article = getArticle(jsonObject);
+                esUtil.update(ARTICLE, DOCS, "articleId", jsonObject.get("data").toString(), article);
+                break;
+            case REPLY:
+                String replyId = jsonObject.get("data").toString();
+                Reply reply = replyService.getOne(new QueryWrapper<Reply>().eq("reply_id", replyId));
+                byId = getUserEntity(reply.getReplyMemberId());
+                reply.setReplyMemberName(byId.getUserName());
+                reply.setReplyMemberImage(byId.getImage());
+                esUtil.update(REPLY, DOCS, "replyId", jsonObject.get("data").toString(), reply);
+                break;
+            default:
+                break;
         }
+
     }
 
     private void save(EsRule esRule, JSONObject jsonObject) {
-        if (esRule.type().getName().equals(ARTICLE)) {
-            Article article = getArticle(jsonObject);
-            esUtil.save(ARTICLE, "docs", article,"articleId");
+        UserEntity byId;
+        switch (esRule.type().getName()) {
+            case ARTICLE:
+                Article article = getArticle(jsonObject);
+                esUtil.save(ARTICLE, "docs", article, "articleId");
+                break;
+            case COMMENT:
+                Comment comment = commentService.getOne(new QueryWrapper<Comment>().eq("comment_id", jsonObject.get("data").toString()));
+                byId = getUserEntity(comment.getMemberId());
+                comment.setMemberImage(byId.getImage());
+                comment.setMemberName(byId.getUserName());
+                esUtil.save(COMMENT, DOCS, comment, "articleId");
+                break;
+            case QUESTION:
+                Question question = questionService.getOne(new QueryWrapper<Question>().eq("question_id", jsonObject.get("data").toString()));
+                byId = getUserEntity(question.getQuestionMemberId());
+                question.setQuestionMemberName(byId.getUserName());
+                question.setQuestionMemberImage(byId.getImage());
+                esUtil.save(QUESTION, DOCS, question, "questionId");
+                break;
+            case REPLY:
+                Reply reply = replyService.getOne(new QueryWrapper<Reply>().eq("reply_id", jsonObject.get("data").toString()));
+                byId = getUserEntity(reply.getReplyMemberId());
+                reply.setReplyMemberName(byId.getUserName());
+                reply.setReplyMemberImage(byId.getImage());
+                esUtil.save(REPLY, DOCS, reply, "replyId");
+                break;
+            default:
+                break;
         }
-        if (esRule.type().getName().equals(COMMENT)) {
-            Comment comment = commentService.getOne(new QueryWrapper<Comment>().eq("comment_id", jsonObject.get("data").toString()));
-            UserEntity byId = userService.findById(comment.getMemberId());
-            comment.setMemberImage(byId.getImage());
-            comment.setMemberName(byId.getUserName());
-            esUtil.save(COMMENT, DOCS, comment,"articleId");
-        }
+
+
+    }
+
+    private UserEntity getUserEntity(String memberId) {
+        return userService.findById(memberId);
     }
 
     @NotNull
     private Article getArticle(JSONObject jsonObject) {
         String articleId = jsonObject.get("data").toString();
         Article article = articleService.getOne(new QueryWrapper<Article>().eq("article_id", articleId));
-        UserEntity byId = userService.findById(article.getMemberId());
+        UserEntity byId = getUserEntity(article.getMemberId());
         article.setMemberImage(byId.getImage());
         article.setUserName(byId.getUserName());
         return article;

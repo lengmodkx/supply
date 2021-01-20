@@ -1,4 +1,4 @@
-package com.art1001.supply.entity.article;
+package com.art1001.supply.entity.content;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

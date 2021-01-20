@@ -1,6 +1,6 @@
-package com.art1001.supply.mapper.article;
+package com.art1001.supply.mapper.content;
 
-import com.art1001.supply.entity.article.Article;
+import com.art1001.supply.entity.content.Article;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,11 +13,7 @@ import java.util.List;
 @Mapper
 public interface ArticleMapper extends BaseMapper<Article> {
 
-    /**
-     * 修改文章
-     * @param article
-     */
-    void editArticle(Article article);
+
 
     /**
      * 按类别分页查询文章列表

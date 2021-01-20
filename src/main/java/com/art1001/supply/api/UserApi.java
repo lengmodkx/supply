@@ -721,10 +721,11 @@ public class UserApi {
      */
     @GetMapping("/workBenchInfo")
     public JSONObject workBenchInfo(@RequestParam(value = "orgId") String orgId,
+                                    @RequestParam(value = "memberId")String memberId,
                                     HttpServletRequest request){
         JSONObject jsonObject = new JSONObject();
         try {
-            WorkBenchInfoVo workBenchInfoVo=userService.workBenchInfo(orgId,request);
+            WorkBenchInfoVo workBenchInfoVo=userService.workBenchInfo(orgId,memberId,request);
             jsonObject.put("result",1);
             jsonObject.put("data",workBenchInfoVo);
         } catch (Exception e) {

@@ -1,47 +1,45 @@
-package com.art1001.supply.entity.demand;
+package com.art1001.supply.entity.content;
 
 import com.art1001.supply.util.LongToDeteSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
- * @ClassName DemandClass
+ * @ClassName ArticleClass
  * @Author lemon lengmodkx@163.com
- * @Discription 需求分类表
+ * @Discription 文章分类表
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(value = "prm_demand_class")
-public class DemandClass extends Model<DemandClass>{
+@TableName(value = "prm_article_class")
+public class ArticleClass extends Model<ArticleClass>{
 
     /**
-      * 需求分类id
+      * 索引ID
       */
-    @TableId(value = "dc_id",type = IdType.UUID)
-    private String dcId;
+    @TableId(value = "ac_id",type = IdType.AUTO)
+    private Integer acId;
 
     /**
-      * 需求名称
+      * 分类标识码
       */
-    private String dcName;
+    private String acCode;
 
     /**
-      * 父级id
+      * 分类名称
       */
-    private String parentId;
+    private String acName;
 
     /**
       * 创建时间
@@ -55,11 +53,9 @@ public class DemandClass extends Model<DemandClass>{
     @JsonSerialize(using = LongToDeteSerializer.class)
     private Long updateTime;
 
-    @TableField(exist = false)
-    private List<DemandClass>list;
 
     @Override
     protected Serializable pkVal() {
-        return this.dcId;
+        return this.acId;
     }
 }

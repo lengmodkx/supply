@@ -1,9 +1,9 @@
 package com.art1001.supply.api;
 
 import com.art1001.supply.entity.Result;
-import com.art1001.supply.entity.article.ArticleClass;
+import com.art1001.supply.entity.content.ArticleClass;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.service.article.ArticleClassService;
+import com.art1001.supply.service.content.ArticleClassService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.web.bind.annotation.*;
 

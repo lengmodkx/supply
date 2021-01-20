@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.content.CommentMapper">
+
+    <select id="listCommentByPage" resultType="com.art1001.supply.entity.content.Comment">
+        select pc.*,
+        tu.image as memberImage,
+        tu.user_name as memberName
+        from prm_comment pc
+        left join tb_user tu
+        on pc.member_id = tu.user_id
+        ${ew.customSqlSegment}
+    </select>
+</mapper>

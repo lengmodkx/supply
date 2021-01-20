@@ -46,6 +46,10 @@ public class UserEntity extends Model<UserEntity> {
 	 */
 	private String accountName;
 
+	/**
+	 * 昵称（唯一不可重复）
+ 	 */
+	private String nickName;
 	/***
 	 * 用户地址
 	 */
