@@ -1,6 +1,5 @@
 package com.art1001.supply.entity.demand;
 
-import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.util.LongToDeteSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -88,7 +87,7 @@ public class Demand extends Model<Demand>{
      * 竞标企业
      */
     @TableField(exist = false)
-    private List<Organization> orgList;
+    private List<DemandBid> bidList;
 
     /**
       * null

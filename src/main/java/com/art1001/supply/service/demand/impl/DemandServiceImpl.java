@@ -3,9 +3,11 @@ package com.art1001.supply.service.demand.impl;
 import com.art1001.supply.entity.demand.Demand;
 import com.art1001.supply.entity.demand.DemandBid;
 import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.demand.DemandBidMapper;
 import com.art1001.supply.mapper.demand.DemandMapper;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
+import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.demand.DemandService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.CommonUtils;
@@ -20,10 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +43,9 @@ public class DemandServiceImpl extends ServiceImpl<DemandMapper, Demand> impleme
     @Resource
     private OrganizationMapper organizationMapper;
 
+    @Resource
+    private UserMapper userMapper;
+
     @Override
     public void add(String demandName, String demandDetails, List<String> demandFiles, BigDecimal bid) {
         Demand demand = new Demand();
@@ -52,6 +54,7 @@ public class DemandServiceImpl extends ServiceImpl<DemandMapper, Demand> impleme
         if (CollectionUtils.isNotEmpty(demandFiles)) {
             demand.setDemandFiles(CommonUtils.listToString(demandFiles));
         }
+        demand.setBid(bid);
         demand.setMemberId(ShiroAuthenticationManager.getUserId());
         demand.setIsCheck(0);
         demand.setIsDel(0);
@@ -146,19 +149,32 @@ public class DemandServiceImpl extends ServiceImpl<DemandMapper, Demand> impleme
 
         if (userId.equals(demand.getMemberId())) {
             List<DemandBid> demandBids = demandBidMapper.selectList(new QueryWrapper<DemandBid>().eq("demand_id", demandId).eq("is_del", 0));
-            Optional.ofNullable(demandBids).ifPresent(bids->{
-                List<String> orgIds = bids.stream().map(DemandBid::getOrganizationId).collect(Collectors.toList());
-                List<Organization> list = organizationMapper.selectList(new QueryWrapper<Organization>().in("organization_id", orgIds));
-                demand.setOrgList(list);
+            Optional.ofNullable(demandBids).ifPresent(bids -> {
+                bids.forEach(this::setOrgAndMemberInfo);
+                demand.setBidList(bids);
             });
-        }else {
+        } else {
             DemandBid demandBid = demandBidMapper.selectOne(new QueryWrapper<DemandBid>().eq("demand_id", demandId).eq("is_del", 0).eq("member_id", userId));
-            if (demandBid!=null) {
-                Organization organization = organizationMapper.selectOne(new QueryWrapper<Organization>().eq("organization_id", demandBid.getOrganizationId()));
-                demand.setOrgList(Arrays.asList(organization));
+            if (demandBid != null) {
+                setOrgAndMemberInfo(demandBid);
+                demand.setBidList(Collections.singletonList(demandBid));
             }
         }
         return demand;
+    }
+
+    /**
+     * 设置企业名企业头像及用户名及用户头像
+     * @param demandBid
+     */
+    private void setOrgAndMemberInfo(DemandBid demandBid) {
+        Organization organization = organizationMapper.selectById(demandBid.getOrganizationId());
+        UserEntity userEntity = userMapper.selectById(demandBid.getMemberId());
+        demandBid.setOrganizationName(organization.getOrganizationName());
+        demandBid.setOrganizationImage(organization.getOrganizationImage());
+        demandBid.setMemberName(userEntity.getUserName());
+        demandBid.setMemberImage(userEntity.getImage());
+        demandBid.setOrganizationPhone(organization.getContactPhone());
     }
 
 

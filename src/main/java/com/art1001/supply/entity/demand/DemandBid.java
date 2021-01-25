@@ -42,10 +42,39 @@ public class DemandBid extends Model<DemandBid>{
     private String organizationId;
 
     /**
+     * 竞标企业名称
+     */
+    @TableField(exist = false)
+    private String organizationName;
+
+    /**
+     * 竞标企业logo
+     */
+    @TableField(exist = false)
+    private String organizationImage;
+
+    /**
+     * 企业联系人电话
+     */
+    @TableField(exist = false)
+    private String organizationPhone;
+
+    /**
       * 竞标人id
       */
     private String memberId;
 
+    /**
+     * 竞标人名称
+     */
+    @TableField(exist = false)
+    private String memberName;
+
+    /**
+     * 竞标人头像
+     */
+    @TableField(exist = false)
+    private String memberImage;
     /**
       * 服务详情
       */
