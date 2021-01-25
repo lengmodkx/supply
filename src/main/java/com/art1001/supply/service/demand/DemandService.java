@@ -7,19 +7,24 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+* @Author: 邓凯欣
+* @Email：dengkaixin@art1001.com
+* @create: 16:37 2021/1/21
+*/
 public interface DemandService extends IService<Demand> {
+
+    Integer ZERO=0;
+    Integer ONE=1;
     /**
      * 保存需求
      * @param demandName      需求名称
-     * @param dcId            需求分类
      * @param demandDetails   需求详情
      * @param demandFiles     需求附件
-     * @param demandBudget    需求预算
-     * @param solveWay        解决方式 1招标 2比稿
-     * @param memberTel       发布人电话
+     * @param bid             出价
      * @return
      */
-    void add(String demandName, String dcId, String demandDetails, List<String> demandFiles, BigDecimal demandBudget, Integer solveWay, String memberTel);
+    void add(String demandName, String demandDetails, List<String> demandFiles, BigDecimal bid);
 
 
 
@@ -27,25 +32,21 @@ public interface DemandService extends IService<Demand> {
      * 修改需求
      * @param demandId      需求id
      * @param demandName    需求名称
-     * @param dcId          需求分类id
      * @param demandDetails 需求详情
      * @param demandFiles   需求附件
-     * @param demandBudget  需求预算
-     * @param memberTel     发布人电话
-     * @param isExpedited   是否加急
-     * @param isTop         是否置顶
+     * @param bid           需求预算
      * @return
      */
-    void edit(String demandId, String demandName, String dcId, String demandDetails, List<String> demandFiles, BigDecimal demandBudget, String memberTel, Integer isExpedited, Integer isTop);
+    void edit(String demandId, String demandName, String demandDetails, List<String> demandFiles, BigDecimal bid);
 
     /**
      * 需求列表
-     * @param pageNum
-     * @param pageSize
-     * @param dcId
-     * @return
+     * @param pageNum      页数
+     * @param pageSize     条数
+     * @param type         1我发布的 2我竞标的 3我中标的
+     * @return  IPage<Demand>
      */
-    IPage<Demand> getList(Integer pageNum, Integer pageSize, String dcId,Integer type);
+    IPage<Demand> getList(Integer pageNum, Integer pageSize,Integer type);
 
     /**
      * 审核/发布需求
@@ -55,4 +56,11 @@ public interface DemandService extends IService<Demand> {
      * @return
      */
     void checkDemand(String demandId,Integer isCheck, String reason);
+
+    /**
+     * 获取需求详情
+     * @param demandId  需求id
+     * @return Demand
+     */
+    Demand demandInfo(String demandId);
 }
