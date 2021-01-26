@@ -244,29 +244,27 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 Article article = esUtil.search(Article.class, sourceBuilder, ARTICLE);
                 if (article != null) list.add(article);
             }
-        }
 
-
-        // es没有就从数据库查
-        if (CollectionUtils.isEmpty(list)) {
-            // todo 后续根据内容状态查询
-            QueryWrapper<Article> query = new QueryWrapper<Article>().in("article_id", articleIds).eq("is_del", 0);
-            if (StringUtils.isNotEmpty(acId)) {
-                query.eq("ac_id", acId);
+            // es没有就从数据库查
+            if (CollectionUtils.isEmpty(list)) {
+                // todo 后续根据内容状态查询
+                QueryWrapper<Article> query = new QueryWrapper<Article>().eq("is_del", 0).in("article_id", articleIds);
+                if (StringUtils.isNotEmpty(acId)) {
+                    query.eq("ac_id", acId);
+                }
+                Page<Article> articlePage = articleMapper.selectPage(page, query);
+                if (CollectionUtils.isNotEmpty(articlePage.getRecords())) {
+                    articlePage.getRecords().forEach(r -> esUtil.save(ARTICLE, DOCS, r, "articleId"));
+                }
+                setComment(articlePage.getRecords());
+                return articlePage;
             }
-            Page<Article> articlePage = articleMapper.selectPage(page, query);
-            if (CollectionUtils.isNotEmpty(articlePage.getRecords())) {
-                articlePage.getRecords().forEach(r -> esUtil.save(ARTICLE, DOCS, r, "articleId"));
-            }
-            setComment(articlePage.getRecords());
-            return articlePage;
+            setComment(page.getRecords());
+            Long aLong = redisUtil.setCount(FOLLOWED_ARTICLE + ShiroAuthenticationManager.getUserId());
+            page.setRecords(list);
+            page.setTotal(aLong);
         }
-        setComment(page.getRecords());
-        Long aLong = redisUtil.setCount(FOLLOWED_ARTICLE + ShiroAuthenticationManager.getUserId());
-        page.setRecords(list);
-        page.setTotal(aLong);
         return page;
-
     }
 
     /**
