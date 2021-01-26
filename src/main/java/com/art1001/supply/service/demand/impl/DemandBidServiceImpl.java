@@ -2,10 +2,17 @@ package com.art1001.supply.service.demand.impl;
 
 import com.art1001.supply.entity.demand.Demand;
 import com.art1001.supply.entity.demand.DemandBid;
+import com.art1001.supply.entity.order.OrderDemand;
+import com.art1001.supply.entity.organization.Organization;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.demand.DemandBidMapper;
 import com.art1001.supply.mapper.demand.DemandMapper;
+import com.art1001.supply.mapper.order.OrderDemandMapper;
+import com.art1001.supply.mapper.organization.OrganizationMapper;
+import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.demand.DemandBidService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
+import com.art1001.supply.util.OrderUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
@@ -29,6 +36,15 @@ public class DemandBidServiceImpl extends ServiceImpl<DemandBidMapper, DemandBid
 
     @Resource
     private DemandMapper demandMapper;
+
+    @Resource
+    private OrderDemandMapper orderDemandMapper;
+
+    @Resource
+    private OrganizationMapper organizationMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
     @Override
     public void joinBidding(String demandId, String orgId, String details, List<String> detailImages, BigDecimal bid) {
@@ -65,8 +81,25 @@ public class DemandBidServiceImpl extends ServiceImpl<DemandBidMapper, DemandBid
                 demandBid.setUpdateTime(System.currentTimeMillis());
                 demandMapper.updateById(demand);
                 updateById(demandBid);
-                // todo 准备生成订单
-                return "已达成合作，请准备签约合同";
+
+                Organization organization = organizationMapper.selectById(demand.getOrgId());
+                UserEntity userEntity = userMapper.selectById(demand.getMemberId());
+                // 生成订单
+                OrderDemand orderDemand = new OrderDemand();
+                orderDemand.setOrderSn(OrderUtils.createOrderSn());
+                orderDemand.setDemandId(demandId);
+                orderDemand.setBidMemberId(demand.getMemberId());
+                orderDemand.setBidMemberName(userEntity.getUserName());
+                orderDemand.setBidMemberImage(userEntity.getImage());
+                orderDemand.setBidOrgId(demand.getOrgId());
+                orderDemand.setBidOrgName(organization.getOrganizationName());
+                orderDemand.setBidOrgImage(organization.getOrganizationImage());
+                orderDemand.setOrderAmount(demandBid.getBid());
+                orderDemand.setCreateTime(System.currentTimeMillis());
+                orderDemand.setUpdateTime(System.currentTimeMillis());
+                orderDemandMapper.insert(orderDemand);
+
+                return "已生成订单，请尽快签约并缴纳合同金";
             }
             return "系统错误，请稍后再试";
         }

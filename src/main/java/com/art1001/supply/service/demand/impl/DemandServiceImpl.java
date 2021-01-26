@@ -47,10 +47,11 @@ public class DemandServiceImpl extends ServiceImpl<DemandMapper, Demand> impleme
     private UserMapper userMapper;
 
     @Override
-    public void add(String demandName, String demandDetails, List<String> demandFiles, BigDecimal bid) {
+    public void add(String demandName, String demandDetails,String orgId, List<String> demandFiles, BigDecimal bid) {
         Demand demand = new Demand();
         demand.setDemandName(demandName);
         demand.setDemandDetails(demandDetails);
+        demand.setOrgId(orgId);
         if (CollectionUtils.isNotEmpty(demandFiles)) {
             demand.setDemandFiles(CommonUtils.listToString(demandFiles));
         }

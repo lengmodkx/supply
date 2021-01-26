@@ -46,6 +46,10 @@ public class Demand extends Model<Demand>{
     private String demandDetails;
 
     /**
+     * 需求发布人企业id
+     */
+    private String orgId;
+    /**
       * 附件
       */
     private String demandFiles;

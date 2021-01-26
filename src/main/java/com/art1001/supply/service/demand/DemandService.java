@@ -24,7 +24,7 @@ public interface DemandService extends IService<Demand> {
      * @param bid             出价
      * @return
      */
-    void add(String demandName, String demandDetails, List<String> demandFiles, BigDecimal bid);
+    void add(String demandName, String demandDetails,String orgId, List<String> demandFiles, BigDecimal bid);
 
 
 

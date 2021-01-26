@@ -37,11 +37,12 @@ public class DemandApi {
     @PostMapping("/add")
     public Result add(@RequestParam(value = "demandName") String demandName,
                       @RequestParam(value = "demandDetails") String demandDetails,
+                      @RequestParam(value = "orgId") String orgId,
                       @RequestParam(value = "demandFiles",required = false) List<String> demandFiles,
                       @RequestParam(value = "bid") BigDecimal bid) {
 
         try {
-            demandService.add(demandName, demandDetails, demandFiles, bid);
+            demandService.add(demandName, demandDetails,orgId, demandFiles, bid);
             return Result.success("保存成功");
         } catch (Exception e) {
             throw new AjaxException(e);

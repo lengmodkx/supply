@@ -3,6 +3,7 @@ package com.art1001.supply.service.order.impl;
 import com.art1001.supply.entity.order.OrderDemand;
 import com.art1001.supply.mapper.order.OrderDemandMapper;
 import com.art1001.supply.service.order.OrderDemandService;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -14,4 +15,16 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OrderDemandServiceImpl extends ServiceImpl<OrderDemandMapper, OrderDemand> implements OrderDemandService {
+
+    /**
+     * 添加订单留言
+     * @param orderId             订单id
+     * @param leaveMessage        订单留言
+     * @return
+     */
+    @Override
+    public void addLeaveMessage(String orderId, String leaveMessage) {
+        update(new UpdateWrapper<OrderDemand>().set("leave_message",leaveMessage)
+                .set("update_time",System.currentTimeMillis()).eq("order_id",orderId));
+    }
 }
