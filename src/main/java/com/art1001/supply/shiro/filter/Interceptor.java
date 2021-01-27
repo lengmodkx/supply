@@ -49,7 +49,7 @@ public class Interceptor implements HandlerInterceptor {
         if(!(handler instanceof HandlerMethod)){
             return true;
         }
-        String userId = ShiroAuthenticationManager.getUserId();
+
         List<String> keyList = new ArrayList<>();
         keyList.add("ScheduleApi:initSchedule");
         keyList.add("ShareApi:share");
@@ -62,21 +62,9 @@ public class Interceptor implements HandlerInterceptor {
         StringBuilder key = new StringBuilder(className);
         key.append(":").append(name);
         List<String> allResources = redisUtil.getList(String.class, "allResources");
-//        if(CollectionUtils.isEmpty(allResources)){
-//            //获取所有的企业资源
-//            List<ResourceEntity> allResourceList = resourceService.list(new QueryWrapper<ResourceEntity>()
-//                    .lambda().ne(ResourceEntity::getResourceLevel, 1));
-//            allResources = allResourceList.stream().map(ResourceEntity::getResourceKey).collect(Collectors.toList());
-//
-//
-//            //获取所有的项目资源
-//            allResources.addAll(proResourcesService.list(new QueryWrapper<ProResources>()
-//                    .lambda().ne(ProResources::getSLevel, 1)).stream()
-//                    .map(ProResources::getSSourceKey).collect(Collectors.toList()));
-//
-//            redisUtil.lset("allResources", allResources);
-//        }
+
         if(allResources.contains(key.toString())){
+            String userId = ShiroAuthenticationManager.getUserId();
             String orgByUserId = organizationMemberService.findOrgByUserId(userId);
             List<String> list = redisUtil.getList(String.class, "orgms:" + userId);
             if(CollectionUtils.isEmpty(list)){

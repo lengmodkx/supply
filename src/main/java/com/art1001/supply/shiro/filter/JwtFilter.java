@@ -53,6 +53,7 @@ public class JwtFilter extends AuthenticatingFilter {
         try {
             allowed = executeLogin(request, response);
         }catch(IllegalStateException e){ //not found any token
+            log.error("uri is ===={}",((HttpServletRequest)request).getRequestURL());
             log.error("Not found any token");
         }catch (Exception e) {
             log.error("Error occurs when login", e);
