@@ -3,12 +3,7 @@ package com.art1001.supply.service.project.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.base.RecycleBinVO;
-import com.art1001.supply.entity.binding.BindingConstants;
 import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.entity.organization.OrganizationMemberInfo;
-import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.project.*;
 import com.art1001.supply.entity.relation.Relation;
@@ -18,16 +13,15 @@ import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.vo.MenuVo;
-import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.mapper.project.ProjectMapper;
+import com.art1001.supply.mapper.role.RoleMapper;
+import com.art1001.supply.mapper.role.RoleUserMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.organization.OrganizationMemberInfoService;
-import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentMemberService;
-import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
@@ -38,15 +32,10 @@ import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
-import com.art1001.supply.service.schedule.ScheduleService;
-import com.art1001.supply.service.share.ShareService;
-import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
-import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.MyBeanUtils;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -54,14 +43,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.swing.plaf.multi.MultiLabelUI;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -125,6 +111,14 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Resource
     private RoleUserService roleUserService;
 
+    @Resource
+    private OrganizationMemberMapper organizationMemberMapper;
+
+    @Resource
+    private RoleMapper roleMapper;
+
+    @Resource
+    private RoleUserMapper roleUserMapper;
     /**
      * 通过projectId获取单条project数据
      *
@@ -644,5 +638,28 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             menuVos.add(menuVo);
         }
         return menuVos;
+    }
+
+    @Override
+    public void addProjectMember(String projectId, String memberId, String orgId) {
+        //判断用户是否在企业
+        if (organizationMemberService.findOrgMemberIsExist(orgId, memberId) != 0) {
+            projectMemberService.saveMember(projectId, memberId, orgId);
+        } else {
+            UserEntity byId = userMapper.findById(memberId);
+            OrganizationMember organizationMember = OrganizationMember.builder().job(byId.getJob())
+                    .createTime(System.currentTimeMillis()).image(byId.getImage()).memberEmail(byId.getEmail())
+                    .memberId(memberId).organizationId(orgId).phone(byId.getAccountName()).updateTime(System.currentTimeMillis())
+                    .userName(byId.getUserName()).build();
+            organizationMemberService.save(organizationMember);
+            Role role = roleMapper.selectOne(new QueryWrapper<Role>().eq("role_name", "外部成员"));
+            RoleUser roleUser = new RoleUser();
+            roleUser.setUId(memberId);
+            roleUser.setOrgId(orgId);
+            roleUser.setRoleId(role.getRoleId());
+            roleUser.setTCreateTime(LocalDateTime.now());
+            roleUserMapper.insert(roleUser);
+            projectMemberService.saveMember(projectId, memberId, orgId);
+        }
     }
 }

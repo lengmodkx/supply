@@ -29,25 +29,20 @@ public class DemandApi {
      * 保存需求
      *
      * @param demandName    需求名称
-     * @param dcId          需求分类
      * @param demandDetails 需求详情
      * @param demandFiles   需求附件
-     * @param demandBudget  需求预算
-     * @param solveWay      解决方式 1招标 2比稿
-     * @param memberTel     发布人电话
-     * @return
+     * @param bid  出价
+          * @return
      */
     @PostMapping("/add")
     public Result add(@RequestParam(value = "demandName") String demandName,
-                      @RequestParam(value = "dcId") String dcId,
                       @RequestParam(value = "demandDetails") String demandDetails,
+                      @RequestParam(value = "orgId") String orgId,
                       @RequestParam(value = "demandFiles",required = false) List<String> demandFiles,
-                      @RequestParam(value = "demandBudget") BigDecimal demandBudget,
-                      @RequestParam(value = "solveWay") Integer solveWay,
-                      @RequestParam(value = "memberTel") String memberTel) {
+                      @RequestParam(value = "bid") BigDecimal bid) {
 
         try {
-            demandService.add(demandName, dcId, demandDetails, demandFiles, demandBudget, solveWay, memberTel);
+            demandService.add(demandName, demandDetails,orgId, demandFiles, bid);
             return Result.success("保存成功");
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -59,28 +54,20 @@ public class DemandApi {
      * 修改需求
      * @param demandId      需求id
      * @param demandName    需求名称
-     * @param dcId          需求分类id
      * @param demandDetails 需求详情
      * @param demandFiles   需求附件
-     * @param demandBudget  需求预算
-     * @param memberTel     发布人电话
-     * @param isExpedited   是否加急
-     * @param isTop         是否置顶
+     * @param bid           需求预算
      * @return
      */
     @PostMapping("/edit")
     public Result edit(@RequestParam(value = "demandId") String demandId,
                        @RequestParam(value = "demandName", required = false) String demandName,
-                       @RequestParam(value = "dcId", required = false) String dcId,
                        @RequestParam(value = "demandDetails", required = false) String demandDetails,
                        @RequestParam(value = "demandFiles", required = false) List<String> demandFiles,
-                       @RequestParam(value = "demandBudget", required = false) BigDecimal demandBudget,
-                       @RequestParam(value = "memberTel", required = false) String memberTel,
-                       @RequestParam(value = "isExpedited", required = false) Integer isExpedited,
-                       @RequestParam(value = "isTop", required = false) Integer isTop) {
+                       @RequestParam(value = "bid", required = false) BigDecimal bid) {
 
         try {
-            demandService.edit(demandId,demandName, dcId, demandDetails, demandFiles, demandBudget, memberTel, isExpedited, isTop);
+            demandService.edit(demandId,demandName, demandDetails, demandFiles,bid);
             return Result.success("保存成功");
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -104,19 +91,17 @@ public class DemandApi {
 
     /**
      * 需求列表
-     * @param pageNum
-     * @param pageSize
-     * @param dcId
-     * @param type 1查看除了我提出的所有的需求  2查看我提出的所有的需求
-     * @return
+     * @param pageNum      页数
+     * @param pageSize     条数
+     * @param type         1我发布的 2我竞标的 3我中标的 4所有需求
+     * @return  Page<Demand>
      */
     @GetMapping("/list")
     public Result list(@RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
                        @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize,
-                       @RequestParam(value = "dcId",required = false) String dcId,
-                       @RequestParam(value = "type",defaultValue = "1")Integer type){
+                       @RequestParam(value = "type",defaultValue = "1") Integer type){
         try {
-            IPage<Demand> page=demandService.getList(pageNum,pageSize,dcId,type);
+            IPage<Demand> page=demandService.getList(pageNum,pageSize,type);
             return Result.success(page);
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -133,11 +118,26 @@ public class DemandApi {
      */
     @GetMapping("/checkDemand")
     public Result checkDemand(@RequestParam(value = "demandId") String demandId,
-                              @RequestParam(value = "isCheck") Integer isCheck,
+                              @RequestParam(value = "isCheck",defaultValue = "1") Integer isCheck,
                               @RequestParam(value = "reason",required = false) String reason){
         try {
             demandService.checkDemand(demandId,isCheck,reason);
             return Result.success("审核成功");
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
+     * 获取需求详情
+     * @param demandId  需求id
+     * @return Demand
+     */
+    @GetMapping("/demandInfo")
+    public Result demandInfo(@RequestParam(value = "demandId") String demandId){
+        try {
+            Demand demand=demandService.demandInfo(demandId);
+            return Result.success(demand);
         } catch (Exception e) {
             throw new AjaxException(e);
         }

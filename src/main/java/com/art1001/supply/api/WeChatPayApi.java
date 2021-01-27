@@ -1,6 +1,5 @@
 package com.art1001.supply.api;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.annotation.PushType;
@@ -10,25 +9,18 @@ import com.art1001.supply.service.order.OrderService;
 import com.art1001.supply.service.product.ProductService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URLEncoder;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -53,7 +45,9 @@ public class WeChatPayApi extends BaseController {
         JSONObject jsonObject = new JSONObject();
         ps.setTotalFee("1");
         ps.setOutTradeNo(IdGen.uuid());
+        // 获取微信支付的二维码地址
         String urlCode = WeixinPay.getCodeUrl(ps);
+        // 将路径生成二维码图片
         WeixinPay.encodeQrcode(urlCode,response);
         jsonObject.put("msgId", ShiroAuthenticationManager.getUserId());
         jsonObject.put("data", 1);

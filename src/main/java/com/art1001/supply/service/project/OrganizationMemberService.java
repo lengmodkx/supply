@@ -1,13 +1,10 @@
 package com.art1001.supply.service.project;
 
 import com.art1001.supply.entity.base.Pager;
-import com.art1001.supply.entity.organization.InvitationLink;
 import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.partment.PartmentMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -168,8 +165,9 @@ public interface OrganizationMemberService extends IService<OrganizationMember> 
 	/**
 	 * 根据电话号或邮箱邀请企业成员
 	 * @param orgId
-	 * @param phone
-	 * @param memberEmail
+	 * @param phone       电话号列联表
+	 * @param memberEmail 邮箱列表
+	 * @param  param  1外部成员 0成员
 	 * @return
 	 */
     List<String> inviteOrgMemberByPhone(String orgId, List<String> phone,List<String>memberEmail,Integer param);

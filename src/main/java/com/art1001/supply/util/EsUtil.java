@@ -14,6 +14,7 @@ import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
@@ -23,7 +24,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.elasticsearch.common.unit.TimeValue.timeValueMillis;
 
@@ -171,51 +175,49 @@ public class EsUtil<T> {
      * @return
      */
     public Page<T> searchListByPage(Class<T> clazz, SearchSourceBuilder sourceBuilder, String indices,Integer pageNum) {
-        Page<T> page = new Page<>(pageNum,20);
+        Page<T> page = new Page<>();
+        page.setCurrent(pageNum);
+        SearchResponse searchResponse;
+        SearchHit[] hits;
+        String scrollId;
         try {
+            sourceBuilder.size(20);
             SearchRequest searchRequest=new SearchRequest(indices);
             Scroll scroll = new Scroll(timeValueMillis(10L));
             searchRequest.scroll(scroll);
             searchRequest.source(sourceBuilder);
 
             // 发起请求并接收响应
-            SearchResponse searchResponse = esClient.search(searchRequest,RequestOptions.DEFAULT);
+             searchResponse = esClient.search(searchRequest,RequestOptions.DEFAULT);
 
             // 初始化查询结果List
             List<String> jsonStringList=Lists.newArrayList();
 
             // 获取ScrollId
-            String scrollId = searchResponse.getScrollId();
-
-            // 获取第一页的查询结果
-            SearchHit[] hits = searchResponse.getHits().getHits();
-            for (SearchHit hit : hits) {
-                jsonStringList.add(hit.getSourceAsString());
-            }
+            scrollId = searchResponse.getScrollId();
 
             // 设置总数
             page.setTotal(searchResponse.getHits().getTotalHits());
 
-            // 返回结果不为空则滚动查询
-            while (hits.length > 0) {
 
-                // 初始化scroll查询
-                SearchScrollRequest searchScrollRequest=new SearchScrollRequest(scrollId);
-                searchScrollRequest.scroll(scroll);
-
-                // 发起请求并接收响应
-                searchResponse = esClient.scroll(searchScrollRequest,RequestOptions.DEFAULT);
-
-                // 更新ScrollId
-                scrollId = searchResponse.getScrollId();
-                // 更新查询结果
-                hits = searchResponse.getHits().getHits();
-                // 放入List
-                for (SearchHit hit : hits) {
-                    jsonStringList.add(hit.getSourceAsString());
+            int ceil = (int) Math.ceil((float) page.getTotal() / 20);
+            if (searchResponse.getHits().getHits().length!=0) {
+                for (int i = 1; i <= ceil; i++) {
+                    if (pageNum.equals(i)) {
+                        Arrays.stream(searchResponse.getHits().getHits()).forEach(v->jsonStringList.add(v.getSourceAsString()));
+                        page.setSize(jsonStringList.size());
+                        page.setRecords(hitsToObject(jsonStringList,clazz));
+                    }else {
+                        //获取scroll_id并再次查询
+                        scrollId = searchResponse.getScrollId();
+                        SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+                        scrollRequest.scroll(TimeValue.timeValueSeconds(3000));
+                        searchResponse = esClient.scroll(scrollRequest,RequestOptions.DEFAULT);
+                    }
                 }
+
             }
-            page.setRecords(hitsToObject(jsonStringList,clazz));
+
             //及时清除es快照，释放资源
             ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
             clearScrollRequest.addScrollId(scrollId);

@@ -2,6 +2,7 @@ package com.art1001.supply.entity.demand;
 
 import com.art1001.supply.util.LongToDeteSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @ClassName Demand
@@ -37,16 +39,16 @@ public class Demand extends Model<Demand>{
       */
     private String demandName;
 
-    /**
-      * 需求分类id
-      */
-    private String dcId;
 
     /**
       * 需求详情
       */
     private String demandDetails;
 
+    /**
+     * 需求发布人企业id
+     */
+    private String orgId;
     /**
       * 附件
       */
@@ -55,35 +57,23 @@ public class Demand extends Model<Demand>{
     /**
       * 需求预算
       */
-    private BigDecimal demandBudget;
+    private BigDecimal bid;
 
-    /**
-      * 解决方式
-      */
-    private Integer solveWay;
 
     /**
       * 需求发布人id
       */
     private String memberId;
 
-    /**
-      * 联系电话
-      */
-    private String memberTel;
 
     /**
       * 是否删除 0否 1是
       */
     private Integer isDel;
 
-    /**
-      * 托管金额
-      */
-    private BigDecimal hostingMoney;
 
     /**
-      * 需求状态 1 需求未发布 2 需求已发布 3需求已承接 4需求已取消 5需求已完成
+      * 需求状态 0需求未承接 1需求已承接 2需求已取消 3需求已完成
       */
     private Integer demandState;
 
@@ -98,14 +88,10 @@ public class Demand extends Model<Demand>{
     private String checkFailReason;
 
     /**
-      * 是否加急 0否 1是
-      */
-    private Integer isExpedited;
-
-    /**
-      * 是否置顶 0否 1是
-      */
-    private Integer isTop;
+     * 竞标企业
+     */
+    @TableField(exist = false)
+    private List<DemandBid> bidList;
 
     /**
       * null

@@ -219,4 +219,12 @@ public interface ProjectService extends IService<Project> {
     String addMember(String projectId, String memberId);
 
     List<MenuVo> taskIndex(String projectId,String userId);
+
+	/**
+	 * 添加项目成员
+	 * @param projectId
+	 * @param memberId
+	 * @param orgId
+	 */
+    void addProjectMember(String projectId, String memberId, String orgId);
 }
