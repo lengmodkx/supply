@@ -22,6 +22,16 @@ public class WeChatConfig {
      * 微信支付成功之后的回调地址【注意：当前回调地址必须是公网能够访问的地址】
      */
     public static String WECHAT_NOTIFY_URL_PC="47.93.138.137:8086/wechat_pay/rollback";
+
+    /**
+     * 微信统一退款API地址
+     */
+    public static String REFUND_URL = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+
+    /**
+     * 微信退款成功之后的回调地址【注意：当前回调地址必须是公网能够访问的地址】
+     */
+    public static String REFUND_NOTIFY_URL="47.93.138.137:8086/wechat_pay/refundnotify";
     /**
      * 微信统一下单API地址
      */

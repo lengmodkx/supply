@@ -21,7 +21,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
      * @param acId
      * @return
      */
-    List<Article> selectByExample(IPage<Article> page, @Param("acId") String acId);
+    List<Article> selectByExample(IPage<Article> page, @Param("acId") String acId,@Param("state")Integer state);
 
     /**
      * 根据文章名称模糊查询文章列表

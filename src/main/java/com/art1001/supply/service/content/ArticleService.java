@@ -100,9 +100,10 @@ public interface ArticleService extends IService<Article> {
      *
      * @param pageNum
      * @param pageSize
+     * @param state    0 未通过审核  1已通过审核
      * @return
      */
-    Page<Article> allArtile(Integer pageNum, Integer pageSize, String acId);
+    Page<Article> allArtile(Integer pageNum, Integer pageSize, String acId,Integer state);
 
     /**
      * 所有粉丝

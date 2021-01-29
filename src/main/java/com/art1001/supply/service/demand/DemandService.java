@@ -43,10 +43,11 @@ public interface DemandService extends IService<Demand> {
      * 需求列表
      * @param pageNum      页数
      * @param pageSize     条数
-     * @param type         1我发布的 2我竞标的 3我中标的
-     * @return  IPage<Demand>
+     * @param type         1我发布的 2我竞标的 3我中标的 4所有需求
+     * @param state        1 审核过的 2未审核的
+     * @return  Page<Demand>
      */
-    IPage<Demand> getList(Integer pageNum, Integer pageSize,Integer type);
+    IPage<Demand> getList(Integer pageNum, Integer pageSize,Integer type,Integer state);
 
     /**
      * 审核/发布需求

@@ -48,7 +48,7 @@ public interface CommentService extends IService<Comment> {
      * @param articleId
      * @return
      */
-    Page<Comment> commentListByArticleId(String articleId,Integer pageNum);
+    Page<Comment> commentListByArticleId(String articleId,Integer pageNum,Integer state);
 
     void dateToEs();
 }

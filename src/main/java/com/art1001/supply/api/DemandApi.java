@@ -94,14 +94,16 @@ public class DemandApi {
      * @param pageNum      页数
      * @param pageSize     条数
      * @param type         1我发布的 2我竞标的 3我中标的 4所有需求
+     * @param state        1 审核过的 2未审核的
      * @return  Page<Demand>
      */
     @GetMapping("/list")
     public Result list(@RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
                        @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize,
-                       @RequestParam(value = "type",defaultValue = "1") Integer type){
+                       @RequestParam(value = "type",defaultValue = "1") Integer type,
+                       @RequestParam(value = "state",defaultValue = "1") Integer state){
         try {
-            IPage<Demand> page=demandService.getList(pageNum,pageSize,type);
+            IPage<Demand> page=demandService.getList(pageNum,pageSize,type,state);
             return Result.success(page);
         } catch (Exception e) {
             throw new AjaxException(e);
