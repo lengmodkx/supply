@@ -657,9 +657,11 @@ public class UserApi {
     @GetMapping("/getMyUserInfo")
     public JSONObject getMyUserInfo() {
         try {
+            String userId = ShiroAuthenticationManager.getUserId();
+            UserEntity byId = userService.findById(userId);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("result", 1);
-            jsonObject.put("data", userService.findById(ShiroAuthenticationManager.getUserId()));
+            jsonObject.put("data", byId);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
