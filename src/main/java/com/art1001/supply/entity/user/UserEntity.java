@@ -146,6 +146,11 @@ public class UserEntity extends Model<UserEntity> {
 	private String email;
 
 	/**
+	 * 是否管理员 0否1是
+	 */
+	private Integer isAdmin;
+
+	/**
 	 * 签名
 	 */
 	private String signature;

@@ -89,7 +89,7 @@ public class UserApi {
 
     private final static String ONE = "1";
     private final static String ZERO = "0";
-    private final static String IM_PASSWORD="AAF9A7ADE8AD853549F9CE5D53E8D645";
+    private final static String IM_PASSWORD = "AAF9A7ADE8AD853549F9CE5D53E8D645";
 
 
     /**
@@ -119,6 +119,7 @@ public class UserApi {
             return Result.fail(CodeMsg.ACCOUNT_OR_PASSWORD_ERROR);
         }
     }
+
 
     /**
      * 用户注册
@@ -241,9 +242,10 @@ public class UserApi {
 
     /**
      * 将用户注册进环信客户端
+     *
      * @param accountName
      */
-    private void registerImService( String accountName) {
+    private void registerImService(String accountName) {
         RegisterUsers users = new RegisterUsers();
         User user1 = new User().username(accountName).password(IM_PASSWORD);
         users.add(user1);
@@ -355,10 +357,11 @@ public class UserApi {
      * @return 视图信息
      */
     @GetMapping(value = "/logout")
-    public void logout() {
+    public Result logout() {
         //这里执行退出系统之前需要清理数据的操作
         // 注销登录
         ShiroAuthenticationManager.logout();
+        return Result.success("1");
     }
 
     /**
@@ -417,7 +420,7 @@ public class UserApi {
                                      @RequestParam(value = "birthday", required = false) String birthday,
                                      @RequestParam(value = "address", required = false) String address,
                                      @RequestParam(value = "email", required = false) String email,
-                                     @RequestParam(value = "signature",required = false)String signature
+                                     @RequestParam(value = "signature", required = false) String signature
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -496,8 +499,8 @@ public class UserApi {
     public JSONObject notBindPhone() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("result",1);
-            jsonObject.put("data",userService.notBindPhone());
+            jsonObject.put("result", 1);
+            jsonObject.put("data", userService.notBindPhone());
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -611,10 +614,17 @@ public class UserApi {
             UsernamePasswordToken token = new UsernamePasswordToken(accountName, password);
             subject.login(token);
             if (subject.isAuthenticated()) {
-                object.put("fileId", Constants.MATERIAL_BASE);
-                object.put("result", 1);
-                object.put("userInfo", ShiroAuthenticationManager.getUserEntity());
-                object.put("accessToken", JwtUtil.sign(ShiroAuthenticationManager.getUserId(), "1qaz2wsx#EDC"));
+                UserEntity byName = userService.findByName(accountName);
+                if (byName.getIsAdmin().equals(1)) {
+                    object.put("fileId", Constants.MATERIAL_BASE);
+                    object.put("result", 1);
+                    object.put("userInfo", ShiroAuthenticationManager.getUserEntity());
+                    object.put("accessToken", JwtUtil.sign(ShiroAuthenticationManager.getUserId(), "1qaz2wsx#EDC"));
+                }
+                else {
+                    object.put("result", 0);
+                    object.put("msg", "很抱歉,您的身份并不是管理员");
+                }
             } else {
                 object.put("result", 0);
                 object.put("msg", "账号或密码错误");
@@ -658,10 +668,11 @@ public class UserApi {
 
 
     /**
-     *生成环信用户密码
+     * 生成环信用户密码
+     *
      * @return
      */
-    private static String getAuth(){
+    private static String getAuth() {
         return MD5.encrypt("supply");
     }
 
@@ -674,13 +685,13 @@ public class UserApi {
      * @create: 17:42 2020/6/2
      */
     @GetMapping("/registerAll")
-    public void registerAll(){
+    public void registerAll() {
 //        List<UserEntity> list = userService.selectAll();
         List<UserEntity> list = userService.list(new QueryWrapper<UserEntity>().eq("delete_status", 0));
 
-        List<User>list1= Lists.newArrayList();
+        List<User> list1 = Lists.newArrayList();
         for (UserEntity u : list) {
-            User user=new User();
+            User user = new User();
             user.setUsername(u.getAccountName());
             user.setPassword(IM_PASSWORD);
             list1.add(user);
@@ -697,39 +708,41 @@ public class UserApi {
 
 
     @GetMapping("checkcookie")
-    public Result checkCookie(){
+    public Result checkCookie() {
         return Result.success();
     }
 
     /**
      * 环信加好友
-     * @param accountName  自己电话号
-     * @param buddyAccountName  好友电话号
+     *
+     * @param accountName      自己电话号
+     * @param buddyAccountName 好友电话号
      * @return
      */
     @GetMapping("/addBuddyByAccountName")
-    public Object addBuddyByAccountName(@RequestParam String accountName,@RequestParam String buddyAccountName){
-       return imUserService.addFriendSingle(accountName,buddyAccountName);
+    public Object addBuddyByAccountName(@RequestParam String accountName, @RequestParam String buddyAccountName) {
+        return imUserService.addFriendSingle(accountName, buddyAccountName);
     }
 
 
     /**
      * 工作台信息
+     *
      * @param orgId
      * @param request
      * @return
      */
     @GetMapping("/workBenchInfo")
     public JSONObject workBenchInfo(@RequestParam(value = "orgId") String orgId,
-                                    @RequestParam(value = "memberId")String memberId,
-                                    HttpServletRequest request){
+                                    @RequestParam(value = "memberId") String memberId,
+                                    HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
         try {
-            WorkBenchInfoVo workBenchInfoVo=userService.workBenchInfo(orgId,memberId,request);
-            jsonObject.put("result",1);
-            jsonObject.put("data",workBenchInfoVo);
+            WorkBenchInfoVo workBenchInfoVo = userService.workBenchInfo(orgId, memberId, request);
+            jsonObject.put("result", 1);
+            jsonObject.put("data", workBenchInfoVo);
         } catch (Exception e) {
-            jsonObject.put("result",0);
+            jsonObject.put("result", 0);
             log.error("查询失败");
             throw new AjaxException(e);
         }

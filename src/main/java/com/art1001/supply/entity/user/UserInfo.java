@@ -68,9 +68,21 @@ public class UserInfo extends Model<UserInfo> {
     @TableField(exist = false)
     private Boolean bindPhone;
 
+    /**
+     * 是否是管理员 0否1是
+     */
+    private Integer isAdmin;
+
     public String getAccessToken() {
         return accessToken = JwtUtil.sign(userId,"1qaz2wsx#EDC");
     }
+
+
+    public Integer getIsAdmin() {
+        return isAdmin;
+    }
+
+
 
     @Override
     protected Serializable pkVal() {
