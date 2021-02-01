@@ -358,13 +358,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime, String memberId) {
+    public Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime, String memberId,Integer state) {
         Page<Article> page = new Page<>();
         // es查询
         try {
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-            boolQueryBuilder.must(QueryBuilders.matchQuery("memberId", memberId));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("state",state).operator(Operator.AND));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("memberId", memberId).operator(Operator.AND));
             if (StringUtils.isNotEmpty(keyword)) {
                 // 模糊查询
                 boolQueryBuilder.must(QueryBuilders.wildcardQuery("articleTitle", "*" + keyword + "*").boost(2f));
@@ -375,7 +376,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             }
             // 根据分类查询
             if (StringUtils.isNotEmpty(acId)) {
-                boolQueryBuilder.must(QueryBuilders.matchQuery("acId", acId));
+                boolQueryBuilder.must(QueryBuilders.matchQuery("acId", acId).operator(Operator.AND));
             }
 
             sourceBuilder.query(boolQueryBuilder);

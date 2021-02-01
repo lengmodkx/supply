@@ -117,9 +117,10 @@ public interface ArticleService extends IService<Article> {
      * 我的文章
      *
      * @param pageNum
+     * @param state 1 未审核 2已审核
      * @return
      */
-    Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime,String memberId);
+    Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime,String memberId,Integer state);
 
     /**
      * 删除文章

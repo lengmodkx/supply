@@ -132,6 +132,7 @@ public class ArticleApi {
      * 根据用户id获取用户自己的文章
      *
      * @param pageNum
+     * @param state 1 未审核 2已审核
      * @return
      */
     @GetMapping("/myArticle")
@@ -140,10 +141,11 @@ public class ArticleApi {
                                            @RequestParam(value = "keyword", required = false) String keyword,
                                            @RequestParam(value = "startTime", required = false) Long startTime,
                                            @RequestParam(value = "endTime", required = false) Long endTime,
-                                           @RequestParam(value = "memberId") String memberId) {
+                                           @RequestParam(value = "memberId") String memberId,
+                                           @RequestParam(value = "state",required = false,defaultValue = "2") Integer state) {
         {
             try {
-                Page<Article> page = articleService.myArticle(pageNum, acId, keyword, startTime, endTime, memberId);
+                Page<Article> page = articleService.myArticle(pageNum, acId, keyword, startTime, endTime, memberId,state);
                 return Result.success(page);
             } catch (Exception e) {
                 throw new AjaxException(e);
