@@ -421,12 +421,19 @@ public class UserApi {
                                      @RequestParam(value = "birthday", required = false) String birthday,
                                      @RequestParam(value = "address", required = false) String address,
                                      @RequestParam(value = "email", required = false) String email,
-                                     @RequestParam(value = "signature", required = false) String signature
+                                     @RequestParam(value = "signature", required = false) String signature,
+                                     @RequestParam(value = "nickname") String nickname
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = new UserEntity();
             userEntity.setUserId(userId);
+            UserEntity byId = userService.findById(userId);
+
+            if (StringUtils.isEmpty(byId.getNickName())&&byId.getNickName().equals(nickname)) {
+               throw new AjaxException("昵称已被占用，请重新输入");
+            }
+            userEntity.setNickName(nickname);
             if (StringUtils.isNotEmpty(image)) {
                 userEntity.setImage(image);
                 userEntity.setDefaultImage(image);
@@ -461,6 +468,7 @@ public class UserApi {
 
             userEntity.setUpdateTime(new Date());
             userService.updateById(userEntity);
+
             jsonObject.put("msg", "用户信息修改成功");
             jsonObject.put("result", 1);
         } catch (Exception e) {

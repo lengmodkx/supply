@@ -239,13 +239,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Page<Article> page = new Page<>(pageNum, 20);
         Set<String> articleIds = redisUtil.zrange(FOLLOWED_ARTICLE + ShiroAuthenticationManager.getUserId(), (pageNum - 1) * 20, (pageNum * 20) - 1);
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        BoolQueryBuilder bool = new BoolQueryBuilder();
+
+        bool.must(QueryBuilders.matchQuery("isDel", 0).operator(Operator.AND));
+        bool.must(QueryBuilders.matchQuery("state", 2).operator(Operator.AND));
         List<Article> list = Lists.newArrayList();
         if (StringUtils.isNotEmpty(acId)) {
-            sourceBuilder.query(QueryBuilders.matchQuery("acId", acId));
+            bool.must(QueryBuilders.matchQuery("acId", acId).operator(Operator.AND));
         }
         if (CollectionUtils.isNotEmpty(articleIds)) {
             for (String articleId : articleIds) {
-                sourceBuilder.query(QueryBuilders.matchQuery("articleId", articleId));
+                bool.must(QueryBuilders.matchQuery("articleId", articleId).operator(Operator.AND));
                 Article article = esUtil.search(Article.class, sourceBuilder, ARTICLE);
                 if (article != null) list.add(article);
             }
