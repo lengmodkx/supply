@@ -402,7 +402,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                         .gt(startTime != null, "create_time", startTime)
                         .lt(endTime != null, "create_time", endTime)
                         .eq("member_Id", memberId)
-                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword).eq("is_del",0);
+                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword).eq("state",state).eq("is_del",0);
                 Page<Article> articlePage = articleMapper.selectArticlePage(page, wrapper);
                 // 设置文章评论信息
                 if (CollectionUtils.isNotEmpty(articlePage.getRecords())) {
