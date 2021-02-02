@@ -32,6 +32,7 @@ public class JwtFilter extends AuthenticatingFilter {
     @Override
     protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) {
         String jwtToken = getAuthzHeader(servletRequest);
+
         if(StringUtils.isNotBlank(jwtToken)&&!JwtUtil.isTokenExpired(jwtToken))
             return new JWTToken(jwtToken);
 
@@ -46,6 +47,7 @@ public class JwtFilter extends AuthenticatingFilter {
         if(isLoginRequest(request, response)){
             return true;
         }
+
         Boolean afterFiltered = (Boolean)(request.getAttribute("jwtShiroFilter.FILTERED"));
         if(BooleanUtils.isTrue(afterFiltered))
             return true;
@@ -53,7 +55,7 @@ public class JwtFilter extends AuthenticatingFilter {
         try {
             allowed = executeLogin(request, response);
         }catch(IllegalStateException e){ //not found any token
-            log.error("uri is ===={}",((HttpServletRequest)request).getRequestURL());
+            log.error("uri is ===={}",WebUtils.toHttp(request).getRequestURL());
             log.error("Not found any token");
         }catch (Exception e) {
             log.error("Error occurs when login", e);

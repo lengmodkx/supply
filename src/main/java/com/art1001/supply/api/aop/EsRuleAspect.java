@@ -144,6 +144,7 @@ public class EsRuleAspect {
         UserEntity byId;
         switch (esRule.type().getName()) {
             case ARTICLE:
+
                 Article article = getArticle(jsonObject);
                 esUtil.save(ARTICLE, "docs", article, "articleId");
                 break;

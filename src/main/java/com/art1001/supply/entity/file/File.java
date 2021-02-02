@@ -10,6 +10,7 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
+import org.apache.lucene.document.FieldType;
 import org.springframework.data.annotation.Id;
 
 
@@ -39,7 +40,7 @@ public class File extends Model<File> {
      * 文件名
      */
     // analyzer = "ik_max_word"
-//    @Field(type = FieldType.text,analyzer = "ik_max_word" )
+   //@Field(type = FieldType.text,analyzer = "ik_max_word" )
     private String fileName;
 
 
