@@ -131,7 +131,7 @@ public class EsRuleAspect {
                 for (String commentId : commentIds) {
                     Comment comment = commentService.getOne(new QueryWrapper<Comment>().eq("comment_id", commentId));
                     byId = getUserEntity(comment.getMemberId());
-                    comment.setCommentName(byId.getUserName());
+                    comment.setMemberName(byId.getUserName());
                     comment.setMemberImage(byId.getImage());
                     esUtil.update(COMMENT, DOCS, "commentId", jsonObject.get("data").toString(), comment);
                 }

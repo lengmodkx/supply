@@ -79,6 +79,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         boolQueryBuilder.must(QueryBuilders.matchQuery("articleId", articleId).operator(Operator.AND));
         boolQueryBuilder.must(QueryBuilders.matchQuery("commentState", state).operator(Operator.AND));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("isDel", 0).operator(Operator.AND));
 
         sourceBuilder.query(boolQueryBuilder);
         page = esUtil.searchListByPage(Comment.class, sourceBuilder, COMMENT, pageNum);
