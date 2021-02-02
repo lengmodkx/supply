@@ -90,6 +90,7 @@ public class UserApi {
     private final static String ONE = "1";
     private final static String ZERO = "0";
     private final static String IM_PASSWORD = "AAF9A7ADE8AD853549F9CE5D53E8D645";
+    private final static String ADMIN = "admin";
 
 
     /**
@@ -615,7 +616,7 @@ public class UserApi {
             subject.login(token);
             if (subject.isAuthenticated()) {
                 UserEntity byName = userService.findByName(accountName);
-                if (byName.getIsAdmin().equals(1)) {
+                if (byName.getAccountName().equals(ADMIN)) {
                     object.put("fileId", Constants.MATERIAL_BASE);
                     object.put("result", 1);
                     object.put("userInfo", ShiroAuthenticationManager.getUserEntity());
