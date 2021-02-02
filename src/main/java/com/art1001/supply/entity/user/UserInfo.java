@@ -68,6 +68,7 @@ public class UserInfo extends Model<UserInfo> {
     @TableField(exist = false)
     private Boolean bindPhone;
 
+
     public String getAccessToken() {
         return accessToken = JwtUtil.sign(userId,"1qaz2wsx#EDC");
     }

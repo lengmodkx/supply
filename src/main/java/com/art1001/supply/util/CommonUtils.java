@@ -1,11 +1,10 @@
 package com.art1001.supply.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class CommonUtils {
+
+
 
     /**
      * 判断数组中是否存在某元素
@@ -26,6 +25,25 @@ public class CommonUtils {
         strings = Arrays.asList(arr);
         strings.remove(targetValue);
     }
+
+    /**
+     * 随机字符串生成
+     * @param length
+     * @return
+     */
+    public static String getRandomString(int length) { // length表示生成字符串的长度
+        String base = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            int number = random.nextInt(base.length());
+            sb.append(base.charAt(number));
+        }
+        return sb.toString();
+    }
+
+
+
 
     public static boolean listIsEmpty(Collection collection){
         return collection == null || collection.isEmpty();

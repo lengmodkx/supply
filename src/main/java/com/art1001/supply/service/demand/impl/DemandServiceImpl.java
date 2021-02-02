@@ -80,52 +80,58 @@ public class DemandServiceImpl extends ServiceImpl<DemandMapper, Demand> impleme
         if (bid != null) {
             demand.setBid(bid);
         }
+        demand.setIsCheck(0);
         demand.setUpdateTime(System.currentTimeMillis());
         updateById(demand);
     }
 
     /**
      * 需求列表
-     *
-     * @param pageNum  页数
-     * @param pageSize 条数
-     * @param type     1我发布的 2我竞标的 3我中标的
-     * @return IPage<Demand>
+     * @param pageNum      页数
+     * @param pageSize     条数
+     * @param type         1我发布的 2我竞标的 3我中标的 4所有需求
+     * @param state        1 审核过的 2未审核的
+     * @return  Page<Demand>
      */
     @Override
-    public IPage<Demand> getList(Integer pageNum, Integer pageSize, Integer type) {
+    public IPage<Demand> getList(Integer pageNum, Integer pageSize, Integer type,Integer state) {
         Page<Demand> page = new Page<>(pageNum, pageSize);
         String userId = ShiroAuthenticationManager.getUserId();
         List<String> demandIds;
-        switch (type) {
-            // 1我发布的
-            case 1:
-                page = page(page, new QueryWrapper<Demand>().eq("is_del", 0).eq("member_id", userId));
-                break;
-            // 2我竞标的
-            case 2:
-                demandIds = demandBidMapper.selectList(new QueryWrapper<DemandBid>().eq("member_id", userId)
-                        .eq("is_del", 0).eq("state", 0)).stream().map(DemandBid::getDemandId).collect(Collectors.toList());
-                if (CollectionUtils.isNotEmpty(demandIds)) {
-                    page = demandMapper.selectPage(page, new QueryWrapper<Demand>().eq("is_del", 0).in("demand_id", demandIds));
-                }
-                break;
-            // 3我中标的
-            case 3:
-                demandIds = demandBidMapper.selectList(new QueryWrapper<DemandBid>().eq("member_id", userId)
-                        .eq("is_del", 0).eq("state", 1)).stream().map(DemandBid::getDemandId).collect(Collectors.toList());
-                if (CollectionUtils.isNotEmpty(demandIds)) {
-                    page = demandMapper.selectPage(page, new QueryWrapper<Demand>().eq("is_del", 0).in("demand_id", demandIds));
-                }
-                break;
-            case 4:
-                page = page(page, new QueryWrapper<Demand>().eq("is_del", 0));
-            default:
-                break;
-        }
-        if (CollectionUtils.isNotEmpty(page.getRecords())) {
-            List<Demand> collect = page.getRecords().stream().sorted(Comparator.comparingLong(Demand::getCreateTime).reversed()).collect(Collectors.toList());
-            page.setRecords(collect);
+        // 审核过的
+        if (state.equals(ONE)) {
+            switch (type) {
+                // 1我发布的
+                case 1:
+                    page = page(page, new QueryWrapper<Demand>().eq("is_del", 0).eq("is_check",1).eq("member_id", userId));
+                    break;
+                // 2我竞标的
+                case 2:
+                    demandIds = demandBidMapper.selectList(new QueryWrapper<DemandBid>().eq("member_id", userId)
+                            .eq("is_del", 0).eq("state", 0)).stream().map(DemandBid::getDemandId).collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(demandIds)) {
+                        page = demandMapper.selectPage(page, new QueryWrapper<Demand>().eq("is_del", 0).eq("is_check",1).in("demand_id", demandIds));
+                    }
+                    break;
+                // 3我中标的
+                case 3:
+                    demandIds = demandBidMapper.selectList(new QueryWrapper<DemandBid>().eq("member_id", userId)
+                            .eq("is_del", 0).eq("state", 1)).stream().map(DemandBid::getDemandId).collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(demandIds)) {
+                        page = demandMapper.selectPage(page, new QueryWrapper<Demand>().eq("is_del", 0).in("demand_id", demandIds).eq("is_check",1));
+                    }
+                    break;
+                case 4:
+                    page = page(page, new QueryWrapper<Demand>().eq("is_del", 0).eq("is_check",1));
+                default:
+                    break;
+            }
+            if (CollectionUtils.isNotEmpty(page.getRecords())) {
+                List<Demand> collect = page.getRecords().stream().sorted(Comparator.comparingLong(Demand::getCreateTime).reversed()).collect(Collectors.toList());
+                page.setRecords(collect);
+            }
+        }else{
+            page=demandMapper.selectPage(page,new QueryWrapper<Demand>().eq("is_del",0).eq("is_check",0));
         }
         return page;
     }
@@ -175,7 +181,7 @@ public class DemandServiceImpl extends ServiceImpl<DemandMapper, Demand> impleme
         demandBid.setOrganizationImage(organization.getOrganizationImage());
         demandBid.setMemberName(userEntity.getUserName());
         demandBid.setMemberImage(userEntity.getImage());
-        demandBid.setOrganizationPhone(organization.getContactPhone());
+        demandBid.setOrganizationPhone(userEntity.getAccountName());
     }
 
 

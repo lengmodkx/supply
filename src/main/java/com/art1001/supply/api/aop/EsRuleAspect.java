@@ -126,6 +126,16 @@ public class EsRuleAspect {
                 Article article = getArticle(jsonObject);
                 esUtil.update(ARTICLE, DOCS, "articleId", jsonObject.get("data").toString(), article);
                 break;
+            case COMMENT:
+                String[] commentIds = jsonObject.get("data").toString().split(",");
+                for (String commentId : commentIds) {
+                    Comment comment = commentService.getOne(new QueryWrapper<Comment>().eq("comment_id", commentId));
+                    byId = getUserEntity(comment.getMemberId());
+                    comment.setMemberName(byId.getUserName());
+                    comment.setMemberImage(byId.getImage());
+                    esUtil.update(COMMENT, DOCS, "commentId", jsonObject.get("data").toString(), comment);
+                }
+                break;
             case REPLY:
                 String replyId = jsonObject.get("data").toString();
                 Reply reply = replyService.getOne(new QueryWrapper<Reply>().eq("reply_id", replyId));
@@ -153,7 +163,7 @@ public class EsRuleAspect {
                 byId = getUserEntity(comment.getMemberId());
                 comment.setMemberImage(byId.getImage());
                 comment.setMemberName(byId.getUserName());
-                esUtil.save(COMMENT, DOCS, comment, "articleId");
+                esUtil.save(COMMENT, DOCS, comment, "commentId");
                 break;
             case QUESTION:
                 Question question = questionService.getOne(new QueryWrapper<Question>().eq("question_id", jsonObject.get("data").toString()));

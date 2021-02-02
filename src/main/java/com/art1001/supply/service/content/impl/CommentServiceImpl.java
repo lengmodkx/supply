@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
@@ -71,19 +72,23 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
-    public Page<Comment> commentListByArticleId(String articleId, Integer pageNum) {
+    public Page<Comment> commentListByArticleId(String articleId, Integer pageNum, Integer state) {
 
         Page<Comment> page;
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        boolQueryBuilder.must(QueryBuilders.matchQuery("articleId", articleId));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("articleId", articleId).operator(Operator.AND));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("commentState", state).operator(Operator.AND));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("isDel", 0).operator(Operator.AND));
+
         sourceBuilder.query(boolQueryBuilder);
         page = esUtil.searchListByPage(Comment.class, sourceBuilder, COMMENT, pageNum);
-        if (CollectionUtils.isNotEmpty(page.getRecords())) {
+        if (CollectionUtils.isEmpty(page.getRecords())) {
             List<Comment> collect = page.getRecords().stream().sorted(Comparator.comparing(Comment::getCreateTime).reversed()).collect(Collectors.toList());
             page.setRecords(collect);
         }
 
+        // es没有从数据库查
         if (CollectionUtils.isEmpty(page.getRecords())) {
             page.setCurrent(pageNum);
             page.setSize(20);

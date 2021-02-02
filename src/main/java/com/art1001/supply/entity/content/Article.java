@@ -138,10 +138,28 @@ public class Article extends Model<Article>{
     private Long updateTime;
 
     /**
-     * 评论数
+     * 评论总数
      */
     @TableField(exist = false)
     private Integer commentCount;
+
+    /**
+     * 评论待通过总数
+     */
+    @TableField(exist = false)
+    private Integer commentNotCheckCount;
+
+    /**
+     * 评论已通过总数
+     */
+    @TableField(exist = false)
+    private Integer commentIsCheckCount;
+
+    /**
+     * 评论未通过总数
+     */
+    @TableField(exist = false)
+    private Integer commentFailCheckCount;
     /**
      * @人的id
      */
@@ -154,11 +172,6 @@ public class Article extends Model<Article>{
     @TableField(typeHandler = FastjsonTypeHandler.class)
     private List<String> topicIds;
 
-    /**
-     * 评论列表
-     */
-    @TableField(exist = false)
-    private List<Comment>comments;
 
     @Override
     protected Serializable pkVal() {

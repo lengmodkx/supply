@@ -15,7 +15,7 @@ public class LongToDeteSerializer extends JsonSerializer<Long> {
     @Override
     public void serialize(Long value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         DateTimeFormatter ftf = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
-        String output = ftf.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault()));
+        String output = ftf.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.of("UTC+8")));
         gen.writeString(output);
     }
 

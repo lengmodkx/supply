@@ -82,4 +82,5 @@ public class MyDBRealm extends AuthorizingRealm {
 				principalCollection, getName());
 		super.clearCachedAuthenticationInfo(principals);
 	}
+
 }

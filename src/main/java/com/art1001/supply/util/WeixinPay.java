@@ -6,6 +6,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import lombok.extern.log4j.Log4j;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -52,14 +53,7 @@ public class WeixinPay {
         String ufdoder_url = WeChatConfig.UFDODER_URL;
         //类型【网页扫码支付】
         String trade_type = "NATIVE";
-
-        /**
-         * 时间字符串
-         */
-        String currTime = PayForUtil.getCurrTime();
-        String strTime = currTime.substring(8, currTime.length());
-        String strRandom = PayForUtil.buildRandom(4) + "";
-        String nonce_str = strTime + strRandom;
+        String nonce_str = getNonceStr();
 
         /**
          * 参数封装
@@ -99,10 +93,21 @@ public class WeixinPay {
         return urlCode;
     }
 
+    @NotNull
+    private static String getNonceStr() {
+        /**
+         * 时间字符串
+         */
+        String currTime = PayForUtil.getCurrTime();
+        String strTime = currTime.substring(8, currTime.length());
+        String strRandom = PayForUtil.buildRandom(4) + "";
+        return strTime + strRandom;
+    }
+
     /**
      * 将路径生成二维码图片
      *
-     * @param content   微信支付的二维码地址
+     * @param content  微信支付的二维码地址
      * @param response
      * @author chenp
      */
@@ -153,4 +158,6 @@ public class WeixinPay {
     public static String UrlEncode(String src) throws UnsupportedEncodingException {
         return URLEncoder.encode(src, "UTF-8").replace("+", "%20");
     }
+
+
 }

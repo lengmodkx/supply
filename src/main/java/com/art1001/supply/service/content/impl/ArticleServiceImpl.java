@@ -1,5 +1,6 @@
 package com.art1001.supply.service.content.impl;
 
+import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.content.Article;
 import com.art1001.supply.entity.content.Comment;
 import com.art1001.supply.entity.content.Topic;
@@ -34,6 +35,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
@@ -41,10 +43,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName articleServiceImpl
@@ -116,11 +116,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
         if (acId.equals(TWO)) {
             article.setHeadlineContent(headlineContent);
-            article.setHeadlineImages(CommonUtils.listToString(headlineImages));
+            if (CollectionUtils.isNotEmpty(headlineImages)) {
+                article.setHeadlineImages(CommonUtils.listToString(headlineImages));
+            }
+
         }
         if (acId.equals(THREE)) {
             article.setVideoName(videoName);
-            article.setVideoAddress(CommonUtils.listToString(videoAddress));
+            if (CollectionUtils.isNotEmpty(videoAddress)) {
+                article.setVideoAddress(CommonUtils.listToString(videoAddress));
+            }
             article.setVideoCover(videoCover);
         }
         article.setAcId(acId);
@@ -160,7 +165,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public void editArticle(String articleTitle, String articleContent, String articlePureContent, String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages) {
         Article article = Article.builder().articleTitle(articleTitle).articleContent(articleContent)
                 .articleId(articleId).headlineContent(headlineContent)
-                .videoName(videoName).videoCover(videoCover)
+                .videoName(videoName).videoCover(videoCover).state(1)
                 .coverShow(coverShow).updateTime(System.currentTimeMillis())
                 .build();
         article.setArticlePureContent(articlePureContent);
@@ -274,23 +279,51 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      */
     private void setComment(List<Article> articles) {
         articles.forEach(r -> {
-            List<Comment> list = commentMapper.selectList(new QueryWrapper<Comment>().eq("article_id", r.getArticleId()).eq("comment_state", 1).eq("is_del", 0));
+            List<Comment>list = commentMapper.selectList(new QueryWrapper<Comment>().eq("article_id", r.getArticleId()).eq("is_del", 0));
+            int commentNotCheckCount=0;
+            int commentIsCheckCount=0;
+            int commentFailCheckCount=0;
+            if (CollectionUtils.isNotEmpty(list)) {
+                commentNotCheckCount=list.stream().filter(f->f.getCommentState().equals(Constants.B_ZERO)).collect(Collectors.toList()).size();
+                commentIsCheckCount=list.stream().filter(f->f.getCommentState().equals(Constants.B_ONE)).collect(Collectors.toList()).size();
+                commentFailCheckCount=list.stream().filter(f->f.getCommentState().equals(Constants.B_TWO)).collect(Collectors.toList()).size();
+            }
             r.setCommentCount(list.size());
-            r.setComments(list);
+            r.setCommentNotCheckCount(commentNotCheckCount);
+            r.setCommentIsCheckCount(commentIsCheckCount);
+            r.setCommentFailCheckCount(commentFailCheckCount);
         });
+        articles.sort(Comparator.comparing(Article::getCreateTime).reversed());
     }
 
+    /**
+     * 所有文章列表
+     *
+     * @param pageNum
+     * @param pageSize
+     * @param acId
+     * @param state    0 未通过审核  1已通过审核
+     * @return
+     */
     @Override
-    public Page<Article> allArtile(Integer pageNum, Integer pageSize, String acId) {
+    public Page<Article> allArtile(Integer pageNum, Integer pageSize, String acId, Integer state) {
         Page<Article> page = new Page<>();
-
         SearchSourceBuilder source = new SearchSourceBuilder();
-        source.query(QueryBuilders.matchQuery("isDel", 0));
-
+        BoolQueryBuilder bool = new BoolQueryBuilder();
+        bool.must(QueryBuilders.matchQuery("isDel", 0).operator(Operator.AND));
+        if (StringUtils.isNotEmpty(acId)) {
+            bool.must(QueryBuilders.matchQuery("acId", acId).operator(Operator.AND));
+        }
+        if (state.equals(ONE)) {
+            bool.must(QueryBuilders.matchQuery("state", 2).operator(Operator.AND));
+        } else {
+            bool.must(QueryBuilders.matchQuery("state", 1).operator(Operator.AND));
+        }
+        source.query(bool);
         page = esUtil.searchListByPage(Article.class, source, ARTICLE, pageNum);
 
         if (CollectionUtils.isEmpty(page.getRecords())) {
-            page.setRecords(articleMapper.selectByExample(page, acId));
+            page.setRecords(articleMapper.selectByExample(page, acId, state));
         }
         setComment(page.getRecords());
         page.setCurrent(pageNum);
@@ -330,13 +363,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime, String memberId) {
+    public Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime, String memberId,Integer state) {
         Page<Article> page = new Page<>();
         // es查询
         try {
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-            boolQueryBuilder.must(QueryBuilders.matchQuery("memberId", memberId));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("state",state).operator(Operator.AND));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("isDel",0).operator(Operator.AND));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("memberId", memberId).operator(Operator.AND));
             if (StringUtils.isNotEmpty(keyword)) {
                 // 模糊查询
                 boolQueryBuilder.must(QueryBuilders.wildcardQuery("articleTitle", "*" + keyword + "*").boost(2f));
@@ -347,27 +382,35 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             }
             // 根据分类查询
             if (StringUtils.isNotEmpty(acId)) {
-                boolQueryBuilder.must(QueryBuilders.matchQuery("acId", acId));
+                boolQueryBuilder.must(QueryBuilders.matchQuery("acId", acId).operator(Operator.AND));
             }
 
             sourceBuilder.query(boolQueryBuilder);
-//
+
             page = esUtil.searchListByPage(Article.class, sourceBuilder, ARTICLE, pageNum);
 
+            // 设置文章评论信息
+            if (CollectionUtils.isNotEmpty(page.getRecords())) {
+                setComment(page.getRecords());
+            }
             if (CollectionUtils.isEmpty(page.getRecords())) {
                 QueryWrapper<Article> wrapper = new QueryWrapper<Article>().eq(StringUtils.isNotEmpty(acId), "ac_Id", acId)
                         .gt(startTime != null, "create_time", startTime)
                         .lt(endTime != null, "create_time", endTime)
                         .eq("member_Id", memberId)
-                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword);
+                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword).eq("is_del",0);
                 Page<Article> articlePage = articleMapper.selectArticlePage(page, wrapper);
-                //es 没有就存进去
-                Optional.ofNullable(articlePage.getRecords()).ifPresent(l -> l.forEach(r -> esUtil.save(ARTICLE, DOCS, r, "articleId")));
-                if (CollectionUtils.isNotEmpty(page.getRecords())) {
-                    setComment(page.getRecords());
+                // 设置文章评论信息
+                if (CollectionUtils.isNotEmpty(articlePage.getRecords())) {
+                    setComment(articlePage.getRecords());
                 }
+                //es 没有就存进去
+                Optional.ofNullable(articlePage.getRecords()).ifPresent(l -> l.forEach(r -> {
+                    esUtil.save(ARTICLE, DOCS, r, "articleId");
+                }));
                 return articlePage;
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -429,27 +472,31 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (state.equals(ONE)) {
             article.setState(2);
             List<String> topIds = Lists.newArrayList();
-            Optional.ofNullable(PatternUtils.parsingTags(article.getArticleContent())).ifPresent(topics -> topics.forEach(r -> {
-                if (topicMapper.selectCount(new QueryWrapper<Topic>().eq(TOPIC_NAME, r)).equals(ZERO)) {
-                    Topic topic = Topic.builder().topicName(r).createTime(System.currentTimeMillis())
-                            .updateTime(System.currentTimeMillis()).build();
-                    topicMapper.insert(topic);
-                    topIds.add(topic.getTopicId());
-                }
-            }));
             List<String> memberIds = Lists.newArrayList();
-            Optional.ofNullable(PatternUtils.parsingNickName(article.getArticleContent())).ifPresent(nickNames -> nickNames.forEach(r -> {
-                if (!userMapper.selectCount(new QueryWrapper<UserEntity>().eq(NICK_NAME, r)).equals(ZERO)) {
-                    String memberId = userMapper.selectOne(new QueryWrapper<UserEntity>().eq(NICK_NAME, r)).getUserId();
-                    memberIds.add(memberId);
-                }
-            }));
-            if(CollectionUtils.isNotEmpty(topIds))article.setTopicIds(topIds);
-            if(CollectionUtils.isNotEmpty(memberIds))article.setTopicIds(memberIds);
+            if (StringUtils.isNotEmpty(article.getArticleContent())) {
+                // 解析标签并存储
+                Optional.ofNullable(PatternUtils.parsingTags(article.getArticleContent())).ifPresent(topics -> topics.forEach(r -> {
+                    if (topicMapper.selectCount(new QueryWrapper<Topic>().eq(TOPIC_NAME, r)).equals(ZERO)) {
+                        Topic topic = Topic.builder().topicName(r).createTime(System.currentTimeMillis())
+                                .updateTime(System.currentTimeMillis()).build();
+                        topicMapper.insert(topic);
+                        topIds.add(topic.getTopicId());
+                    }
+                }));
+                // 解析@昵称 并存储
+                Optional.ofNullable(PatternUtils.parsingNickName(article.getArticleContent())).ifPresent(nickNames -> nickNames.forEach(r -> {
+                    if (!userMapper.selectCount(new QueryWrapper<UserEntity>().eq(NICK_NAME, r)).equals(ZERO)) {
+                        String memberId = userMapper.selectOne(new QueryWrapper<UserEntity>().eq(NICK_NAME, r)).getUserId();
+                        memberIds.add(memberId);
+                    }
+                }));
+            }
+            if (CollectionUtils.isNotEmpty(topIds)) article.setTopicIds(topIds);
+            if (CollectionUtils.isNotEmpty(memberIds)) article.setTopicIds(memberIds);
         }
         if (state.equals(TWO)) {
             article.setState(3);
-            if(StringUtils.isNotEmpty(checkFailReason))article.setCheckFailReason(checkFailReason);
+            if (StringUtils.isNotEmpty(checkFailReason)) article.setCheckFailReason(checkFailReason);
         }
         updateById(article);
 
