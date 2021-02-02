@@ -83,7 +83,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
         sourceBuilder.query(boolQueryBuilder);
         page = esUtil.searchListByPage(Comment.class, sourceBuilder, COMMENT, pageNum);
-        if (CollectionUtils.isEmpty(page.getRecords())) {
+        if (CollectionUtils.isNotEmpty(page.getRecords())) {
             List<Comment> collect = page.getRecords().stream().sorted(Comparator.comparing(Comment::getCreateTime).reversed()).collect(Collectors.toList());
             page.setRecords(collect);
         }
@@ -92,7 +92,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         if (CollectionUtils.isEmpty(page.getRecords())) {
             page.setCurrent(pageNum);
             page.setSize(20);
-            QueryWrapper<Comment> query = new QueryWrapper<Comment>().eq("article_id", articleId).eq("is_del", 0).eq("comment_state", 1).orderByDesc("create_time");
+            QueryWrapper<Comment> query = new QueryWrapper<Comment>().eq("article_id", articleId).eq("is_del", 0).eq("comment_state", state).orderByDesc("create_time");
             page = commentMapper.listCommentByPage(page, query);
         }
         return page;
