@@ -256,6 +256,12 @@ public class ArticleApi {
         }
     }
 
+    @GetMapping("/getArticleById")
+    public Result getArticleById(@RequestParam(value = "articleId") String articleId){
+        Article byId = articleService.getById(articleId);
+        return Result.success(byId);
+    }
+
     /**
      * 将mysql数据存储到es中
      *

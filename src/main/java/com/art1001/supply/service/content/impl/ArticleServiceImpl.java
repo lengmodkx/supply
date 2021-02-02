@@ -116,11 +116,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
         if (acId.equals(TWO)) {
             article.setHeadlineContent(headlineContent);
-            article.setHeadlineImages(CommonUtils.listToString(headlineImages));
+            if (CollectionUtils.isNotEmpty(headlineImages)) {
+                article.setHeadlineImages(CommonUtils.listToString(headlineImages));
+            }
+
         }
         if (acId.equals(THREE)) {
             article.setVideoName(videoName);
-            article.setVideoAddress(CommonUtils.listToString(videoAddress));
+            if (CollectionUtils.isNotEmpty(videoAddress)) {
+                article.setVideoAddress(CommonUtils.listToString(videoAddress));
+            }
             article.setVideoCover(videoCover);
         }
         article.setAcId(acId);
@@ -365,6 +370,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
             boolQueryBuilder.must(QueryBuilders.matchQuery("state",state).operator(Operator.AND));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("isDel",0).operator(Operator.AND));
             boolQueryBuilder.must(QueryBuilders.matchQuery("memberId", memberId).operator(Operator.AND));
             if (StringUtils.isNotEmpty(keyword)) {
                 // 模糊查询
@@ -392,7 +398,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                         .gt(startTime != null, "create_time", startTime)
                         .lt(endTime != null, "create_time", endTime)
                         .eq("member_Id", memberId)
-                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword);
+                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword).eq("is_del",0);
                 Page<Article> articlePage = articleMapper.selectArticlePage(page, wrapper);
                 // 设置文章评论信息
                 if (CollectionUtils.isNotEmpty(articlePage.getRecords())) {
