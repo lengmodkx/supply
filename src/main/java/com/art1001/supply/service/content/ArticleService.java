@@ -60,7 +60,7 @@ public interface ArticleService extends IService<Article> {
      * @param coverImages     文章封面展示图片
      * @return
      */
-    String addArticle(String articleTitle, String articleContent, String articlePureContent, Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages);
+    String addArticle(String articleTitle, String articleContent, String articlePureContent, Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages,String videoLocal);
 
     /**
      * 修改文章
