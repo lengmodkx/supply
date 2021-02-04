@@ -7,6 +7,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
@@ -18,6 +19,11 @@ public class TransactionConfig implements TransactionManagementConfigurer {
 
     @Resource
     private DataSource dataSource;
+
+    @PostConstruct
+    public void setProperties(){
+        System.setProperty("druid.mysql.usePingMethod","false");
+    }
 
     @NotNull
     @Bean(name = "transactionManager")
