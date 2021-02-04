@@ -18,6 +18,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
+import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.RegexUtils;
 import com.art1001.supply.util.crypto.EndecryptUtils;
@@ -159,6 +160,7 @@ public class UserApi {
         //设置添加用户的密码和加密盐
         userEntity.setPassword(user.getPassword());
         userEntity.setCredentialsSalt(user.getCredentialsSalt());
+        userEntity.setNickName("supply"+CommonUtils.getRandomString(6));
         try {
             //向第三方环信注册用户
 //            registerImService(accountName);
@@ -421,12 +423,19 @@ public class UserApi {
                                      @RequestParam(value = "birthday", required = false) String birthday,
                                      @RequestParam(value = "address", required = false) String address,
                                      @RequestParam(value = "email", required = false) String email,
-                                     @RequestParam(value = "signature", required = false) String signature
+                                     @RequestParam(value = "signature", required = false) String signature,
+                                     @RequestParam(value = "nickname") String nickname
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = new UserEntity();
             userEntity.setUserId(userId);
+            UserEntity byId = userService.findById(userId);
+
+            if (StringUtils.isEmpty(byId.getNickName())&&byId.getNickName().equals(nickname)) {
+               throw new AjaxException("昵称已被占用，请重新输入");
+            }
+            userEntity.setNickName(nickname);
             if (StringUtils.isNotEmpty(image)) {
                 userEntity.setImage(image);
                 userEntity.setDefaultImage(image);
@@ -461,6 +470,7 @@ public class UserApi {
 
             userEntity.setUpdateTime(new Date());
             userService.updateById(userEntity);
+
             jsonObject.put("msg", "用户信息修改成功");
             jsonObject.put("result", 1);
         } catch (Exception e) {
@@ -709,7 +719,6 @@ public class UserApi {
 
     }
 
-
     @GetMapping("checkcookie")
     public Result checkCookie() {
         return Result.success();
@@ -750,8 +759,5 @@ public class UserApi {
             throw new AjaxException(e);
         }
         return jsonObject;
-
     }
-
-
 }

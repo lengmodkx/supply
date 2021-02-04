@@ -103,7 +103,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      * @return
      */
     @Override
-    public String addArticle(String articleTitle, String articleContent, String articlePureContent, Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages) {
+    public String addArticle(String articleTitle, String articleContent, String articlePureContent, Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages,String videoLocal) {
         Article article = new Article();
         if (acId.equals(ONE)) {
             article.setArticleTitle(articleTitle);
@@ -126,6 +126,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             if (CollectionUtils.isNotEmpty(videoAddress)) {
                 article.setVideoAddress(CommonUtils.listToString(videoAddress));
             }
+            article.setVideoLocal(videoLocal);
             article.setVideoCover(videoCover);
         }
         article.setAcId(acId);
@@ -239,13 +240,18 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Page<Article> page = new Page<>(pageNum, 20);
         Set<String> articleIds = redisUtil.zrange(FOLLOWED_ARTICLE + ShiroAuthenticationManager.getUserId(), (pageNum - 1) * 20, (pageNum * 20) - 1);
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        BoolQueryBuilder bool = new BoolQueryBuilder();
+
+        bool.must(QueryBuilders.matchQuery("isDel", 0).operator(Operator.AND));
+        bool.must(QueryBuilders.matchQuery("state", 2).operator(Operator.AND));
         List<Article> list = Lists.newArrayList();
         if (StringUtils.isNotEmpty(acId)) {
-            sourceBuilder.query(QueryBuilders.matchQuery("acId", acId));
+            bool.must(QueryBuilders.matchQuery("acId", acId).operator(Operator.AND));
         }
         if (CollectionUtils.isNotEmpty(articleIds)) {
             for (String articleId : articleIds) {
-                sourceBuilder.query(QueryBuilders.matchQuery("articleId", articleId));
+                bool.must(QueryBuilders.matchQuery("articleId", articleId));
+                sourceBuilder.query(bool);
                 Article article = esUtil.search(Article.class, sourceBuilder, ARTICLE);
                 if (article != null) list.add(article);
             }
@@ -257,6 +263,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 if (StringUtils.isNotEmpty(acId)) {
                     query.eq("ac_id", acId);
                 }
+                query.eq("state",2);
                 Page<Article> articlePage = articleMapper.selectPage(page, query);
                 if (CollectionUtils.isNotEmpty(articlePage.getRecords())) {
                     articlePage.getRecords().forEach(r -> esUtil.save(ARTICLE, DOCS, r, "articleId"));
@@ -398,7 +405,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                         .gt(startTime != null, "create_time", startTime)
                         .lt(endTime != null, "create_time", endTime)
                         .eq("member_Id", memberId)
-                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword).eq("is_del",0);
+                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword).eq("state",state).eq("is_del",0);
                 Page<Article> articlePage = articleMapper.selectArticlePage(page, wrapper);
                 // 设置文章评论信息
                 if (CollectionUtils.isNotEmpty(articlePage.getRecords())) {

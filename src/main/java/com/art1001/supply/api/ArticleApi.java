@@ -53,13 +53,14 @@ public class ArticleApi {
                                  @RequestParam(value = "headlineContent", required = false) String headlineContent,
                                  @RequestParam(value = "headlineImages", required = false) List<String> headlineImages,
                                  @RequestParam(value = "videoName", required = false) String videoName,
+                                 @RequestParam(value = "videoLocal", required = false) String videoLocal,
                                  @RequestParam(value = "videoAddress", required = false) List<String> videoAddress,
                                  @RequestParam(value = "videoCover", required = false) String videoCover,
                                  @RequestParam(value = "coverShow", required = false) Integer coverShow,
                                  @RequestParam(value = "coverImages", required = false) List<String> coverImages) {
         try {
             JSONObject jsonObject = new JSONObject();
-            String articleId = articleService.addArticle(articleTitle, articleContent, articlePureContent, acId, headlineContent, headlineImages, videoName, videoAddress, videoCover, coverShow, coverImages);
+            String articleId = articleService.addArticle(articleTitle, articleContent, articlePureContent, acId, headlineContent, headlineImages, videoName, videoAddress, videoCover, coverShow, coverImages,videoLocal);
             jsonObject.put("result", 1);
             jsonObject.put("data", articleId);
             return jsonObject;

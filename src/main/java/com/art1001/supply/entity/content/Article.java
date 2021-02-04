@@ -106,6 +106,11 @@ public class Article extends Model<Article>{
      * 视频名称
      */
     private String videoName;
+
+    /**
+     * 视频本地名称
+     */
+    private String videoLocal;
     /**
      * 视频地址
      */
