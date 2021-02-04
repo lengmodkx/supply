@@ -332,6 +332,41 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (CollectionUtils.isEmpty(page.getRecords())) {
             page.setRecords(articleMapper.selectByExample(page, acId, state));
         }
+//        setComment(page.getRecords());
+        page.setCurrent(pageNum);
+        page.setSize(20);
+        return page;
+    }
+
+    /**
+     * 所有文章列表
+     *
+     * @param pageNum
+     * @param pageSize
+     * @param acId
+     * @param state    0 未通过审核  1已通过审核
+     * @return
+     */
+    @Override
+    public Page<Article> allArtile1(Integer pageNum, Integer pageSize, String acId, Integer state) {
+        Page<Article> page = new Page<>();
+        SearchSourceBuilder source = new SearchSourceBuilder();
+        BoolQueryBuilder bool = new BoolQueryBuilder();
+        bool.must(QueryBuilders.matchQuery("isDel", 0).operator(Operator.AND));
+        if (StringUtils.isNotEmpty(acId)) {
+            bool.must(QueryBuilders.matchQuery("acId", acId).operator(Operator.AND));
+        }
+        if (state.equals(ONE)) {
+            bool.must(QueryBuilders.matchQuery("state", 2).operator(Operator.AND));
+        } else {
+            bool.must(QueryBuilders.matchQuery("state", 1).operator(Operator.AND));
+        }
+        source.query(bool);
+        page = esUtil.searchListByPage(Article.class, source, ARTICLE, pageNum);
+
+        if (CollectionUtils.isEmpty(page.getRecords())) {
+            page.setRecords(articleMapper.selectByExample(page, acId, state));
+        }
         setComment(page.getRecords());
         page.setCurrent(pageNum);
         page.setSize(20);
