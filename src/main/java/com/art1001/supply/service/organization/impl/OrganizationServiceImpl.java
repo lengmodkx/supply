@@ -219,10 +219,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	 */
 	@Override
 	public Integer automaticUpdateProjectSchedule(Project r) {
-		List<Task> taskByProject = taskService.findTaskByProject(r.getProjectId());
-		List<Task> collect = taskService.findTaskIsOk(r.getProjectId());
-		DecimalFormat df = new DecimalFormat("0.00");//格式化小数，不足的补0
-		float v = ((float) collect.size() / taskByProject.size()) * 100;
+		List<Task> taskList = taskService.list(new QueryWrapper<Task>().eq("task_del",0).eq("parent_id",0).eq("project_id",r.getProjectId()));
+		List<Task> collect = taskList.stream().filter(Task::getTaskStatus).collect(Collectors.toList());
+		float v = ((float) collect.size() / taskList.size()) * 100;
 		return  (int) v;
 	}
 

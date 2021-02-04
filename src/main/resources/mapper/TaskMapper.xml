@@ -1095,15 +1095,6 @@
     <update id="updateAll">
 		update prm_task set member_id = #{userId} where member_id = #{id}
 	</update>
-    <update id="updateTag">
-    update prm_task set tag_id = JSON_ARRAY_APPEND(tag_id, '$', JSON_OBJECT("tagId",#{tag.tagId},"tagName",#{tag.tagName}))
-    where
-        task_id = #{taskId}
-    </update>
-    <select id="selectTag">
-        select task_list->'$.tagId' form prm_task where
-    </select>
-
 
     <!-- 根据用户查询出该用户执行的和创建的所有任务 -->
     <select id="findTaskByCalendar" resultMap="BaseResultMap">
