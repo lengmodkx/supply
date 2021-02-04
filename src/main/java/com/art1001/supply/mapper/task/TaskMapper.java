@@ -810,9 +810,4 @@ public interface TaskMapper extends BaseMapper<Task> {
 							   @Param("startTime") Long startTime, @Param("endTime") Long endTime,
 							   @Param("memberId") String memberId, @Param("taskUid") String taskUid,
 							   @Param("taskStatus") Integer taskStatus,@Param("priority") String priority);
-
-    void updateTag(String taskId,Tag tag);
-
-
-
 }

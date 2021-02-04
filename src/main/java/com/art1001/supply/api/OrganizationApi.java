@@ -157,9 +157,6 @@ public class OrganizationApi {
     public JSONObject getOrgProject(@NotEmpty(message = "orgId不能为空!") @PathVariable String orgId){
         JSONObject jsonObject = new JSONObject();
         try {
-            if(organizationMemberService.checkUserIdIsOrgMaster(orgId, ShiroAuthenticationManager.getUserId())){
-
-            }
             List<Project> projects = organizationService.getProject(orgId);
             jsonObject.put("data", projects);
             jsonObject.put("result", 1);
