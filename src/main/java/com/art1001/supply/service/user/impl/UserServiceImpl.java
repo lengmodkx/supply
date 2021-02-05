@@ -688,8 +688,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         workBenchInfoVo.setMemberId(memberId);
         workBenchInfoVo.setImage(userEntity.getImage());
         workBenchInfoVo.setLoginTime(System.currentTimeMillis());
-//        workBenchInfoVo.setLoginIp(IpUtil.getIpAddr(request));
-        workBenchInfoVo.setLoginIp(request.getRemoteAddr());
+        workBenchInfoVo.setLoginIp(IpUtil.getIpAddress(request));
+        log.info("remoteAddr:"+ request.getRemoteAddr());
+        log.info("IP:"+ IpUtil.getIpAddress(request));
+
         workBenchInfoVo.setSignature(userEntity.getSignature());
 
         Set<String> followIds = redisUtil.zrange(FOLLOWING + memberId, 0, -1);
