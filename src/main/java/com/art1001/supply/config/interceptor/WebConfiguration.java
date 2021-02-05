@@ -4,14 +4,11 @@ import com.art1001.supply.interceptor.RecycleParamCheckInterceptor;
 import com.art1001.supply.shiro.filter.Interceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author heshaohua
@@ -36,6 +33,7 @@ public class WebConfiguration implements WebMvcConfigurer {
                 "/wechatcode","/invite/**","/wechattoken","/files/**/upload","/files/**/model","/files/**/name",
                 "/files/deletefile","/logs/exportLogByExcel","/organization/members/expOrgMember","/organization/members/impUser/**",
                 "/check_account_exist","/organization/members/addMember1","/druid/**"};
+        // excludePathPatterns添加不应应用于注册拦截器的URL模式
         registry.addInterceptor(interceptor).addPathPatterns("/**").excludePathPatterns(path);
         registry.addInterceptor(recycleParamCheck).addPathPatterns("/recycle_bin/move_task_rb","/recycle_bin/move_file_rb","/recycle_bin/move_share_rb","/recycle_bin/move_schedule_rb","/recycle_bin/move_tag_rb");
     }
