@@ -19,7 +19,7 @@ public class IpUtil {
         String ipAddress = null;
         try {
 //            ipAddress = request.getHeader("x-forwarded-for");
-            ipAddress =request.getRemoteAddr();
+            ipAddress =request.getRemoteHost();
             if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
                 ipAddress = request.getHeader("Proxy-Client-IP");
             }
