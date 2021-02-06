@@ -377,7 +377,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (ObjectsUtil.isNotEmpty(one)) {
             UserEntity saveUserInfo = new UserEntity();
             saveUserInfo.setUserId(one.getUserId());
-            saveUserInfo.setWxOpenId(res.getOpenId());
+            saveUserInfo.setWxAppOpenId(res.getOpenId());
             saveUserInfo.setUpdateTime(new Date());
             this.updateById(saveUserInfo);
             return one;
