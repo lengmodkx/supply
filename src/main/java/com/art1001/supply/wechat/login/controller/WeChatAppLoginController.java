@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.entity.user.UserInfo;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.wechat.login.dto.UpdateUserInfoRequest;
@@ -65,10 +66,9 @@ public class WeChatAppLoginController extends BaseController {
 
         redisUtil.remove(Constants.WE_CHAT_SESSION_KEY_PRE + user.getOpenId());
 
-        UserEntity userEntity = userService.saveWeChatAppUserInfo(res);
-        log.info(res.getUnionId());
-        log.info(userEntity.getWxUnionId());
-        jsonObject.put("userInfo", userEntity);
+        UserInfo userInfo = userService.saveWeChatAppUserInfo(res);
+
+        jsonObject.put("userInfo", userInfo);
         jsonObject.put("result", 1);
         return jsonObject;
     }

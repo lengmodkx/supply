@@ -365,8 +365,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
 
     @Override
-    public UserEntity saveWeChatAppUserInfo(WeChatDecryptResponse res) {
-
+    public UserInfo saveWeChatAppUserInfo(WeChatDecryptResponse res) {
+        UserInfo userInfo=new UserInfo();
         LambdaQueryWrapper<UserEntity> getSingleUserByWxUnionId = new QueryWrapper<UserEntity>()
                 .lambda()
                 .eq(UserEntity::getWxUnionId, res.getUnionId());
@@ -380,13 +380,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             saveUserInfo.setWxAppOpenId(res.getOpenId());
             saveUserInfo.setUpdateTime(new Date());
             this.updateById(saveUserInfo);
-            return one;
+            userInfo.setAccessToken(JwtUtil.sign(saveUserInfo.getAccountName(), "1qaz2wsx#EDC"));
+            return userInfo;
         }
 
         UserEntity userEntity = assembler.weChatUserTransUserEntity(res);
         this.save(userEntity);
         userEntity.setWxUnionId(null);
-        return userEntity;
+        return userInfo;
     }
 
     @Override
