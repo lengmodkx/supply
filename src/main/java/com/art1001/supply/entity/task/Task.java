@@ -46,9 +46,10 @@ Task extends Model<Task> {
 	/**
 	 * 标签
 	 */
-	@TableField(typeHandler = FastjsonTypeHandler.class)
+	@TableField(exist = false)
 	private List<Tag> tagList;
 
+	private String tagId;
 	/**
 	 * 任务名称
 	 */
