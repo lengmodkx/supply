@@ -527,6 +527,8 @@ public class UserApi {
         return jsonObject;
     }
 
+
+
 //    @PutMapping("/wechat_info")
 //    public Object wechatInfo(){
 //

@@ -9,7 +9,6 @@ import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.wechat.login.dto.UpdateUserInfoRequest;
 import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.art1001.supply.wechat.login.service.WeChatAppLogin;
-import com.art1001.supply.wechat.message.template.MessageToken;
 import com.art1001.supply.wechat.util.WeChatUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -46,7 +45,6 @@ public class WeChatAppLoginController extends BaseController {
     @GetMapping("/login")
     public Object wxAppLogin(@Validated @NotNull(message = "code 不能为空！") String code){
         log.info("weChat app login.[{}]", code);
-
         return success(weChatAppLogin.login(code));
     }
 
@@ -64,9 +62,12 @@ public class WeChatAppLoginController extends BaseController {
                 user.getEncryptedData(), user.getIv(), redisUtil.get(Constants.WE_CHAT_SESSION_KEY_PRE + user.getOpenId()), WeChatDecryptResponse.class
         );
 
+
         redisUtil.remove(Constants.WE_CHAT_SESSION_KEY_PRE + user.getOpenId());
 
         UserEntity userEntity = userService.saveWeChatAppUserInfo(res);
+        log.info(res.getUnionId());
+        log.info(userEntity.getWxUnionId());
         jsonObject.put("userInfo", userEntity);
         jsonObject.put("result", 1);
         return jsonObject;

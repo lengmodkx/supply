@@ -3,25 +3,18 @@ package com.art1001.supply.wechat.login.service.impl;
 import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.user.UserService;
-import com.art1001.supply.service.user.WechatAppIdInfoService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
-import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.wechat.login.dto.AppLoginResponse;
-import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.art1001.supply.wechat.login.dto.WeChatPhoneResponse;
-import com.art1001.supply.wechat.login.entity.WechatAppIdInfo;
 import com.art1001.supply.wechat.login.service.WeChatAppLogin;
 import com.art1001.supply.wechat.util.WeChatUtil;
-import com.auth0.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.PropertiesUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +22,6 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author heshaohua
@@ -74,7 +66,7 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
             //验证手机号是否正确，如果不正确则需要通过小程序绑定手机号
             try {
                 PhoneTest.testPhone(userEntity.getAccountName());
-                resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), userEntity.getCredentialsSalt()));
+                resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), "1qaz2wsx#EDC"));
             } catch (Exception e){
                 log.error("手机号码验证错误，需要重新绑定手机号。[{}]", e.getMessage());
                 resultMap.put("getPhone", true);
@@ -109,7 +101,7 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
         Map<String,Object> resultMap = new HashMap<>(2);
 
         resultMap.put("userInfo",userEntity);
-        resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), userEntity.getCredentialsSalt()));
+        resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), "1qaz2wsx#EDC"));
         return resultMap;
 
     }

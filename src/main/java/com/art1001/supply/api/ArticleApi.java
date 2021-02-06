@@ -194,6 +194,27 @@ public class ArticleApi {
     }
 
     /**
+     * 所有文章(后台)
+     *
+     * @param pageNum
+     * @param pageSize
+     * @param state    0 未通过审核  1已通过审核
+     * @return
+     */
+    @GetMapping("/allArtile1")
+    public Result allArtile1(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                            @RequestParam(value = "pageSize", defaultValue = "20") Integer pageSize,
+                            @RequestParam(value = "acId", required = false) String acId,
+                            @RequestParam(value = "state",defaultValue = "1") Integer state) {
+        try {
+            Page<Article> page = articleService.allArtile1(pageNum, pageSize, acId,state);
+            return Result.success(page);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
      * 删除文章
      *
      * @param articleId

@@ -105,6 +105,8 @@ public interface ArticleService extends IService<Article> {
      */
     Page<Article> allArtile(Integer pageNum, Integer pageSize, String acId,Integer state);
 
+    Page<Article> allArtile1(Integer pageNum, Integer pageSize, String acId,Integer state);
+
     /**
      * 所有粉丝
      *
