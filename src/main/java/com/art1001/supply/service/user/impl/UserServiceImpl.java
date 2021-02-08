@@ -381,7 +381,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             saveUserInfo.setAccountName(one.getAccountName());
             saveUserInfo.setUpdateTime(new Date());
             this.updateById(saveUserInfo);
-            userInfo.setAccessToken(JwtUtil.sign(saveUserInfo.getAccountName(), "1qaz2wsx#EDC"));
+            userInfo.setAccessToken(JwtUtil.sign(one.getUserId(), "1qaz2wsx#EDC"));
             return userInfo;
         }
 
