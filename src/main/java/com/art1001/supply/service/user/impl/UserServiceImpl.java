@@ -374,6 +374,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         UserEntity one = this.getOne(getSingleUserByWxUnionId);
 
         log.info(JSON.toJSONString(one));
+        log.info("userId="+one.getUserId());
         //如果pc微信已经注册
         if (ObjectsUtil.isNotEmpty(one)) {
             UserEntity saveUserInfo = new UserEntity();
