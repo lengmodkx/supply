@@ -373,6 +373,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
         UserEntity one = this.getOne(getSingleUserByWxUnionId);
 
+        log.info(JSON.toJSONString(one));
         //如果pc微信已经注册
         if (ObjectsUtil.isNotEmpty(one)) {
             UserEntity saveUserInfo = new UserEntity();
@@ -381,6 +382,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             saveUserInfo.setAccountName(one.getAccountName());
             saveUserInfo.setUpdateTime(new Date());
             this.updateById(saveUserInfo);
+
             userInfo.setAccessToken(JwtUtil.sign(one.getUserId(), "1qaz2wsx#EDC"));
             return userInfo;
         }
