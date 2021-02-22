@@ -365,35 +365,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
 
     @Override
-    public UserInfo saveWeChatAppUserInfo(WeChatDecryptResponse res) {
-        UserInfo userInfo=new UserInfo();
-        LambdaQueryWrapper<UserEntity> getSingleUserByWxUnionId = new QueryWrapper<UserEntity>()
-                .lambda()
-                .eq(UserEntity::getWxUnionId, res.getUnionId());
-
-        UserEntity one = this.getOne(getSingleUserByWxUnionId);
-
-        log.info(JSON.toJSONString(one));
-        log.info("userId="+one.getUserId());
-        //如果pc微信已经注册
-        if (ObjectsUtil.isNotEmpty(one)) {
-            UserEntity saveUserInfo = new UserEntity();
-            saveUserInfo.setUserId(one.getUserId());
-            saveUserInfo.setWxAppOpenId(res.getOpenId());
-            saveUserInfo.setAccountName(one.getAccountName());
-            saveUserInfo.setUpdateTime(new Date());
-            this.updateById(saveUserInfo);
-            log.info(ShiroAuthenticationManager.getUserId());
-            userInfo.setUserId(one.getUserId());
-            userInfo.setAccessToken(JwtUtil.sign(one.getUserId(), "1qaz2wsx#EDC"));
-            userInfo.setAccessToken(userInfo.getAccessToken());
-            return userInfo;
-        }
-
-        UserEntity userEntity = assembler.weChatUserTransUserEntity(res);
-        this.save(userEntity);
-        userEntity.setWxUnionId(null);
-        return userInfo;
+    public String saveWeChatAppUserInfo(WeChatDecryptResponse res) {
+        return "";
     }
 
     @Override

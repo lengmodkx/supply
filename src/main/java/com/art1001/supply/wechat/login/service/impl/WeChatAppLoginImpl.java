@@ -1,6 +1,5 @@
 package com.art1001.supply.wechat.login.service.impl;
 
-import com.art1001.supply.aliyun.message.util.PhoneTest;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.service.user.UserService;
@@ -46,37 +45,20 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
 
     @Override
     public Map<String, Object> login(String code) {
-
         AppLoginResponse openIdAndSessionKey = weChatUtil.getOpenIdAndSessionKey(code);
-
         //根据授权返回信息中的openid查询该用户信息是否在数据库中存在
-        LambdaQueryWrapper<UserEntity> selectById = new QueryWrapper<UserEntity>().lambda()
-                .eq(UserEntity::getWxOpenId, openIdAndSessionKey.getOpenid());
-        log.info(openIdAndSessionKey.getUnionid());
+        LambdaQueryWrapper<UserEntity> selectById = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getWxAppOpenId, openIdAndSessionKey.getOpenid());
         UserEntity userEntity = userService.getOne(selectById);
-
         Map<String,Object> resultMap = new HashMap<>(5);
         resultMap.put("openId", openIdAndSessionKey.getOpenid());
-
-
         if(ObjectsUtil.isNotEmpty(userEntity)){
             resultMap.put("updateInfo", false);
             resultMap.put("getPhone", false);
-            resultMap.put("userInfo", userEntity);
-
-            //验证手机号是否正确，如果不正确则需要通过小程序绑定手机号
-            try {
-                PhoneTest.testPhone(userEntity.getAccountName());
-                resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), "1qaz2wsx#EDC"));
-            } catch (Exception e){
-                log.error("手机号码验证错误，需要重新绑定手机号。[{}]", e.getMessage());
-                resultMap.put("getPhone", true);
-            }
+            resultMap.put("accessToken", JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         } else {
             redisUtil.set(Constants.WE_CHAT_SESSION_KEY_PRE + openIdAndSessionKey.getOpenid(), openIdAndSessionKey.getSession_key());
             resultMap.put("updateInfo", true);
             resultMap.put("getPhone", true);
-            return resultMap;
         }
         return resultMap;
     }

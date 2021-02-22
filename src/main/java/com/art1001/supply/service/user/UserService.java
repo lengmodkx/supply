@@ -134,7 +134,7 @@ public interface UserService extends IService<UserEntity> {
 	 * @param res 解密后的小程序用户信息
 	 * @return 存储后的用户信息
 	 */
-	UserInfo saveWeChatAppUserInfo(WeChatDecryptResponse res);
+	String saveWeChatAppUserInfo(WeChatDecryptResponse res);
 
 	/**
 	 * 手机号绑定微信

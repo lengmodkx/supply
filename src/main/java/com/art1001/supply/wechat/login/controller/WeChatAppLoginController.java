@@ -4,19 +4,23 @@ import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.entity.user.UserInfo;
 import com.art1001.supply.service.user.UserService;
+import com.art1001.supply.shiro.util.JwtUtil;
+import com.art1001.supply.util.ObjectsUtil;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.wechat.login.dto.UpdateUserInfoRequest;
 import com.art1001.supply.wechat.login.dto.WeChatDecryptResponse;
 import com.art1001.supply.wechat.login.service.WeChatAppLogin;
 import com.art1001.supply.wechat.util.WeChatUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -58,18 +62,27 @@ public class WeChatAppLoginController extends BaseController {
         log.info("save weChat user info. [{}]", user);
 
         JSONObject jsonObject = new JSONObject();
-
         WeChatDecryptResponse res = WeChatUtil.deciphering(
                 user.getEncryptedData(), user.getIv(), redisUtil.get(Constants.WE_CHAT_SESSION_KEY_PRE + user.getOpenId()), WeChatDecryptResponse.class
         );
-
-
         redisUtil.remove(Constants.WE_CHAT_SESSION_KEY_PRE + user.getOpenId());
+        LambdaQueryWrapper<UserEntity> getSingleUserByWxUnionId = new QueryWrapper<UserEntity>().lambda()
+                .eq(UserEntity::getWxUnionId, res.getUnionId());
+        UserEntity one = userService.getOne(getSingleUserByWxUnionId);
+        //如果pc微信已经注册
+        if (ObjectsUtil.isNotEmpty(one)) {
+            UserEntity saveUserInfo = new UserEntity();
+            saveUserInfo.setWxAppOpenId(res.getOpenId());
+            saveUserInfo.setUpdateTime(new Date());
+            userService.updateById(saveUserInfo);
+            jsonObject.put("accessToken",JwtUtil.sign(one.getUserId(), "1qaz2wsx#EDC"));
+            jsonObject.put("result", 1);
+        }else{
+            jsonObject.put("result", 0);
+            jsonObject.put("msg", "请先到pc端绑定微信之后在登陆小程序");
+        }
 
-        UserInfo userInfo = userService.saveWeChatAppUserInfo(res);
 
-        jsonObject.put("userInfo", userInfo);
-        jsonObject.put("result", 1);
         return jsonObject;
     }
 
