@@ -170,7 +170,7 @@ public class UserEntity extends Model<UserEntity> {
 	private String wxAppOpenId;
 	@JsonIgnore
 	private String wxUnionId;
-	@JsonIgnore
+
 	private String wxOpenId;
 
 	@TableField(exist = false)
