@@ -385,7 +385,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             this.updateById(saveUserInfo);
             log.info(ShiroAuthenticationManager.getUserId());
             userInfo.setUserId(one.getUserId());
-//            userInfo.setAccessToken(JwtUtil.sign(one.getUserId(), "1qaz2wsx#EDC"));
+            userInfo.setAccessToken(JwtUtil.sign(one.getUserId(), "1qaz2wsx#EDC"));
             userInfo.setAccessToken(userInfo.getAccessToken());
             return userInfo;
         }

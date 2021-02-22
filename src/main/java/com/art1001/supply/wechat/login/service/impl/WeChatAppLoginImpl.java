@@ -49,8 +49,6 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
 
         AppLoginResponse openIdAndSessionKey = weChatUtil.getOpenIdAndSessionKey(code);
 
-        log.info(openIdAndSessionKey.getOpenid());
-        log.info(openIdAndSessionKey.getUnionid());
         //根据授权返回信息中的openid查询该用户信息是否在数据库中存在
         LambdaQueryWrapper<UserEntity> selectById = new QueryWrapper<UserEntity>().lambda()
                 .eq(UserEntity::getWxOpenId, openIdAndSessionKey.getOpenid());
