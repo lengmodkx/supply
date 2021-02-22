@@ -576,14 +576,14 @@ public class UserApi {
     /**
      * 解绑微信
      *
-     * @param useId
+     * @param userId
      * @return
      */
     @PostMapping("/notbind/wechat")
-    public Result notBindWeChat(@Validated @NotNull(message = "useId不能为空！") String useId) {
-        log.info("bind weChat [{}]", useId);
+    public Result notBindWeChat(@Validated @NotNull(message = "useId不能为空！") String userId) {
+        log.info("bind weChat [{}]", userId);
         UserEntity userEntity = new UserEntity();
-        userEntity.setUserId(useId);
+        userEntity.setUserId(userId);
         userEntity.setWxOpenId("");
         userEntity.setWxUnionId("");
         userService.updateById(userEntity);
