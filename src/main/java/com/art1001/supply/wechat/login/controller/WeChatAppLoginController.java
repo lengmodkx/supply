@@ -72,6 +72,7 @@ public class WeChatAppLoginController extends BaseController {
         //如果pc微信已经注册
         if (ObjectsUtil.isNotEmpty(one)) {
             UserEntity saveUserInfo = new UserEntity();
+            saveUserInfo.setUserId(one.getUserId());
             saveUserInfo.setWxAppOpenId(res.getOpenId());
             saveUserInfo.setUpdateTime(new Date());
             userService.updateById(saveUserInfo);
