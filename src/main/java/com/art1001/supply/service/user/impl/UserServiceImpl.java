@@ -233,7 +233,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         Oauth2Token oauth2AccessToken = getOauth2AccessToken(code);
         WeChatUser info = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserInfo userInfo = new UserInfo();
-        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_open_id", info.getOpenId()));
+        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_union_id", info.getUnionid()));
         if (userEntity == null) {//微信用户不存在，保存微信返回的信息
             UserEntity user = new UserEntity();
             user.setUserName(info.getNickname());
