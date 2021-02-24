@@ -661,19 +661,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         WorkBenchInfoVo workBenchInfoVo = new WorkBenchInfoVo();
         Integer roleId = roleUserService.getUserOrgRoleId(memberId, orgId);
         Role byId = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleId));
-        workBenchInfoVo.setRoleName(byId.getRoleName());
-        workBenchInfoVo.setRoleKey(byId.getRoleKey());
+        if (byId!=null) {
+            workBenchInfoVo.setRoleName(byId.getRoleName());
+            workBenchInfoVo.setRoleKey(byId.getRoleKey());
+        }
         UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("user_id", memberId));
-        workBenchInfoVo.setNickName(userEntity.getUserName());
+        if (userEntity!=null) {
+            workBenchInfoVo.setNickName(userEntity.getUserName());
+            workBenchInfoVo.setImage(userEntity.getImage());
+        }
         workBenchInfoVo.setMemberId(memberId);
-        workBenchInfoVo.setImage(userEntity.getImage());
         workBenchInfoVo.setLoginTime(System.currentTimeMillis());
         workBenchInfoVo.setLoginIp(IpUtil.getIpAddress(request));
-        log.info("remoteAddr:"+ request.getRemoteAddr());
-        log.info("IP:"+ IpUtil.getIpAddress(request));
-        log.info("IP2:"+ request.getHeader("x-forwarded-for"));
-        log.info("IP3:"+ request.getRemoteHost());
-        log.info("IP3:"+ IpUtil.getIpAddr(request));
 
         workBenchInfoVo.setSignature(userEntity.getSignature());
 
