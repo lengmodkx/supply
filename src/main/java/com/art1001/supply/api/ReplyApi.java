@@ -111,7 +111,7 @@ public class ReplyApi {
                                           @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         try {
             Page page = replyService.getReplyListByQuetionId(questionId, pageNum);
-            log.info("一共有"+page.getRecords().size()+"条数据");
+
             return Result.success(page);
         } catch (Exception e) {
             throw new AjaxException(e);
