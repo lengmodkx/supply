@@ -73,7 +73,7 @@ public class EsRuleAspect {
     private void update(EsRule esRule, JSONObject jsonObject) {
         switch (esRule.type().getName()) {
             case ARTICLE:
-                Article article = JSON.parseObject(jsonObject.get("data").toString(), Article.class);
+                Article article = JSON.parseObject(JSON.toJSONString(jsonObject.get("data")), Article.class);
                 esUtil.update(ARTICLE, DOCS, "articleId", article.getArticleId(), article);
                 break;
             case COMMENT:
