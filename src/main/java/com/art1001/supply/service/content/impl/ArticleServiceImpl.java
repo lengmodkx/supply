@@ -331,7 +331,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 //        setComment(page.getRecords());
 
         Optional.ofNullable(page.getRecords()).ifPresent(list->list.forEach(r->{
-            UserEntity userEntity = userMapper.selectById(r.getMemberId());
+            UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id",r.getMemberId()));
             if (userEntity!=null) {
                 r.setMemberImage(userEntity.getImage());
                 r.setUserName(userEntity.getUserName());
