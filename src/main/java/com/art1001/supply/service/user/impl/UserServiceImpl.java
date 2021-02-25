@@ -13,7 +13,6 @@ import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRole;
-import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.user.*;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
@@ -660,15 +659,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     public WorkBenchInfoVo workBenchInfo(String orgId,String memberId, HttpServletRequest request) {
         WorkBenchInfoVo workBenchInfoVo = new WorkBenchInfoVo();
         Integer roleId = roleUserService.getUserOrgRoleId(memberId, orgId);
-        Role byId = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleId));
+        /*Role byId = roleService.getOne(new QueryWrapper<Role>().eq("role_id", roleId));
         if (byId!=null) {
             workBenchInfoVo.setRoleName(byId.getRoleName());
             workBenchInfoVo.setRoleKey(byId.getRoleKey());
-        }
+        }*/
         UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("user_id", memberId));
         if (userEntity!=null) {
             workBenchInfoVo.setNickName(userEntity.getUserName());
             workBenchInfoVo.setImage(userEntity.getImage());
+            workBenchInfoVo.setRoleName(userEntity.getJob());
         }
         workBenchInfoVo.setMemberId(memberId);
         workBenchInfoVo.setLoginTime(System.currentTimeMillis());
