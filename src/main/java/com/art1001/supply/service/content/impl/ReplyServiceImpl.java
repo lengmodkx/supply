@@ -8,7 +8,6 @@ import com.art1001.supply.service.content.ReplyService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.EsUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -42,32 +42,36 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
     private UserMapper userMapper;
 
     @Override
-    public String add(String questionId, String replyContent, Integer isIncognito, Integer isDraft) {
-
-        UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id", ShiroAuthenticationManager.getUserId()));
+    public Reply add(String questionId, String replyContent, Integer isIncognito, Integer isDraft) {
 
         Reply reply = Reply.builder().questionId(questionId).replyMemberId(ShiroAuthenticationManager.getUserId()).replyContent(replyContent)
-                .isIncognito(isIncognito).isDraft(isDraft).createTime(System.currentTimeMillis())
-                .updateTime(System.currentTimeMillis()).replyMemberImage(userEntity.getImage())
-                .replyMemberName(userEntity.getUserName()).build();
+                .isIncognito(isIncognito).isDraft(isDraft).createTime(System.currentTimeMillis()).isDel(0)
+                .updateTime(System.currentTimeMillis())
+                .build();
 
         save(reply);
-        return reply.getReplyId();
+        return reply;
     }
 
     @Override
-    public void edit(String replyId, String replyContent, Integer isIncognito, Integer isDraft) {
-        Reply reply = Reply.builder().replyId(replyId).isIncognito(isIncognito).isDraft(isDraft)
-                .updateTime(System.currentTimeMillis()).build();
+    public Reply edit(String replyId, String replyContent, Integer isIncognito, Integer isDraft) {
+        Reply reply = getById(replyId);
+        reply.setIsIncognito(isIncognito);
+        reply.setIsDraft(isDraft);
+        reply.setUpdateTime(System.currentTimeMillis());
         if (StringUtils.isNotEmpty(replyContent)) {
             reply.setReplyContent(replyContent);
         }
         updateById(reply);
+        return reply;
     }
 
     @Override
-    public void delete(String replyId) {
-        update(new UpdateWrapper<Reply>().set("is_del", 1).eq("reply_id", replyId));
+    public Reply delete(String replyId) {
+        Reply reply = getById(replyId);
+        reply.setIsDel(1);
+        updateById(reply);
+        return reply;
     }
 
     @Override
@@ -115,6 +119,11 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
         page = esUtil.searchListByPage(Reply.class, sourceBuilder, REPLY, pageNum);
 
         if (CollectionUtils.isNotEmpty(page.getRecords())) {
+            page.getRecords().forEach(r->{
+                UserEntity userEntity = userMapper.selectById(r.getReplyMemberId());
+                r.setReplyMemberName(userEntity.getUserName());
+                r.setReplyMemberImage(userEntity.getImage());
+            });
             page.setRecords(page.getRecords().stream()
                     .sorted(Comparator.comparingLong(Reply::getCreateTime).reversed())
                     .collect(Collectors.toList()));
@@ -134,5 +143,14 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
 
         }
         return page;
+    }
+
+    @Override
+    public void dateToEs() {
+        esUtil.createIndex(REPLY);
+        List<Reply> list = list(new QueryWrapper<Reply>());
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(r ->esUtil.save(REPLY, DOCS, r, "replyId"));
+        }
     }
 }

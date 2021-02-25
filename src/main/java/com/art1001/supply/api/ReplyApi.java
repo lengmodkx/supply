@@ -44,9 +44,9 @@ public class ReplyApi {
                           @RequestParam(value = "isDraft", defaultValue = "0") Integer isDraft) {
         JSONObject jsonObject = new JSONObject();
         try {
-            String replyId = replyService.add(questionId, replyContent, isIncognito, isDraft);
+            Reply reply = replyService.add(questionId, replyContent, isIncognito, isDraft);
             jsonObject.put("result", 1);
-            jsonObject.put("data", replyId);
+            jsonObject.put("data", reply);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -70,9 +70,9 @@ public class ReplyApi {
                            @RequestParam(value = "isDraft", defaultValue = "0") Integer isDraft) {
         JSONObject jsonObject = new JSONObject();
         try {
-            replyService.edit(replyId, replyContent, isIncognito, isDraft);
+            Reply reply = replyService.edit(replyId, replyContent, isIncognito, isDraft);
             jsonObject.put("result", 1);
-            jsonObject.put("data", replyId);
+            jsonObject.put("data", reply);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -90,9 +90,9 @@ public class ReplyApi {
     public JSONObject delete(@RequestParam(value = "replyId") String replyId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            replyService.delete(replyId);
+            Reply reply = replyService.delete(replyId);
             jsonObject.put("result", 1);
-            jsonObject.put("data", replyId);
+            jsonObject.put("data", reply);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -154,5 +154,11 @@ public class ReplyApi {
         } catch (Exception e) {
             throw new AjaxException(e);
         }
+    }
+
+    @GetMapping("/dateToEs")
+    public Result dateToEs(){
+        replyService.dateToEs();
+        return Result.success();
     }
 }

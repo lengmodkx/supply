@@ -36,14 +36,24 @@ public class Comment extends Model<Comment>{
     private String commentName;
 
     /**
-      * 评论文章
+      * 评论分类id
       */
-    private String articleId;
+    private String commentClassId;
 
     /**
       * 评论人id
       */
     private String memberId;
+
+    /**
+     *  上级评论id
+     */
+    private String parentCommentId;
+
+    /**
+     * 1文章评论 2 问答评论
+     */
+    private Integer commentClass;
 
     /**
      * 评论人昵称

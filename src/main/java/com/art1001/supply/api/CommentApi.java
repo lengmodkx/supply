@@ -34,7 +34,7 @@ public class CommentApi {
      * 新增评论
      * @param commentName
      * @param articleId
-     * @return
+     * todo 需要新增问答评论时加一个状态即可
      */
     @EsRule(sort = 1,type = EsRuleType.COMMEMT)
     @GetMapping("/add")
@@ -42,9 +42,9 @@ public class CommentApi {
                                  @RequestParam(value = "articleId") String articleId){
         try {
             JSONObject jsonObject = new JSONObject();
-            String commentId = commentService.addComment(commentName, articleId);
+            Comment comment = commentService.addComment(commentName, articleId);
             jsonObject.put("result",1);
-            jsonObject.put("data",commentId);
+            jsonObject.put("data",comment);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -71,7 +71,7 @@ public class CommentApi {
     }
 
     /**
-     * 根据文章id查询评论列表
+     * 根据文章id查询文章评论列表
      * @param articleId
      * @param pageNum
      * @param state        审核状态0 未通过 1已通过

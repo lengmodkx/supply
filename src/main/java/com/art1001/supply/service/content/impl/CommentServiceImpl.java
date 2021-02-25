@@ -1,7 +1,6 @@
 package com.art1001.supply.service.content.impl;
 
 import com.art1001.supply.entity.content.Comment;
-import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.content.CommentMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.content.CommentService;
@@ -43,11 +42,11 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     private UserMapper userMapper;
 
     @Override
-    public String addComment(String commentName, String articleId) {
-        Comment comment = Comment.builder().articleId(articleId).commentName(commentName).memberId(ShiroAuthenticationManager.getUserId())
-                .createTime(System.currentTimeMillis()).updateTime(System.currentTimeMillis()).build();
+    public Comment addComment(String commentName, String articleId) {
+        Comment comment = Comment.builder().commentClassId(articleId).commentName(commentName).memberId(ShiroAuthenticationManager.getUserId())
+                .createTime(System.currentTimeMillis()).isDel(0).commentClass(1).commentState(0).updateTime(System.currentTimeMillis()).build();
         save(comment);
-        return comment.getCommentId();
+        return comment;
     }
 
     @Override
@@ -77,9 +76,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Page<Comment> page;
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        boolQueryBuilder.must(QueryBuilders.matchQuery("articleId", articleId).operator(Operator.AND));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("comment_class_id", articleId).operator(Operator.AND));
         boolQueryBuilder.must(QueryBuilders.matchQuery("commentState", state).operator(Operator.AND));
         boolQueryBuilder.must(QueryBuilders.matchQuery("isDel", 0).operator(Operator.AND));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("comment_class", 1).operator(Operator.AND));
 
         sourceBuilder.query(boolQueryBuilder);
         page = esUtil.searchListByPage(Comment.class, sourceBuilder, COMMENT, pageNum);
@@ -92,7 +92,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         if (CollectionUtils.isEmpty(page.getRecords())) {
             page.setCurrent(pageNum);
             page.setSize(20);
-            QueryWrapper<Comment> query = new QueryWrapper<Comment>().eq("article_id", articleId).eq("is_del", 0).eq("comment_state", state).orderByDesc("create_time");
+            QueryWrapper<Comment> query = new QueryWrapper<Comment>().eq("comment_class_id", articleId).eq("is_del", 0).eq("comment_state", state).eq("comment_class",1).orderByDesc("create_time");
             page = commentMapper.listCommentByPage(page, query);
         }
         return page;
@@ -100,13 +100,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Override
     public void dateToEs() {
+        esUtil.createIndex(COMMENT);
         List<Comment> list = list(new QueryWrapper<Comment>());
         if (CollectionUtils.isNotEmpty(list)) {
-
             list.forEach(r -> {
-                UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id", r.getMemberId()));
-                r.setMemberName(userEntity.getUserName());
-                r.setMemberImage(userEntity.getImage());
                 esUtil.save(COMMENT, DOCS, r, "commentId");
             });
         }

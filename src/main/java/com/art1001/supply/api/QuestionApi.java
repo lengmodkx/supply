@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -25,6 +26,8 @@ public class QuestionApi {
 
     @Resource
     private QuestionService questionService;
+
+
 
     /**
      * 发布提问
@@ -45,9 +48,9 @@ public class QuestionApi {
                                   @RequestParam(value = "isDraft", defaultValue = "0") Integer isDraft) {
         JSONObject jsonObject = new JSONObject();
         try {
-            String questionId = questionService.addQuestion(questionContent, questionDepict, questionDepictImages, isIncognito, isDraft);
+            Question question = questionService.addQuestion(questionContent, questionDepict, questionDepictImages, isIncognito, isDraft);
             jsonObject.put("result", 1);
-            jsonObject.put("data", questionId);
+            jsonObject.put("data", question);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -65,9 +68,9 @@ public class QuestionApi {
     public JSONObject removeQuestion(@RequestParam(value = "questionId") String questionId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            questionService.removeQuestion(questionId);
+            Question question = questionService.removeQuestion(questionId);
             jsonObject.put("result", 1);
-            jsonObject.put("data", questionId);
+            jsonObject.put("data", question);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -120,6 +123,11 @@ public class QuestionApi {
         }
     }
 
+    @GetMapping("/dateToEs")
+    public Result dateToEs() throws IOException {
+        questionService.dateToEs();
+        return Result.success();
+    }
 
 
 }
