@@ -268,10 +268,10 @@ public class ArticleApi {
                                    @RequestParam(value = "checkFailReason", required = false) String checkFailReason) {
         JSONObject jsonObject = new JSONObject();
         try {
-            articleService.checkArticle(articleId, state, checkFailReason);
+            Article article = articleService.checkArticle(articleId, state, checkFailReason);
             jsonObject.put("result", 1);
             jsonObject.put("message", "已审核");
-            jsonObject.put("data", articleId);
+            jsonObject.put("data", article);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);

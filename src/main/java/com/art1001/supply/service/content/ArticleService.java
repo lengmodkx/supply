@@ -138,5 +138,5 @@ public interface ArticleService extends IService<Article> {
      * @param state               1审核通过 2审核不通过
      * @param checkFailReason     审核失败原因
      */
-    void checkArticle(String articleId,Integer state,String checkFailReason);
+    Article checkArticle(String articleId,Integer state,String checkFailReason);
 }

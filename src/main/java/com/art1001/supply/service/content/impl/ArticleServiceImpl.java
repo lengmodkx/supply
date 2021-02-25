@@ -489,7 +489,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      * @return
      */
     @Override
-    public void checkArticle(String articleId, Integer state, String checkFailReason) {
+    public Article checkArticle(String articleId, Integer state, String checkFailReason) {
         Article article = getOne(new QueryWrapper<Article>().eq("article_id", articleId));
         if (state.equals(ONE)) {
             article.setState(2);
@@ -521,7 +521,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             if (StringUtils.isNotEmpty(checkFailReason)) article.setCheckFailReason(checkFailReason);
         }
         updateById(article);
-
+        return article;
     }
 
 
