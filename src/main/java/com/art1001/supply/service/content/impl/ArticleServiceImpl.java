@@ -329,6 +329,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             page.setRecords(articleMapper.selectByExample(page, acId, state));
         }
 //        setComment(page.getRecords());
+        Optional.ofNullable(page.getRecords()).ifPresent(list->list.forEach(r->{
+            UserEntity userEntity = userMapper.selectById(r.getMemberId());
+            r.setMemberImage(userEntity.getImage());
+            r.setUserName(userEntity.getUserName());
+        }));
         page.setCurrent(pageNum);
         page.setSize(20);
         return page;

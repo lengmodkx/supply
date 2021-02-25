@@ -123,8 +123,10 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             page.getRecords().forEach(r -> {
                 r.setReplyCount(replyMapper.selectCount(new QueryWrapper<Reply>().eq("question_id", r.getQuestionId())));
                 UserEntity userEntity = userMapper.selectById(r.getQuestionMemberId());
-                r.setQuestionMemberName(userEntity.getUserName());
-                r.setQuestionMemberImage(userEntity.getImage());
+                if (userEntity!=null) {
+                    r.setQuestionMemberName(userEntity.getUserName());
+                    r.setQuestionMemberImage(userEntity.getImage());
+                }
             });
 
             page.setRecords(page.getRecords().stream()
