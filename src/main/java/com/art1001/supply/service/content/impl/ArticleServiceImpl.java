@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -48,6 +49,7 @@ import java.util.stream.Collectors;
  * @Date 2020/12/24 9:50
  * @Discription
  */
+@Slf4j
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
 
@@ -337,6 +339,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 r.setUserName(userEntity.getUserName());
             }
         }));
+        log.info(page.getRecords()+"");
         page.setCurrent(pageNum);
         page.setSize(20);
         return page;
