@@ -424,7 +424,7 @@ public class UserApi {
                                      @RequestParam(value = "address", required = false) String address,
                                      @RequestParam(value = "email", required = false) String email,
                                      @RequestParam(value = "signature", required = false) String signature,
-                                     @RequestParam(value = "nickname") String nickname
+                                     @RequestParam(value = "nickname",required = false) String nickname
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
