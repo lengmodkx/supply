@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @Date:2019/2/21 17:57
  * @Author ddm
  **/
-@Configuration
+//@Configuration
 public class RedissonConfig {
 
     @Value("${spring.redis.host}")
