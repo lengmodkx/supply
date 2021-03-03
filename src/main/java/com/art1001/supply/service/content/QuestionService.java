@@ -21,13 +21,13 @@ public interface QuestionService extends IService<Question> {
      * @param isDraft              是否草稿（0否1是）
      * @return
      */
-    String addQuestion(String questionContent, String questionDepict, List<String> questionDepictImages, Integer isIncognito, Integer isDraft);
+    Question addQuestion(String questionContent, String questionDepict, List<String> questionDepictImages, Integer isIncognito, Integer isDraft);
 
     /**
      * 移除提问
      * @param questionId
      */
-    void removeQuestion(String questionId);
+    Question removeQuestion(String questionId);
 
     /**
      * 根据用户id分页查询提问列表
@@ -49,4 +49,9 @@ public interface QuestionService extends IService<Question> {
      * @return
      */
     Page<Question> listAll(Integer isIncognito, Integer isDraft, Integer isDel, Integer pageNum);
+
+    /**
+     * 数据放到es
+     */
+    void dateToEs();
 }

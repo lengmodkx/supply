@@ -10,11 +10,11 @@ import com.art1001.supply.service.content.QuestionService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.EsUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -48,24 +48,31 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private RestHighLevelClient esClient;
+
 
     @Override
-    public String addQuestion(String questionContent, String questionDepict, List<String> questionDepictImages, Integer isIncognito, Integer isDraft) {
+    public Question addQuestion(String questionContent, String questionDepict, List<String> questionDepictImages, Integer isIncognito, Integer isDraft) {
         Question question = new Question();
         question.setQuestionContent(questionContent);
         question.setIsDraft(isDraft);
         question.setIsDraft(isDraft);
         question.setQuestionMemberId(ShiroAuthenticationManager.getUserId());
         question.setCreateTime(System.currentTimeMillis());
+        question.setIsDel(0);
         if (StringUtils.isNotEmpty(questionDepict)) question.setQuestionDepict(questionDepict);
         if (CollectionUtils.isNotEmpty(questionDepictImages)) question.setQuestionDepictImages(questionDepictImages);
         save(question);
-        return question.getQuestionId();
+        return question;
     }
 
     @Override
-    public void removeQuestion(String questionId) {
-        update(new UpdateWrapper<Question>().set("is_del", 1).eq("question_id", questionId));
+    public Question removeQuestion(String questionId) {
+        Question byId = getById(questionId);
+        byId.setIsDel(1);
+        updateById(byId);
+        return byId;
     }
 
     @Override
@@ -80,7 +87,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         sourceBuilder.query(boolQueryBuilder);
         page = esUtil.searchListByPage(Question.class, sourceBuilder, QUESTION, pageNum);
         // 按照时间排序排序
-        if(CollectionUtils.isNotEmpty(page.getRecords())) {
+        if (CollectionUtils.isNotEmpty(page.getRecords())) {
             page.setRecords(page.getRecords().stream().sorted(Comparator.comparing(Question::getCreateTime)
                     .reversed()).collect(Collectors.toList()));
         }
@@ -90,9 +97,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             page.setCurrent(pageNum);
             page.setSize(20);
             QueryWrapper<Question> query = new QueryWrapper<>();
-            query.eq("question_member_id",memberId).eq("is_incognito",isIncognito).eq("is_draft",isDraft).eq("is_del",isDel).orderByDesc("create_time");
+            query.eq("question_member_id", memberId).eq("is_incognito", isIncognito).eq("is_draft", isDraft).eq("is_del", isDel).orderByDesc("create_time");
             Page<Question> listByPage = questionMapper.listByPage(page, query);
-            Optional.ofNullable(listByPage.getRecords()).ifPresent(list-> list.forEach(r->esUtil.save(QUESTION,DOCS,r,"questionId")));
+            Optional.ofNullable(listByPage.getRecords()).ifPresent(list -> list.forEach(r -> esUtil.save(QUESTION, DOCS, r, "questionId")));
             return listByPage;
         }
         page.setCurrent(pageNum);
@@ -105,15 +112,23 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         Page<Question> page;
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
-        boolQueryBuilder.must(QueryBuilders.matchQuery("isIncognito",isIncognito).operator(Operator.AND))
-                .must(QueryBuilders.matchQuery("isDraft",isDraft).operator(Operator.AND))
-                .must(QueryBuilders.matchQuery("isDel",isDel).operator(Operator.AND));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("isIncognito", isIncognito).operator(Operator.AND))
+                .must(QueryBuilders.matchQuery("isDraft", isDraft).operator(Operator.AND))
+                .must(QueryBuilders.matchQuery("isDel", isDel).operator(Operator.AND));
         sourceBuilder.size(20);
         sourceBuilder.query(boolQueryBuilder);
-        page=esUtil.searchListByPage(Question.class,sourceBuilder,QUESTION,pageNum);
+        page = esUtil.searchListByPage(Question.class, sourceBuilder, QUESTION, pageNum);
         // 按照时间排序排序
-        if(CollectionUtils.isNotEmpty(page.getRecords())) {
-            page.getRecords().forEach(r->r.setReplyCount(replyMapper.selectCount(new QueryWrapper<Reply>().eq("question_id",r.getQuestionId()))));
+        if (CollectionUtils.isNotEmpty(page.getRecords())) {
+            page.getRecords().forEach(r -> {
+                r.setReplyCount(replyMapper.selectCount(new QueryWrapper<Reply>().eq("question_id", r.getQuestionId())));
+                UserEntity userEntity = userMapper.selectById(r.getQuestionMemberId());
+                if (userEntity!=null) {
+                    r.setQuestionMemberName(userEntity.getUserName());
+                    r.setQuestionMemberImage(userEntity.getImage());
+                }
+            });
+
             page.setRecords(page.getRecords().stream()
                     .sorted(Comparator.comparing(Question::getCreateTime).reversed())
                     .collect(Collectors.toList()));
@@ -124,9 +139,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             page.setCurrent(pageNum);
             page.setSize(20);
             QueryWrapper<Question> query = new QueryWrapper<>();
-            query.eq("is_incognito",isIncognito).eq("is_draft",isDraft).eq("is_del",isDel).orderByDesc("create_time").groupBy("question_id");
+            query.eq("is_incognito", isIncognito).eq("is_draft", isDraft).eq("is_del", isDel).orderByDesc("create_time").groupBy("question_id");
             List<Question> list1 = list(query);
-            Optional.ofNullable(list1).ifPresent(list->list.forEach(r->{
+            Optional.ofNullable(list1).ifPresent(list -> list.forEach(r -> {
                 UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id", r.getQuestionMemberId()));
                 r.setQuestionMemberName(userEntity.getUserName());
                 r.setQuestionMemberImage(userEntity.getImage());
@@ -138,5 +153,18 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         page.setCurrent(pageNum);
         page.setSize(20);
         return page;
+    }
+
+    @Override
+    public void dateToEs() {
+       esUtil.createIndex(QUESTION);
+        List<Question> list = list(new QueryWrapper<Question>());
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (Question question : list) {
+                esUtil.save(QUESTION, DOCS, question, "questionId");
+            }
+        }
+
+
     }
 }

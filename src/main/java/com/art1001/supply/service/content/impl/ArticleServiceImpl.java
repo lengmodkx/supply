@@ -26,13 +26,9 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
-import org.apache.commons.beanutils.BeanUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
@@ -41,9 +37,10 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -52,6 +49,7 @@ import java.util.stream.Collectors;
  * @Date 2020/12/24 9:50
  * @Discription
  */
+@Slf4j
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
 
@@ -103,7 +101,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      * @return
      */
     @Override
-    public String addArticle(String articleTitle, String articleContent, String articlePureContent, Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages,String videoLocal) {
+    public Article addArticle(String articleTitle, String articleContent, String articlePureContent, Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages, String videoLocal) {
         Article article = new Article();
         if (acId.equals(ONE)) {
             article.setArticleTitle(articleTitle);
@@ -144,7 +142,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             }
         }
         redisUtil.zSet(FOLLOWED_ARTICLE + ShiroAuthenticationManager.getUserId(), article.getArticleId(), System.currentTimeMillis());
-        return article.getArticleId();
+        return article;
     }
 
     /**
@@ -163,7 +161,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      * @return
      */
     @Override
-    public void editArticle(String articleTitle, String articleContent, String articlePureContent, String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages) {
+    public Article editArticle(String articleTitle, String articleContent, String articlePureContent, String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages) {
         Article article = Article.builder().articleTitle(articleTitle).articleContent(articleContent)
                 .articleId(articleId).headlineContent(headlineContent)
                 .videoName(videoName).videoCover(videoCover).state(1)
@@ -180,7 +178,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             article.setVideoAddress(CommonUtils.listToString(videoAddress));
         }
         updateById(article);
-
+        return getById(articleId);
     }
 
 
@@ -263,7 +261,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 if (StringUtils.isNotEmpty(acId)) {
                     query.eq("ac_id", acId);
                 }
-                query.eq("state",2);
+                query.eq("state", 2);
                 Page<Article> articlePage = articleMapper.selectPage(page, query);
                 if (CollectionUtils.isNotEmpty(articlePage.getRecords())) {
                     articlePage.getRecords().forEach(r -> esUtil.save(ARTICLE, DOCS, r, "articleId"));
@@ -286,14 +284,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      */
     private void setComment(List<Article> articles) {
         articles.forEach(r -> {
-            List<Comment>list = commentMapper.selectList(new QueryWrapper<Comment>().eq("article_id", r.getArticleId()).eq("is_del", 0));
-            int commentNotCheckCount=0;
-            int commentIsCheckCount=0;
-            int commentFailCheckCount=0;
+            List<Comment> list = commentMapper.selectList(new QueryWrapper<Comment>().eq("comment_class_id", r.getArticleId()).eq("is_del", 0));
+            int commentNotCheckCount = 0;
+            int commentIsCheckCount = 0;
+            int commentFailCheckCount = 0;
             if (CollectionUtils.isNotEmpty(list)) {
-                commentNotCheckCount=list.stream().filter(f->f.getCommentState().equals(Constants.B_ZERO)).collect(Collectors.toList()).size();
-                commentIsCheckCount=list.stream().filter(f->f.getCommentState().equals(Constants.B_ONE)).collect(Collectors.toList()).size();
-                commentFailCheckCount=list.stream().filter(f->f.getCommentState().equals(Constants.B_TWO)).collect(Collectors.toList()).size();
+                commentNotCheckCount = list.stream().filter(f -> f.getCommentState().equals(Constants.B_ZERO)).collect(Collectors.toList()).size();
+                commentIsCheckCount = list.stream().filter(f -> f.getCommentState().equals(Constants.B_ONE)).collect(Collectors.toList()).size();
+                commentFailCheckCount = list.stream().filter(f -> f.getCommentState().equals(Constants.B_TWO)).collect(Collectors.toList()).size();
             }
             r.setCommentCount(list.size());
             r.setCommentNotCheckCount(commentNotCheckCount);
@@ -333,6 +331,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             page.setRecords(articleMapper.selectByExample(page, acId, state));
         }
 //        setComment(page.getRecords());
+
+        Optional.ofNullable(page.getRecords()).ifPresent(list->list.forEach(r->{
+            UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id",r.getMemberId()));
+            if (userEntity!=null) {
+                r.setMemberImage(userEntity.getImage());
+                r.setUserName(userEntity.getUserName());
+            }
+        }));
+        log.info(page.getRecords()+"");
         page.setCurrent(pageNum);
         page.setSize(20);
         return page;
@@ -367,7 +374,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (CollectionUtils.isEmpty(page.getRecords())) {
             page.setRecords(articleMapper.selectByExample(page, acId, state));
         }
+
         setComment(page.getRecords());
+        Optional.ofNullable(page.getRecords()).ifPresent(list->list.forEach(r->{
+            UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id",r.getMemberId()));
+            if (userEntity!=null) {
+                r.setMemberImage(userEntity.getImage());
+                r.setUserName(userEntity.getUserName());
+            }
+        }));
         page.setCurrent(pageNum);
         page.setSize(20);
         return page;
@@ -405,14 +420,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime, String memberId,Integer state) {
+    public Page<Article> myArticle(Integer pageNum, String acId, String keyword, Long startTime, Long endTime, String memberId, Integer state) {
         Page<Article> page = new Page<>();
         // es查询
         try {
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-            boolQueryBuilder.must(QueryBuilders.matchQuery("state",state).operator(Operator.AND));
-            boolQueryBuilder.must(QueryBuilders.matchQuery("isDel",0).operator(Operator.AND));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("state", state).operator(Operator.AND));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("isDel", 0).operator(Operator.AND));
             boolQueryBuilder.must(QueryBuilders.matchQuery("memberId", memberId).operator(Operator.AND));
             if (StringUtils.isNotEmpty(keyword)) {
                 // 模糊查询
@@ -440,7 +455,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                         .gt(startTime != null, "create_time", startTime)
                         .lt(endTime != null, "create_time", endTime)
                         .eq("member_Id", memberId)
-                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword).eq("state",state).eq("is_del",0);
+                        .like(StringUtils.isNotEmpty(keyword), "article_title", keyword).eq("state", state).eq("is_del", 0);
                 Page<Article> articlePage = articleMapper.selectArticlePage(page, wrapper);
                 // 设置文章评论信息
                 if (CollectionUtils.isNotEmpty(articlePage.getRecords())) {
@@ -466,37 +481,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public void dateToEs() {
+        esUtil.createIndex(ARTICLE);
         List<Article> list = list(new QueryWrapper<Article>());
         if (CollectionUtils.isNotEmpty(list)) {
-            list.forEach(r -> {
-                try {
-                    UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id", r.getMemberId()));
-                    r.setMemberImage(userEntity.getImage());
-                    r.setUserName(userEntity.getUserName());
-                    // 构建查询
-                    SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-                    // 索引查询
-                    BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-                    boolQueryBuilder.should(QueryBuilders.multiMatchQuery("articleId", r.getArticleId()));
-                    sourceBuilder.query(boolQueryBuilder);
-                    SearchRequest request = new SearchRequest();
-                    request.source(sourceBuilder);
-                    SearchResponse search = esClient.search(request, RequestOptions.DEFAULT);
-                    if (search.getHits().getHits().length == 0) {
-                        try {
-                            IndexRequest indexRequest = new IndexRequest("article", "docs");
-                            Map<String, String> article1 = BeanUtils.describe(r);
-                            indexRequest.source(article1);
-                            esClient.index(indexRequest, RequestOptions.DEFAULT);
-                        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | IOException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+            list.forEach(r -> esUtil.save(ARTICLE, DOCS, r, "articleId"));
         }
     }
 
@@ -509,7 +497,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      * @return
      */
     @Override
-    public void checkArticle(String articleId, Integer state, String checkFailReason) {
+    public Article checkArticle(String articleId, Integer state, String checkFailReason) {
         Article article = getOne(new QueryWrapper<Article>().eq("article_id", articleId));
         if (state.equals(ONE)) {
             article.setState(2);
@@ -541,7 +529,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             if (StringUtils.isNotEmpty(checkFailReason)) article.setCheckFailReason(checkFailReason);
         }
         updateById(article);
-
+        return article;
     }
 
 

@@ -16,7 +16,7 @@ public interface CommentService extends IService<Comment> {
      * @param commentName
      * @param articleId
      */
-    String addComment(String commentName, String articleId);
+    Comment addComment(String commentName, String articleId);
 
     /**
      * 移除评论

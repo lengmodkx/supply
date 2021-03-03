@@ -14,7 +14,12 @@ import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.CreateIndexResponse;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
@@ -54,11 +59,12 @@ public class EsUtil<T> {
      */
     public void save(String indexName, String type, Object object, String indices) {
         try {
-
-            SearchRequest request = new SearchRequest();
+            SearchRequest request = new SearchRequest(indexName);
             SearchSourceBuilder builder = new SearchSourceBuilder();
             Map<String, String> fileMap = BeanUtils.describe(object);
-            builder.query(QueryBuilders.matchQuery(indices, fileMap.get(indices)));
+            BoolQueryBuilder bool = new BoolQueryBuilder();
+            bool.must(QueryBuilders.matchQuery(indices, fileMap.get(indices)).operator(Operator.AND));
+            builder.query(bool);
             request.source(builder);
             SearchResponse search = esClient.search(request, RequestOptions.DEFAULT);
             if (search.getHits().getTotalHits() == 0) {
@@ -259,5 +265,20 @@ public class EsUtil<T> {
         return search;
     }
 
+    public Boolean createIndex(String indices){
+        CreateIndexResponse createIndexResponse=null;
+        try {
+            CreateIndexRequest request = new CreateIndexRequest(indices);
+            request.settings(Settings.builder()
+                    .put("index.number_of_shards", 5)
+                    .put("index.number_of_replicas", 1)
+            );
+            createIndexResponse = esClient.indices().create(request, RequestOptions.DEFAULT);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return createIndexResponse.isAcknowledged();
+    }
 
 }

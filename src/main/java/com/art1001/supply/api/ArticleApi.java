@@ -60,9 +60,9 @@ public class ArticleApi {
                                  @RequestParam(value = "coverImages", required = false) List<String> coverImages) {
         try {
             JSONObject jsonObject = new JSONObject();
-            String articleId = articleService.addArticle(articleTitle, articleContent, articlePureContent, acId, headlineContent, headlineImages, videoName, videoAddress, videoCover, coverShow, coverImages,videoLocal);
+            Article article = articleService.addArticle(articleTitle, articleContent, articlePureContent, acId, headlineContent, headlineImages, videoName, videoAddress, videoCover, coverShow, coverImages,videoLocal);
             jsonObject.put("result", 1);
-            jsonObject.put("data", articleId);
+            jsonObject.put("data", article);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -100,9 +100,9 @@ public class ArticleApi {
                                   @RequestParam(value = "coverImages", required = false) List<String> coverImages) {
         try {
             JSONObject jsonObject = new JSONObject();
-            articleService.editArticle(articleTitle, articleContent, articlePureContent, articleId, headlineContent, headlineImages, videoName, videoAddress, videoCover, coverShow, coverImages);
+            Article article = articleService.editArticle(articleTitle, articleContent, articlePureContent, articleId, headlineContent, headlineImages, videoName, videoAddress, videoCover, coverShow, coverImages);
             jsonObject.put("result", 1);
-            jsonObject.put("data", articleId);
+            jsonObject.put("data", article);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -268,10 +268,10 @@ public class ArticleApi {
                                    @RequestParam(value = "checkFailReason", required = false) String checkFailReason) {
         JSONObject jsonObject = new JSONObject();
         try {
-            articleService.checkArticle(articleId, state, checkFailReason);
+            Article article = articleService.checkArticle(articleId, state, checkFailReason);
             jsonObject.put("result", 1);
             jsonObject.put("message", "已审核");
-            jsonObject.put("data", articleId);
+            jsonObject.put("data", article);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);

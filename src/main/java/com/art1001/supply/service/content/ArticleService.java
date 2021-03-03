@@ -60,7 +60,7 @@ public interface ArticleService extends IService<Article> {
      * @param coverImages     文章封面展示图片
      * @return
      */
-    String addArticle(String articleTitle, String articleContent, String articlePureContent, Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages,String videoLocal);
+    Article addArticle(String articleTitle, String articleContent, String articlePureContent, Integer acId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages,String videoLocal);
 
     /**
      * 修改文章
@@ -77,7 +77,7 @@ public interface ArticleService extends IService<Article> {
      * @param coverImages     文章封面展示图片
      * @return
      */
-    void editArticle(String articleTitle, String articleContent, String articlePureContent, String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages);
+    Article editArticle(String articleTitle, String articleContent, String articlePureContent, String articleId, String headlineContent, List<String> headlineImages, String videoName, List<String> videoAddress, String videoCover, Integer coverShow, List<String> coverImages);
 
     /**
      * 关注/取消关注 用户
@@ -138,5 +138,5 @@ public interface ArticleService extends IService<Article> {
      * @param state               1审核通过 2审核不通过
      * @param checkFailReason     审核失败原因
      */
-    void checkArticle(String articleId,Integer state,String checkFailReason);
+    Article checkArticle(String articleId,Integer state,String checkFailReason);
 }

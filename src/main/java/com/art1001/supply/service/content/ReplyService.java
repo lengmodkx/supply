@@ -18,7 +18,7 @@ public interface ReplyService extends IService<Reply> {
      * @param isDraft          是否草稿0否1是
      * @return
      */
-    String add(String questionId, String replyContent, Integer isIncognito, Integer isDraft);
+    Reply add(String questionId, String replyContent, Integer isIncognito, Integer isDraft);
 
     /**
      * 编辑回答
@@ -28,13 +28,13 @@ public interface ReplyService extends IService<Reply> {
      * @param isDraft          是否草稿0否1是
      * @return
      */
-    void edit(String replyId, String replyContent, Integer isIncognito, Integer isDraft);
+    Reply edit(String replyId, String replyContent, Integer isIncognito, Integer isDraft);
 
     /**
      * 移除回答
      * @param replyId
      */
-    void delete(String replyId);
+    Reply delete(String replyId);
 
     /**
      * 所有回答列表
@@ -59,4 +59,6 @@ public interface ReplyService extends IService<Reply> {
      * @return Page page
      */
     Page  getReplyListByQuetionId(String questionId,Integer pageNum);
+
+    void dateToEs();
 }
