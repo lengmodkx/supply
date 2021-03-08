@@ -135,7 +135,6 @@ public class PushAspect extends BaseController {
 
     /**
      * 保存操作日志
-     *
      * @param object 返回值信息
      */
     private Log saveLog(JSONObject object, Push push) {

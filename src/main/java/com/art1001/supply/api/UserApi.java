@@ -425,17 +425,19 @@ public class UserApi {
                                      @RequestParam(value = "email", required = false) String email,
                                      @RequestParam(value = "signature", required = false) String signature,
                                      @RequestParam(value = "nickname",required = false) String nickname
-    ) {
+    ) throws AjaxException {
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = new UserEntity();
             userEntity.setUserId(userId);
-            UserEntity byId = userService.findById(userId);
-
-            if (StringUtils.isEmpty(byId.getNickName())&&byId.getNickName().equals(nickname)) {
-               throw new AjaxException("昵称已被占用，请重新输入");
+            if (StringUtils.isNotEmpty(nickname)) {
+                UserEntity user = userService.getOne(new QueryWrapper<UserEntity>().eq("nick_name", nickname));
+                if (user==null){
+                    userEntity.setNickName(nickname);
+                }else {
+                    throw new AjaxException("昵称已被占用，请重新输入");
+                }
             }
-            userEntity.setNickName(nickname);
             if (StringUtils.isNotEmpty(image)) {
                 userEntity.setImage(image);
                 userEntity.setDefaultImage(image);

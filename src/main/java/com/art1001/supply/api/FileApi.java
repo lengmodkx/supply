@@ -1420,4 +1420,15 @@ public class FileApi extends BaseController {
         }
     }
 
+    /**
+     * 将mysql数据存储到es中
+     *
+     * @return
+     */
+    @GetMapping("/dateToEs")
+    public Result dateToEs() {
+        fileService.dateToEs();
+        return Result.success();
+    }
+
 }

@@ -25,7 +25,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -78,6 +77,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Resource
     private FileEsService fileEsService;
+
+    @Resource
+    private EsUtil esUtil;
 
     /**
      * 公共模型库 常量定义信息
@@ -1637,5 +1639,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             fileMapper.deleteById(fileId);
         }
 
+    }
+
+    @Override
+    public void dateToEs() {
+        esUtil.createIndex(FILES);
+        List<File> list = list(new QueryWrapper<File>());
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(r -> esUtil.save(FILES, DOCS, r, "fileId"));
+        }
     }
 }

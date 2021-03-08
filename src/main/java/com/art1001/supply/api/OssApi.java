@@ -6,7 +6,6 @@ import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
-import com.art1001.supply.annotation.ProjectAuth;
 import com.art1001.supply.entity.CodeMsg;
 import com.art1001.supply.entity.OssInfo;
 import com.art1001.supply.entity.Result;
@@ -108,7 +107,7 @@ public class OssApi {
     public Result getWebSign(@RequestParam String dir){
         OSSClient client = new OSSClient(oss.getEndpoint(), oss.getAccessId(), oss.getAccessKey());
         try {
-            long expireEndTime = System.currentTimeMillis() + 30 * 1000;
+            long expireEndTime = System.currentTimeMillis() + 300 * 1000;
             Date expiration = new Date(expireEndTime);
             PolicyConditions policyCods = new PolicyConditions();
             policyCods.addConditionItem(PolicyConditions.COND_CONTENT_LENGTH_RANGE, 0, 1048576000);

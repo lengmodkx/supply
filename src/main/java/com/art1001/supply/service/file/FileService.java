@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +23,8 @@ import java.util.List;
  */
  public interface FileService extends IService<File> {
 
+ 	String FILES="files";
+ 	String DOCS="docs";
 
  	List<FileTree> querySubFileList(String fileId);
 
@@ -504,4 +507,10 @@ import java.util.List;
 	 * @param fileId
 	 */
 	void deleteFileFolder(String fileId);
+
+	/**
+	 * 将mysql数据存储到es中
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	void dateToEs();
 }
