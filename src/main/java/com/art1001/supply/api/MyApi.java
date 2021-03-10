@@ -1,7 +1,6 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.common.CommonResult;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.exception.AjaxException;
@@ -11,7 +10,6 @@ import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -73,11 +71,8 @@ public class MyApi {
                                           @RequestParam Integer isDone,
                                           @RequestParam String type) {
         try {
-//            if (Constants.PROJECT.equals(order)) {
-//                return CommonResult.success(CommonPage.restPage(taskService.findExecuteOrderProject(isDone,pageNum,pageSize)));
-//            } else {
-                return Result.success(taskService.findMeAndOrder(isDone, type,order,pageSize,pageNum));
-//            }
+            List<Task> meAndOrder = taskService.findMeAndOrder(isDone, type, order, pageSize, pageNum);
+            return Result.success(meAndOrder);
         } catch (Exception e) {
             throw new AjaxException("系统异常,获取信息失败!", e);
         }
