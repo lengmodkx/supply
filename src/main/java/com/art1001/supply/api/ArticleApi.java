@@ -121,6 +121,7 @@ public class ArticleApi {
             int i = articleService.attentionUserStatus(memberId);
             if (i == 1) {
                 return Result.success("已关注");
+
             } else {
                 return Result.success("已取消关注");
             }
