@@ -129,7 +129,7 @@ public class WeChatAppLoginController extends BaseController {
             OrganizationMember one = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>().eq("member_id", userId).eq("user_default", 1));
             if (one != null) {
                 jsonObject.put("result", 1);
-                jsonObject.put("data", one);
+                jsonObject.put("data", one.getOrganizationId());
             } else {
                 jsonObject.put("result", 0);
                 jsonObject.put("msg", "你还没有加入任何企业，请加入或创建一个企业后再试吧");
