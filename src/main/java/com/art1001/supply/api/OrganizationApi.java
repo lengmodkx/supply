@@ -247,7 +247,7 @@ public class OrganizationApi {
     }
 
     /**
-     * 小程序获取企业下项目列表
+         * 小程序获取企业下项目列表
      * @return
      */
     @GetMapping("/getProjects")

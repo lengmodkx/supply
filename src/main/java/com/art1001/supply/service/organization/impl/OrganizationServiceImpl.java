@@ -230,7 +230,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 
 	@Override
 	public List<Project> getProjects(String orgId) {
-		return projectMapper.selectList(new QueryWrapper<Project>().eq("organization_id",orgId).eq("project_del",0));
+		return projectMapper.selectList(new QueryWrapper<Project>().eq("organization_id",orgId).eq("project_del",0).orderByDesc("create_time"));
 	}
 
 
