@@ -56,13 +56,13 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
         //根据授权返回信息中的openid查询该用户信息是否在数据库中存在
         LambdaQueryWrapper<UserEntity> selectById = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getWxAppOpenId, openIdAndSessionKey.getOpenid());
         UserEntity userEntity = userService.getOne(selectById);
-        OrganizationMember organizationMember = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("member_id", userEntity.getUserId()).eq("user_default", 1));
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("openId", openIdAndSessionKey.getOpenid());
-        resultMap.put("defaultOrgId", organizationMember);
         if(ObjectsUtil.isNotEmpty(userEntity)){
             resultMap.put("updateInfo", false);
             resultMap.put("getPhone", false);
+            OrganizationMember organizationMember = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("member_id", userEntity.getUserId()).eq("user_default", 1));
+            resultMap.put("defaultOrgId", organizationMember);
             resultMap.put("accessToken", JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         } else {
             redisUtil.set(Constants.WE_CHAT_SESSION_KEY_PRE + openIdAndSessionKey.getOpenid(), openIdAndSessionKey.getSession_key());
