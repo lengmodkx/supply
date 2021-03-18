@@ -1,7 +1,9 @@
 package com.art1001.supply.wechat.login.service.impl;
 
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.user.UserEntity;
+import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.shiro.util.JwtUtil;
@@ -39,8 +41,13 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private OrganizationMemberMapper organizationMemberMapper;
+
     @Value("${app.login.secret}")
     private String secret;
+
+
 
 
     @Override
@@ -49,8 +56,10 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
         //根据授权返回信息中的openid查询该用户信息是否在数据库中存在
         LambdaQueryWrapper<UserEntity> selectById = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getWxAppOpenId, openIdAndSessionKey.getOpenid());
         UserEntity userEntity = userService.getOne(selectById);
+        OrganizationMember organizationMember = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("member_id", userEntity.getUserId()).eq("user_default", 1));
         Map<String,Object> resultMap = new HashMap<>(5);
         resultMap.put("openId", openIdAndSessionKey.getOpenid());
+        resultMap.put("defaultOrgId", organizationMember.getOrganizationId());
         if(ObjectsUtil.isNotEmpty(userEntity)){
             resultMap.put("updateInfo", false);
             resultMap.put("getPhone", false);
