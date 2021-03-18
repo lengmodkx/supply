@@ -57,7 +57,7 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
         LambdaQueryWrapper<UserEntity> selectById = new QueryWrapper<UserEntity>().lambda().eq(UserEntity::getWxAppOpenId, openIdAndSessionKey.getOpenid());
         UserEntity userEntity = userService.getOne(selectById);
         OrganizationMember organizationMember = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("member_id", userEntity.getUserId()).eq("user_default", 1));
-        Map<String,Object> resultMap = new HashMap<>(5);
+        Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("openId", openIdAndSessionKey.getOpenid());
         resultMap.put("defaultOrgId", organizationMember);
         if(ObjectsUtil.isNotEmpty(userEntity)){
