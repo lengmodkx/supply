@@ -59,7 +59,7 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
         OrganizationMember organizationMember = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("member_id", userEntity.getUserId()).eq("user_default", 1));
         Map<String,Object> resultMap = new HashMap<>(5);
         resultMap.put("openId", openIdAndSessionKey.getOpenid());
-        resultMap.put("defaultOrgId", organizationMember.getOrganizationId());
+        resultMap.put("defaultOrgId", organizationMember);
         if(ObjectsUtil.isNotEmpty(userEntity)){
             resultMap.put("updateInfo", false);
             resultMap.put("getPhone", false);
