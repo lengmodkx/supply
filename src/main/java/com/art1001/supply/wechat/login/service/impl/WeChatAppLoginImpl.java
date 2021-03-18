@@ -59,8 +59,8 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
         resultMap.put("openId", openIdAndSessionKey.getOpenid());
         if(ObjectsUtil.isNotEmpty(userEntity)){
             resultMap.put("updateInfo", false);
-            resultMap.put("getPhone", userEntity.getUserId());
-            resultMap.put("userId", false);
+            resultMap.put("getPhone", false);
+            resultMap.put("userId", userEntity.getUserId());
             resultMap.put("accessToken", JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         } else {
             redisUtil.set(Constants.WE_CHAT_SESSION_KEY_PRE + openIdAndSessionKey.getOpenid(), openIdAndSessionKey.getSession_key());
