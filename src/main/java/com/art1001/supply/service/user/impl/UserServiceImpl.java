@@ -377,13 +377,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (this.getOne(queryWrapper) != null) {
             throw new ServiceException("该微信号已经被其他手机号绑定，请更换微信号重试！");
         }
-
-        UserEntity updateEntity = new UserEntity();
+        UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id", userId));
+        if (userEntity!=null) {
+            userEntity.setUpdateTime(new Date());
+            userEntity.setWxOpenId(info.getOpenId());
+            userEntity.setWxUnionId(info.getUnionid());
+            updateById(userEntity);
+        }
+        /*UserEntity updateEntity = new UserEntity();
         updateEntity.setUpdateTime(new Date());
         updateEntity.setWxOpenId(info.getOpenId());
         updateEntity.setWxUnionId(info.getUnionid());
         updateEntity.setUserId(userId);
-        updateById(updateEntity);
+        updateById(updateEntity);*/
     }
 
     @Override
