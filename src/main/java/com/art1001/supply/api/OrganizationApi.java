@@ -1,12 +1,10 @@
 package com.art1001.supply.api;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.organization.Organization;
 import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.entity.organization.OrganizationMemberInfo;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
@@ -19,22 +17,17 @@ import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.resource.ResourceService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
-import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.RedisUtil;
 import com.art1001.supply.util.ValidatorUtils;
 import com.art1001.supply.validation.organization.SaveOrg;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 组织成员管理控制器
@@ -64,6 +57,8 @@ public class OrganizationApi {
 
     @Resource
     private OrganizationMemberInfoService organizationMemberInfoService;
+
+
 
     /**
      * 新增企业
@@ -249,6 +244,29 @@ public class OrganizationApi {
         } catch (Exception e) {
             throw new AjaxException(e);
         }
+    }
+
+    /**
+     * 小程序获取企业下项目列表
+     * @return
+     */
+    @GetMapping("/getProjects")
+    public JSONObject getProjects(@RequestParam(value = "orgId") String orgId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Project>list=organizationService.getProjects(orgId);
+            if (CollectionUtils.isNotEmpty(list)) {
+                jsonObject.put("result",1);
+                jsonObject.put("data",list);
+            }
+            else {
+                jsonObject.put("result",0);
+                jsonObject.put("msg","你还没有加入任何项目，请加入或创建一个项目后再试吧");
+            }
+        } catch (Exception e) {
+            throw  new AjaxException(e);
+        }
+        return jsonObject;
     }
 
 }

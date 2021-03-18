@@ -8,6 +8,7 @@ import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.mapper.organization.OrganizationMapper;
+import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.OrganizationMemberService;
 import com.art1001.supply.service.role.ProRoleService;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +53,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 
 	@Resource
 	private TaskService taskService;
+
+	@Resource
+	private ProjectMapper projectMapper;
 
 	/**
 	 * 查询分页organization数据
@@ -223,6 +226,11 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 		List<Task> collect = taskList.stream().filter(Task::getTaskStatus).collect(Collectors.toList());
 		float v = ((float) collect.size() / taskList.size()) * 100;
 		return  (int) v;
+	}
+
+	@Override
+	public List<Project> getProjects(String orgId) {
+		return projectMapper.selectList(new QueryWrapper<Project>().eq("organization_id",orgId).eq("project_del",0));
 	}
 
 

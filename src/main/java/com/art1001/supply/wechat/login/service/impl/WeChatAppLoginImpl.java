@@ -1,7 +1,6 @@
 package com.art1001.supply.wechat.login.service.impl;
 
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.service.user.UserService;
@@ -60,9 +59,8 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
         resultMap.put("openId", openIdAndSessionKey.getOpenid());
         if(ObjectsUtil.isNotEmpty(userEntity)){
             resultMap.put("updateInfo", false);
-            resultMap.put("getPhone", false);
-            OrganizationMember organizationMember = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("member_id", userEntity.getUserId()).eq("user_default", 1));
-            resultMap.put("defaultOrgId", organizationMember);
+            resultMap.put("getPhone", userEntity.getUserId());
+            resultMap.put("userId", false);
             resultMap.put("accessToken", JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         } else {
             redisUtil.set(Constants.WE_CHAT_SESSION_KEY_PRE + openIdAndSessionKey.getOpenid(), openIdAndSessionKey.getSession_key());

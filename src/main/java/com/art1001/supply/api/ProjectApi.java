@@ -9,7 +9,10 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.TimeMap;
-import com.art1001.supply.entity.project.*;
+import com.art1001.supply.entity.project.Project;
+import com.art1001.supply.entity.project.ProjectFunc;
+import com.art1001.supply.entity.project.ProjectMember;
+import com.art1001.supply.entity.project.ProjectSimpleInfo;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
@@ -17,7 +20,6 @@ import com.art1001.supply.entity.task.vo.MenuVo;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.organization.OrganizationMemberInfoService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.ProjectMemberService;
@@ -41,7 +43,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 项目
@@ -1024,6 +1027,7 @@ public class ProjectApi extends BaseController {
             throw new AjaxException(e);
         }
     }
+
 
 
 }

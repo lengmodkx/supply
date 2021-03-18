@@ -1,12 +1,11 @@
 package com.art1001.supply.service.organization;
 
-import java.util.Arrays;
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.organization.Organization;
-import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.project.Project;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 
 /**
@@ -103,4 +102,10 @@ public interface OrganizationService extends IService<Organization> {
 	 */
 	Integer automaticUpdateProjectSchedule(Project r);
 
+	/**
+	 * 小程序获取企业下项目列表
+	 * @param orgId
+	 * @return
+	 */
+	List<Project> getProjects(String orgId);
 }
