@@ -31,6 +31,7 @@ import com.art1001.supply.wechat.message.service.WeChatAppMessageService;
 import com.art1001.supply.wechat.message.service.WeChatAppMessageTemplateDataBuildService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
@@ -1397,6 +1398,28 @@ public class TaskApi extends BaseController {
         return jsonObject;
     }
 
+    /**
+     * 小程序-根据menuId获取任务列表
+     * @param menuId
+     * @return
+     */
+    @GetMapping("/getTasksByMenuId")
+    public JSONObject getTasksByMenuId(@RequestParam(value = "menuId") String menuId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Task>list=taskService.getTasksByMenuId(menuId);
+            if(CollectionUtils.isNotEmpty(list)) {
+                jsonObject.put("result",1);
+                jsonObject.put("data",list);
+            }else {
+                jsonObject.put("result",0);
+                jsonObject.put("msg","任务列表为空");
+            }
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
 
 }
 

@@ -9,13 +9,11 @@ import com.art1001.supply.entity.statistics.Statistics;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.*;
 import com.art1001.supply.entity.task.vo.ExecutorVo;
-import com.art1001.supply.entity.task.vo.TaskDynamicVO;
 import com.art1001.supply.entity.template.TemplateData;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.quartz.SchedulerException;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
 import java.util.List;
@@ -749,4 +747,11 @@ public interface TaskService extends IService<Task> {
 
 
 	List<Relation> searchTaskByExample(TaskTmp taskTmp);
+
+	/**
+	 * 小程序-根据menuId获取任务列表
+	 * @param menuId
+	 * @return
+	 */
+    List<Task> getTasksByMenuId(String menuId);
 }

@@ -12,6 +12,7 @@ import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.relation.RelationService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -486,5 +487,28 @@ public class  RelationApi {
          jsonObject.put("msg","修改失败");
          return  jsonObject;
      }
+
+    /**
+     * 小程序获取菜单列表
+     * @param groupId
+     * @return
+     */
+    @GetMapping("/relationList")
+    public JSONObject relationList(@RequestParam(value = "groupId") String groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Relation> list = relationService.list(new QueryWrapper<Relation>().eq("parent_id", groupId).eq("lable", 1));
+            if (CollectionUtils.isNotEmpty(list)) {
+                jsonObject.put("result",1);
+                jsonObject.put("data",list);
+            }else {
+                jsonObject.put("result",0);
+                jsonObject.put("msg","菜单列表为空");
+            }
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
 
 }

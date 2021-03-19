@@ -2265,6 +2265,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         return relations;
     }
 
+    @Override
+    public List<Task> getTasksByMenuId(String menuId) {
+        return taskMapper.findTaskByMenuId(menuId);
+    }
+
 
     private List<Task> choiceByExample(List<Task> list, String executor, Integer tagId, Long startTime, Long endTime, String memberId, String taskUid, Integer taskStatus, String priority) {
         if (CollectionUtils.isNotEmpty(list)) {
