@@ -2270,7 +2270,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     public List<Task> getTaskByGroupId(String groupId) {
-        return list(new QueryWrapper<Task>().eq("task_group_id",groupId).eq("task_del",0));
+        return list(new QueryWrapper<Task>().eq("task_group_id",groupId).eq("task_del",0).eq("parent_id",0));
     }
 
 
