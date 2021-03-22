@@ -754,4 +754,11 @@ public interface TaskService extends IService<Task> {
 	 * @return
 	 */
     List<Task> getTasksByMenuId(String menuId);
+
+	/**
+	 * 根据任务分组id获取人物列表
+	 * @param groupId
+	 * @return
+	 */
+	List<Task> getTaskByGroupId(String groupId);
 }

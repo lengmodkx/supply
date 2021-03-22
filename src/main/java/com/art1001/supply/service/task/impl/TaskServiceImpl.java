@@ -2239,8 +2239,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     @Override
     public List<Relation> searchTaskByExample(TaskTmp taskTmp) {
 
-
-
         List<Relation> relations = relationService.list(new QueryWrapper<Relation>().eq("lable", 1).eq("groupId", taskTmp.getGroupId()).orderByAsc("order"));
         relations.forEach(r->{
             LambdaQueryWrapper<Task> wrapper = new LambdaQueryWrapper<Task>().eq(Task::getTaskMenuId,r.getRelationId());
@@ -2268,6 +2266,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     @Override
     public List<Task> getTasksByMenuId(String menuId) {
         return taskMapper.findTaskByMenuId(menuId);
+    }
+
+    @Override
+    public List<Task> getTaskByGroupId(String groupId) {
+        return list(new QueryWrapper<Task>().eq("task_group_id",groupId).eq("task_del",0));
     }
 
 

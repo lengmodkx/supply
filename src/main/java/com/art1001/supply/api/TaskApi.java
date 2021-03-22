@@ -1421,6 +1421,28 @@ public class TaskApi extends BaseController {
         }
     }
 
+    /**
+     * 根据任务分组id获取人物列表
+     * @param groupId
+     * @return
+     */
+    @GetMapping("/getTaskByGroupId")
+    public JSONObject getTaskByGroupId(@RequestParam(value = "groupId") String groupId){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            List<Task>list=taskService.getTaskByGroupId(groupId);
+            if(CollectionUtils.isNotEmpty(list)) {
+                jsonObject.put("result",1);
+                jsonObject.put("data",list);
+            }else {
+                jsonObject.put("result",0);
+                jsonObject.put("msg","任务列表为空");
+            }
+            return jsonObject;
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
 }
 
 
