@@ -122,12 +122,17 @@ public class DemandServiceImpl extends ServiceImpl<DemandMapper, Demand> impleme
                     }
                     break;
                 case 4:
-                    page = page(page, new QueryWrapper<Demand>().eq("is_del", 0).eq("is_check",1));
+                    page = page(page, new QueryWrapper<Demand>().eq("is_del", 0).eq("is_check",1).eq("demand_state",0));
                 default:
                     break;
             }
             if (CollectionUtils.isNotEmpty(page.getRecords())) {
                 List<Demand> collect = page.getRecords().stream().sorted(Comparator.comparingLong(Demand::getCreateTime).reversed()).collect(Collectors.toList());
+                collect.forEach(r->{
+                    UserEntity userEntity = userMapper.selectById(r.getMemberId());
+                    r.setMemberImg(userEntity.getImage());
+                    r.setMemberName(userEntity.getUserName());
+                });
                 page.setRecords(collect);
             }
         }else{

@@ -65,6 +65,12 @@ public class Demand extends Model<Demand>{
       */
     private String memberId;
 
+    @TableField(exist = false)
+    private String memberName;
+
+    @TableField(exist = false)
+    private String memberImg;
+
 
     /**
       * 是否删除 0否 1是

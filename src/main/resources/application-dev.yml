@@ -32,7 +32,7 @@ spring:
   #阿里云redis连接配置
   redis:
     database: 0
-    host: localhost
+    host: 127.0.0.1
     port: 6379
   #password: 1qaz2wsx#EDC
   #配置JSON时区和空值处理
