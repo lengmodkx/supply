@@ -7,8 +7,6 @@ import com.aliyun.oss.event.ProgressEventType;
 import com.aliyun.oss.event.ProgressListener;
 import com.aliyun.oss.model.*;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.util.crypto.ShortCodeUtils;
-import com.mchange.lang.ShortUtils;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -17,7 +15,6 @@ import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -39,8 +36,8 @@ public class AliyunOss {
 
     // TODO 开发使用
     private static String endpoint = "https://oss-cn-beijing.aliyuncs.com";
-    private static String accessKeyId = "LTAIP4MyTAbONGJx";
-    private static String accessKeySecret = "coCyCStZwTPbfu93a3Ax0WiVg3D4EW";
+    private static String accessKeyId = "LTAI4G24eniXnJtHWFGt7dYr";
+    private static String accessKeySecret = "MLM7h4dHKSShQB15s4v3SkVewwccCV";
     private static String bucketName = "art1001-bim-5d";
 
     // Object是OSS存储数据的基本单元，称为OSS的对象，也被称为OSS的文件。详细描述请参看“开发人员指南 > 基本概念 > OSS基本概念介绍”。

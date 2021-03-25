@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OssInfo {
 
-    private String accessId="LTAIP4MyTAbONGJx";
+    private String accessId="LTAI4G24eniXnJtHWFGt7dYr";
 
     private String policy;
 
@@ -24,7 +24,7 @@ public class OssInfo {
     private String callback;
 
     @JsonIgnore
-    private String accessKey = "coCyCStZwTPbfu93a3Ax0WiVg3D4EW";
+    private String accessKey = "MLM7h4dHKSShQB15s4v3SkVewwccCV";
 
     @JsonIgnore
     private String endpoint="oss-cn-beijing.aliyuncs.com";
