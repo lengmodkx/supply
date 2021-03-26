@@ -1031,11 +1031,11 @@ public class ProjectApi extends BaseController {
     }
 
     /**
-     *
+     * 获取项目下文件名列表
      * @param projectId
      * @return
      */
-    @GetMapping("/{projectId}/menu")
+    @GetMapping("/{projectId}/initFileMenu")
     public JSONObject initFileMenu(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
         try {
