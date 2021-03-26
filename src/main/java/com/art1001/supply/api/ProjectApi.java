@@ -1035,7 +1035,7 @@ public class ProjectApi extends BaseController {
      * @param projectId
      * @return
      */
-    @GetMapping("/{projectId}/initFileMenu")
+    @GetMapping("/initFileMenu/{projectId}")
     public JSONObject initFileMenu(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
         try {
