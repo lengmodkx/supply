@@ -349,12 +349,6 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>4.2.2</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>okio</artifactId>
-                    <groupId>com.squareup.okio</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Java Low Level REST Client -->
