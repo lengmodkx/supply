@@ -9,6 +9,7 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.TimeMap;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -36,6 +37,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
@@ -1028,5 +1030,28 @@ public class ProjectApi extends BaseController {
         }
     }
 
+
+    /**
+     * 获取项目下文件名列表
+     * @param projectId
+     * @return
+     */
+    @GetMapping("/initFileMenu/{projectId}")
+    public JSONObject initFileMenu(@PathVariable String projectId) {
+        JSONObject object = new JSONObject();
+        try {
+            List<File> list = fileService.list(new QueryWrapper<File>().eq("project_id", projectId).eq("file_del", 0));
+            if (CollectionUtils.isEmpty(list)) {
+                object.put("result", 0);
+                object.put("msg", "null");
+            }else {
+                object.put("result", 1);
+                object.put("data", list);
+            }
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,信息获取失败", e);
+        }
+        return object;
+    }
 
 }
