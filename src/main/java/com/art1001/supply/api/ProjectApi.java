@@ -9,6 +9,7 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.TimeMap;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectFunc;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -36,6 +37,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
@@ -1034,7 +1036,7 @@ public class ProjectApi extends BaseController {
      * @param projectId
      * @return
      */
-   /* @GetMapping("/initFileMenu/{projectId}")
+    @GetMapping("/initFileMenu/{projectId}")
     public JSONObject initFileMenu(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
         try {
@@ -1051,6 +1053,5 @@ public class ProjectApi extends BaseController {
         }
         return object;
     }
-*/
 
 }
