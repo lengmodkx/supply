@@ -1040,7 +1040,7 @@ public class ProjectApi extends BaseController {
     public JSONObject initFileMenu(@PathVariable String projectId) {
         JSONObject object = new JSONObject();
         try {
-            List<File> list = fileService.list(new QueryWrapper<File>().eq("project_id", projectId).eq("file_del", 0));
+            List<File> list = fileService.initFileMenu(projectId);
             if (CollectionUtils.isEmpty(list)) {
                 object.put("result", 0);
                 object.put("msg", "null");

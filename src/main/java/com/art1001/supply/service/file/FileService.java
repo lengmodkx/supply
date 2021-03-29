@@ -513,4 +513,12 @@ import java.util.List;
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	void dateToEs();
+
+
+	/**
+	 * 获取项目下文件名列表
+	 * @param projectId
+	 * @return
+	 */
+	List<File> initFileMenu(String projectId);
 }

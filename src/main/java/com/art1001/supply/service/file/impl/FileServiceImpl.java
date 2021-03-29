@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -1648,5 +1649,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         if (CollectionUtils.isNotEmpty(list)) {
             list.forEach(r -> esUtil.save(FILES, DOCS, r, "fileId"));
         }
+    }
+
+    @Override
+    public List<File> initFileMenu(String projectId) {
+        List<File>files=Lists.newArrayList();
+        List<File> list = list(new QueryWrapper<File>().eq("project_id", projectId).eq("file_del", 0));
+        if (CollectionUtils.isNotEmpty(list)) {
+            List<File> collect = list.stream().filter(f -> f.getParentId().equals(Constants.ZERO)).collect(Collectors.toList());
+            File file = collect.get(0);
+            files= list.stream().filter(f -> f.getParentId().equals(file.getFileId())).collect(Collectors.toList());
+        }
+        return files;
     }
 }
