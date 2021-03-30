@@ -1,13 +1,14 @@
 package com.art1001.supply.api.aop;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.EsRule;
 import com.art1001.supply.entity.content.Article;
 import com.art1001.supply.entity.content.Comment;
 import com.art1001.supply.entity.content.Question;
 import com.art1001.supply.entity.content.Reply;
+import com.art1001.supply.service.content.ArticleService;
+import com.art1001.supply.service.content.CommentService;
 import com.art1001.supply.util.EsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -33,6 +34,12 @@ public class EsRuleAspect {
 
     @Resource
     private EsUtil esUtil;
+
+    @Resource
+    private CommentService commentService;
+
+    @Resource
+    private ArticleService articleService;
 
     private final static String ARTICLE = "article";
 
@@ -77,10 +84,21 @@ public class EsRuleAspect {
                 esUtil.update(ARTICLE, DOCS, "articleId", article.getArticleId(), article);
                 break;
             case COMMENT:
-                List<Comment> comments = JSONArray.parseArray((String) jsonObject.get("data"), Comment.class);
-                for (Comment comment : comments) {
-                    esUtil.update(COMMENT, DOCS, "commentId", comment.getCommentId(), comment);
+                List<String> data = (List<String>) jsonObject.get("data");
+                String commentId = data.get(0);
+                String articleId = (String) jsonObject.get("data1");
+
+
+                Comment comment = commentService.getById(commentId);
+                esUtil.update(COMMENT, DOCS, "commentId", commentId, comment);
+                Article article1 = articleService.getById(articleId);
+
+                if (article1.getCommentCount()!=null) {
+                    article1.setCommentCount(article1.getCommentCount() -1 );
+                    esUtil.update(ARTICLE, DOCS, "articleId", articleId, article1);
                 }
+
+
                 break;
             case REPLY:
                 Reply reply = JSON.parseObject(jsonObject.get("data").toString(), Reply.class);

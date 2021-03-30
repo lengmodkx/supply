@@ -58,12 +58,14 @@ public class CommentApi {
      */
     @EsRule(sort = 2, type = EsRuleType.COMMEMT)
     @GetMapping("/remove")
-    public JSONObject removeComment(@RequestParam(value ="commentIds" ) List<String> commentIds){
+    public JSONObject removeComment(@RequestParam(value ="commentIds" ) List<String> commentIds,
+                                    @RequestParam(value ="articleId" )String articleId){
         JSONObject jsonObject = new JSONObject();
         try {
-            commentService.removeComment(commentIds);
+            commentService.removeComment(commentIds,articleId);
             jsonObject.put("result",1);
             jsonObject.put("data",commentIds);
+            jsonObject.put("data1",articleId);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -120,13 +122,15 @@ public class CommentApi {
     @EsRule(sort = 2, type = EsRuleType.COMMEMT)
     @GetMapping("/updateCommentState")
     public JSONObject updateCommentState(@RequestParam(value = "commentState",defaultValue = "1") Integer commentState,
-                                     @RequestParam(value = "commentId") String commentId,
-                                     @RequestParam(value = "checkFailReason",required = false) String checkFailReason){
+                                         @RequestParam(value = "commentId") String commentId,
+                                         @RequestParam(value = "checkFailReason",required = false) String checkFailReason,
+                                         @RequestParam(value = "articleId") String articleId){
         JSONObject jsonObject = new JSONObject();
         try {
-            commentService.updateCommentState(commentState,commentId,checkFailReason);
+            commentService.updateCommentState(commentState,commentId,checkFailReason,articleId);
             jsonObject.put("result",1);
             jsonObject.put("data",commentId);
+            jsonObject.put("data2",articleId);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);

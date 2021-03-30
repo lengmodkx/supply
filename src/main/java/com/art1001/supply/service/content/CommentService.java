@@ -22,7 +22,7 @@ public interface CommentService extends IService<Comment> {
      * 移除评论
      * @param commentIds
      */
-    void removeComment(List<String> commentIds);
+    void removeComment(List<String> commentIds,String articleId);
 
 
     /**
@@ -41,7 +41,7 @@ public interface CommentService extends IService<Comment> {
      * @param commentId
      * @param checkFailReason
      */
-    void updateCommentState(Integer commentState, String commentId, String checkFailReason);
+    void updateCommentState(Integer commentState, String commentId, String checkFailReason,String articleId);
 
     /**
      * 根据文章id查询评论列表

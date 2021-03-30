@@ -1,6 +1,8 @@
 package com.art1001.supply.service.content.impl;
 
+import com.art1001.supply.entity.content.Article;
 import com.art1001.supply.entity.content.Comment;
+import com.art1001.supply.mapper.content.ArticleMapper;
 import com.art1001.supply.mapper.content.CommentMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.content.CommentService;
@@ -41,6 +43,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private ArticleMapper articleMapper;
+
     @Override
     public Comment addComment(String commentName, String articleId) {
         Comment comment = Comment.builder().commentClassId(articleId).commentName(commentName).memberId(ShiroAuthenticationManager.getUserId())
@@ -50,8 +55,14 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
-    public void removeComment(List<String> commentIds) {
+    public void removeComment(List<String> commentIds,String articleId) {
         update(new UpdateWrapper<Comment>().set("is_del", 1).in("comment_id", commentIds));
+        Article article = articleMapper.selectById(articleId);
+        Integer size = commentIds.size();
+        if (article.getCommentCount()!=null) {
+            article.setCommentCount(article.getCommentCount()-size);
+        }
+        articleMapper.updateById(article);
     }
 
     @Override
@@ -62,12 +73,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
-    public void updateCommentState(Integer commentState, String commentId, String checkFailReason) {
+    public void updateCommentState(Integer commentState, String commentId, String checkFailReason,String articleId) {
         UpdateWrapper<Comment> updateWrapper = new UpdateWrapper<Comment>().set("comment_state", commentState);
         if (StringUtils.isNotEmpty(checkFailReason)) {
             updateWrapper.set("check_fail_reason", checkFailReason);
         }
         update(updateWrapper.eq("comment_id", commentId));
+        Article article = articleMapper.selectById(articleId);
+        article.setCommentCount(article.getCommentCount()+1);
+        articleMapper.updateById(article);
     }
 
     @Override

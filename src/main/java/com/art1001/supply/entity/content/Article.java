@@ -145,7 +145,6 @@ public class Article extends Model<Article>{
     /**
      * 评论总数
      */
-    @TableField(exist = false)
     private Integer commentCount;
 
     /**
