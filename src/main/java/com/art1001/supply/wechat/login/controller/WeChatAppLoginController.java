@@ -84,6 +84,7 @@ public class WeChatAppLoginController extends BaseController {
             saveUserInfo.setWxAppOpenId(res.getOpenId());
             saveUserInfo.setUpdateTime(new Date());
             userService.updateById(saveUserInfo);
+            jsonObject.put("userId",one.getUserId());
             jsonObject.put("accessToken", JwtUtil.sign(one.getUserId(), "1qaz2wsx#EDC"));
             jsonObject.put("result", 1);
         } else {
