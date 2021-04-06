@@ -75,4 +75,10 @@
         where r.organization_id=#{orgId} and
         u.u_id=#{memberId}
     </select>
+
+    <select id="getRoleName" resultType="java.lang.String">
+        select r.role_name from sys_role_user s
+        join sys_role r on s.role_id=r.role_id
+        where s.org_id=#{organizationId} and s.u_id=#{memberId}
+    </select>
 </mapper>

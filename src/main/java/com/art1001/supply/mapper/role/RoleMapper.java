@@ -27,4 +27,6 @@ public interface RoleMapper extends BaseMapper<Role> {
     Role selectRoleAndResrouceInfo(@Param("roleId") Integer roleId);
 
     Role checkRole(@Param("orgId") String orgId, @Param("memberId") String memberId);
+
+    String getRoleName(@Param("organizationId")String organizationId, @Param("memberId")String memberId);
 }

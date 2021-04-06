@@ -443,6 +443,8 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         List<OrganizationMember> organizationMembers = Lists.newArrayList();
         //查询企业
         Organization org = organizationMapper.selectOne(new QueryWrapper<Organization>().eq("organization_id", orgId));
+
+        //是企业拥有者
         if (integer != 0) {
             //根据企业id获取部门信息
             orgParentByOrgId = partmentMemberService.getPartmentByOrgId(orgId);
@@ -738,6 +740,11 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         String partmentName = "";
         if (CollectionUtils.isNotEmpty(orgMembers)) {
             for (OrganizationMember r : orgMembers) {
+                Integer count = roleUserMapper.selectCount(new QueryWrapper<RoleUser>()
+                        .eq("org_id", r.getOrganizationId()).eq("u_id", r.getMemberId()));
+                if (count==1){
+                    r.setMemberLabel(roleMapper.getRoleName( r.getOrganizationId(),r.getMemberId()));
+                }
                 UserEntity byId = userService.findById(r.getMemberId());
                 if (byId != null) {
                     r.setJob(byId.getJob());
