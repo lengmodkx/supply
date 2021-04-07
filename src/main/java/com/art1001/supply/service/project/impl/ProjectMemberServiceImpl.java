@@ -377,7 +377,8 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         projectMemberMapper.insert(member);
 
         //如果是企业外部成员，权限变为外部成员权限
-        if (organizationMemberService.findOrgOtherByMemberId(memberId, orgId)==0) {
+        OrganizationMember organizationMember = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId));
+        if (organizationMember.getOther()==0) {
             List<Role> roles = roleService.list(new QueryWrapper<Role>().eq("organization_id", orgId));
             Optional.ofNullable(roles).ifPresent(r->r.stream().forEach(e->{
                 if (e.getRoleName().equals(EXTERNALMEMBER)) {
