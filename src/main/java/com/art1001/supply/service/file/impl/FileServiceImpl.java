@@ -31,6 +31,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -80,7 +83,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     private FileEsService fileEsService;
 
     @Resource
-    private EsUtil esUtil;
+    private EsUtil<File> esUtil;
 
     /**
      * 公共模型库 常量定义信息
@@ -1281,25 +1284,21 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     }
 
     @Override
-    public List<File> searchFile(String fileName, String projectId, Pageable pageable) {
-        PageRequest of;
-        if (pageable == null) {
-            of = PageRequest.of(0, 20, new Sort(Sort.Direction.DESC, "createTime"));
-        } else {
-            of = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
-        }
-      /*  SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.matchPhraseQuery("fileName", fileName))
-                .withFilter(QueryBuilders.termQuery("projectId", projectId)).withPageable(of)
-                .build();
-        Iterable<File> byFileNameOrTagNameFiles = fileRepository.search(searchQuery);*/
-        //如果ES查询不到数据，从数据库再查询一遍
-        /*if (Lists.newArrayList(byFileNameOrTagNameFiles).size()==0){
-            List<File> files = fileService.seachByName(fileName, projectId);
-            return  Lists.newArrayList(files);
+    public Page<File> searchFile(String fileName,String projectId, Integer pageNum) {
+        Page<File> page=new Page<>();
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        boolQueryBuilder.must(QueryBuilders.termQuery("fileDel", "0"));
+        boolQueryBuilder.must(QueryBuilders.termQuery("projectId", projectId));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("fileName",  fileName ));
+        sourceBuilder.query(boolQueryBuilder);
+        page=esUtil.searchListByPage(File.class,sourceBuilder,FILES,pageNum);
+
+       /* if (CollectionUtils.isEmpty(page.getRecords())) {
+            List<File> files = fileMapper.selectList(new QueryWrapper<File>().like("file_name", fileName).eq("file_del", 0).eq("project_id",projectId));
+            page.setRecords(files);
         }*/
-//        return Lists.newArrayList(byFileNameOrTagNameFiles);
-        return null;
+        return page;
     }
 
     @Override
@@ -1653,14 +1652,26 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     public List<File> initFileMenu(String projectId) {
-        List<File>files=Lists.newArrayList();
+        List<File> files = Lists.newArrayList();
         List<File> list = list(new QueryWrapper<File>().eq("project_id", projectId).eq("file_del", 0));
         if (CollectionUtils.isNotEmpty(list)) {
             List<File> collect = list.stream().filter(f -> f.getParentId().equals(Constants.ZERO)).collect(Collectors.toList());
             File file = collect.get(0);
-            files= list.stream().filter(f -> f.getParentId().equals(file.getFileId())).collect(Collectors.toList());
+            files = list.stream().filter(f -> f.getParentId().equals(file.getFileId())).collect(Collectors.toList());
         }
         return files;
+    }
+
+    @Override
+    public Page<File> materialBaseSearch(String fileName, Integer pageNum) {
+        Page<File>page=new Page<>();
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        boolQueryBuilder.must(QueryBuilders.termQuery("fileDel", "0"));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("fileName",  fileName ));
+        sourceBuilder.query(boolQueryBuilder);
+        page=esUtil.searchListByPage(File.class,sourceBuilder,FILES,pageNum);
+        return page;
     }
 
 

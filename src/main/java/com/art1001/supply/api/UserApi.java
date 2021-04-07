@@ -160,7 +160,7 @@ public class UserApi {
         //设置添加用户的密码和加密盐
         userEntity.setPassword(user.getPassword());
         userEntity.setCredentialsSalt(user.getCredentialsSalt());
-        userEntity.setNickName("supply"+CommonUtils.getRandomString(6));
+        userEntity.setNickName("supply" + CommonUtils.getRandomString(6));
         try {
             //向第三方环信注册用户
 //            registerImService(accountName);
@@ -431,12 +431,11 @@ public class UserApi {
             userEntity.setUserId(userId);
             if (StringUtils.isNotEmpty(nickname)) {
                 UserEntity user = userService.getOne(new QueryWrapper<UserEntity>().eq("nick_name", nickname));
-                if (user==null){
+                if (user == null) {
                     userEntity.setNickName(nickname);
-                }else if(user.getNickName().equals(nickname)){
+                } else if (user.getNickName().equals(nickname)) {
                     userEntity.setNickName(nickname);
-                }
-                else {
+                } else {
                     throw new AjaxException("昵称已被占用，请重新输入");
                 }
             }
@@ -533,7 +532,6 @@ public class UserApi {
     }
 
 
-
 //    @PutMapping("/wechat_info")
 //    public Object wechatInfo(){
 //
@@ -619,6 +617,7 @@ public class UserApi {
 
     /**
      * 管理员登陆
+     *
      * @param accountName 账户名称
      * @param password    密码
      */
@@ -637,8 +636,7 @@ public class UserApi {
                     object.put("result", 1);
                     object.put("userInfo", ShiroAuthenticationManager.getUserEntity());
                     object.put("accessToken", JwtUtil.sign(ShiroAuthenticationManager.getUserId(), "1qaz2wsx#EDC"));
-                }
-                else {
+                } else {
                     object.put("result", 0);
                     object.put("msg", "很抱歉,您的身份并不是管理员");
                 }
