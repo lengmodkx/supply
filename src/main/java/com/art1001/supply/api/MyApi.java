@@ -191,7 +191,7 @@ public class MyApi {
             } else if ("join".equals(type)) {
                 jsonObject.put("data", fileService.join(order));
                 jsonObject.put("result", 1);
-            } else {
+            }else {
                 jsonObject.put("result", 0);
             }
             return jsonObject;

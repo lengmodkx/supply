@@ -4,7 +4,6 @@ import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.template.Template;
 import com.art1001.supply.entity.template.TemplateRelation;
 import com.art1001.supply.exception.AjaxException;
-import com.art1001.supply.service.template.TemplateDataService;
 import com.art1001.supply.service.template.TemplateRelationService;
 import com.art1001.supply.service.template.TemplateService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -58,7 +56,7 @@ public class TemplateApi {
     public Result<Template> saveTemplate(@RequestParam String templateName,
                                @RequestParam String templateDes,
                                @RequestParam String templateCover,
-                                         @RequestParam String orgId){
+                               @RequestParam String orgId){
         try {
             Template template = new Template();
             template.setTemplateName(templateName);

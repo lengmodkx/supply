@@ -12,13 +12,11 @@ import com.art1001.supply.service.share.ShareService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * 任务，文件，日程，分享收藏
@@ -50,18 +48,20 @@ public class CollectionApi {
     ShareService shareService;
 
     /**
-     * 收藏
+         * 收藏
      * @param projectId 项目id
      * @param publicId  任务/文件/日程/分享的id
      * @param collectType 收藏类型
      * @return
      */
     @PostMapping
-    public JSONObject addCollection(@RequestParam String projectId,@RequestParam String publicId,@RequestParam String collectType){
+    public JSONObject addCollection(@RequestParam(required = false) String projectId,@RequestParam String publicId,@RequestParam String collectType){
         JSONObject object = new JSONObject();
         try{
             PublicCollect collect = new PublicCollect();
-            collect.setProjectId(projectId);
+            if (StringUtils.isNotEmpty(projectId)) {
+                collect.setProjectId(projectId);
+            }
             collect.setPublicId(publicId);
             collect.setCollectType(collectType);
             collect.setCreateTime(System.currentTimeMillis());

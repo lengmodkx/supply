@@ -424,8 +424,7 @@ public class UserApi {
                                      @RequestParam(value = "address", required = false) String address,
                                      @RequestParam(value = "email", required = false) String email,
                                      @RequestParam(value = "signature", required = false) String signature,
-                                     @RequestParam(value = "nickname",required = false) String nickname
-    ) throws AjaxException {
+                                     @RequestParam(value = "nickname", required = false) String nickname) {
         JSONObject jsonObject = new JSONObject();
         try {
             UserEntity userEntity = new UserEntity();
@@ -479,6 +478,7 @@ public class UserApi {
             e.printStackTrace();
             jsonObject.put("msg", "信息修改失败,请稍后再试");
             jsonObject.put("result", "0");
+            throw new AjaxException();
         }
         return jsonObject;
     }
