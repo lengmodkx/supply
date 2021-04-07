@@ -433,7 +433,10 @@ public class UserApi {
                 UserEntity user = userService.getOne(new QueryWrapper<UserEntity>().eq("nick_name", nickname));
                 if (user==null){
                     userEntity.setNickName(nickname);
-                }else {
+                }else if(user.getNickName().equals(nickname)){
+                    userEntity.setNickName(nickname);
+                }
+                else {
                     throw new AjaxException("昵称已被占用，请重新输入");
                 }
             }
