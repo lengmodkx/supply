@@ -632,7 +632,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
      */
     @Override
     public Integer findOrgOtherByMemberId(String memberId, String orgId) {
-        return organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId).eq("other", "0"));
+        return organizationMemberMapper.selectCount(new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId));
     }
 
     @Override

@@ -391,7 +391,7 @@ public class OrganizationMemberApi {
 
     /**
      * 移交企业权限
-     *
+     *getOrgPartment
      * @param orgId   企业id
      * @param ownerId 企业拥有者id
      * @param userId  成员id
