@@ -36,9 +36,12 @@ public class AutomationRulesServiceImpl extends ServiceImpl<AutomationRulesMappe
 
     @Override
     public int saveAutomationRule(AutomationRule automationRule) {
-        if(this.checkAutomationRuleIsExistByName(automationRule.getProjectId(), automationRule.getName())){
-            throw new ServiceException("该项目中的规则已经存在,请更换规则名称。");
+        if(automationRule.getId()==null){
+            if(this.checkAutomationRuleIsExistByName(automationRule.getProjectId(), automationRule.getName())){
+                throw new ServiceException("该项目中的规则已经存在,请更换规则名称。");
+            }
         }
+
         automationRule.setCreateTime(System.currentTimeMillis());
         automationRule.setUpdateTime(System.currentTimeMillis());
         automationRule.setCreateUser(ShiroAuthenticationManager.getUserId());
