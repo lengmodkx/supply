@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  **/
 public class PhoneTest {
 
-    private static final String PHONE_TEST = "^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[013678])|(18[0,5-9]))\\d{8}$";
+    private static final String PHONE_TEST = "^1[3|4|5|7|8][0-9]{9}$";
 
     private static final int PHONE_LENGTH = 11;
 
