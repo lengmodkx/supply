@@ -265,8 +265,13 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 				.eq(StringUtils.isNotEmpty(keyword),"news_content",keyword)
 				.ge(startTime!=null,"create_time",startTime)
 				.lt(endTime!=null,"create_time",endTime)
-				.eq(param!=null,"news_handle",param);
-		return userNewsMapper.selectPage(page, query);
+				.eq(param!=null,"news_handle",param).orderByDesc("create_time");
+		Page<UserNews> userNewsPage = userNewsMapper.selectPage(page, query);
+		/*if (CollectionUtils.isNotEmpty(userNewsPage.getRecords())) {
+			List<UserNews> collect = userNewsPage.getRecords().stream().sorted(Comparator.comparing(UserNews::getCreateTime).reversed()).collect(Collectors.toList());
+			userNewsPage.setRecords(collect);
+		}*/
+		return userNewsPage;
 	}
 
 	@Override

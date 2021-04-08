@@ -197,10 +197,10 @@ public class ProjectApi extends BaseController {
                 project.setProjectSchedule(projectSchedule);
             }
             projectService.updateProject(project);
-            project.setProjectId(newProjectId);
             object.put("result", 1);
             object.put("msg", "更新成功");
             object.put("data", project);
+
         } catch (Exception e) {
             log.error("保存失败:", e);
             throw new AjaxException(e);

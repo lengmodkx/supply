@@ -9,7 +9,10 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
-import com.art1001.supply.entity.file.*;
+import com.art1001.supply.entity.file.File;
+import com.art1001.supply.entity.file.FileTree;
+import com.art1001.supply.entity.file.FileVersion;
+import com.art1001.supply.entity.file.MemberDownload;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.user.UserEntity;
@@ -42,7 +45,6 @@ import okhttp3.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -314,7 +316,7 @@ public class FileApi extends BaseController {
      * @param privacy 隐私模式
      * @return
      */
-    @Push(value = PushType.C8, name = PushName.FILE,type = 1)
+    @Push(value = PushType.C8, name = PushName.FILE, type = 1)
     @PutMapping("/{id}/privacy/{privacy}")
     public JSONObject privacy(@PathVariable String id,
                               @PathVariable int privacy,
@@ -396,7 +398,7 @@ public class FileApi extends BaseController {
      * @param projectId 项目id
      */
 //    @Log(PushType.C2)
-    @Push(value = PushType.C2, name = PushName.FILE,type = 1)
+    @Push(value = PushType.C2, name = PushName.FILE, type = 1)
     @PostMapping("/{parentId}/upload")
     public JSONObject uploadFile(
             @PathVariable(value = "parentId") String parentId,
@@ -418,7 +420,7 @@ public class FileApi extends BaseController {
         return jsonObject;
     }
 
-    @Push(value = PushType.C2,name = PushName.FILE, type = 1)
+    @Push(value = PushType.C2, name = PushName.FILE, type = 1)
     @PostMapping("/uploadFile")
     public JSONObject uploadFile1(
             @RequestParam(value = "parentId") String parentId,
@@ -535,7 +537,7 @@ public class FileApi extends BaseController {
      * @return
      */
     @Log(PushType.C4)
-    @Push(value = PushType.C4, name = PushName.FILE,type = 1)
+    @Push(value = PushType.C4, name = PushName.FILE, type = 1)
     @PostMapping("/{fileId}/version")
     public JSONObject updateUploadFile(
             @PathVariable(value = "fileId") String fileId,
@@ -571,7 +573,7 @@ public class FileApi extends BaseController {
      * @param fileId 文件id
      */
     @Log(PushType.C5)
-    @Push(value = PushType.C5, name = PushName.FILE,type = 1)
+    @Push(value = PushType.C5, name = PushName.FILE, type = 1)
     @PostMapping("/{parentId}/update_model")
     public JSONObject updateModel(
             @PathVariable(value = "parentId") String fileId,
@@ -667,11 +669,12 @@ public class FileApi extends BaseController {
 
     /**
      * 删除文件夹
+     *
      * @param fileId
      * @return
      */
     @DeleteMapping("/deleteFileFolder")
-    public Result deleteFileFolder(@RequestParam(value = "fileId") String fileId){
+    public Result deleteFileFolder(@RequestParam(value = "fileId") String fileId) {
         try {
             fileService.deleteFileFolder(fileId);
             return Result.success();
@@ -763,7 +766,7 @@ public class FileApi extends BaseController {
      * @param toProjectId 目标项目id
      * @return
      */
-    @Push(value = PushType.C12, name = PushName.FILE,type = 2)
+    @Push(value = PushType.C12, name = PushName.FILE, type = 2)
     @PutMapping("/{folderId}/m_move")
     public JSONObject moveFile(
             @PathVariable String folderId,
@@ -800,7 +803,7 @@ public class FileApi extends BaseController {
      * @param toProjectId 目标项目id
      * @return
      */
-    @Push(value = PushType.C10, name = PushName.FILE,type = 1)
+    @Push(value = PushType.C10, name = PushName.FILE, type = 1)
     @PostMapping("/{folderId}/copy")
     public JSONObject copyFile(
             @PathVariable String folderId,
@@ -834,7 +837,7 @@ public class FileApi extends BaseController {
      * @param fileIds   ids
      * @param projectId 项目id
      */
-    @Push(value = PushType.C13, name = PushName.FILE,type = 1)
+    @Push(value = PushType.C13, name = PushName.FILE, type = 1)
     @PutMapping("/{fileIds}/m_recycle")
     public JSONObject moveToRecycleBin(
             @PathVariable(value = "fileIds") String fileIds,
@@ -932,7 +935,7 @@ public class FileApi extends BaseController {
      * @param newJoin 新的参与者id 数组
      * @return
      */
-    @Push(value = PushType.C9, name = PushName.FILE,type = 1)
+    @Push(value = PushType.C9, name = PushName.FILE, type = 1)
     @PutMapping("/{fileId}/add_remove_join")
     public JSONObject addAndRemoveFileJoin(@PathVariable(value = "fileId") String fileId,
                                            @RequestParam(value = "newJoin") String newJoin) {
@@ -1042,7 +1045,7 @@ public class FileApi extends BaseController {
      * @param files 文件信息
      * @return
      */
-    @Push(value = PushType.A30, name = PushName.FILE,type = 1)
+    @Push(value = PushType.A30, name = PushName.FILE, type = 1)
     @PostMapping("/bind_files")
     public JSONObject bindFile(@RequestParam String files, @RequestParam String publicId, @RequestParam String projectId) {
         JSONObject jsonObject = new JSONObject();
@@ -1102,7 +1105,7 @@ public class FileApi extends BaseController {
     /*
      * 在文件系统创建标签并绑定文件
      * */
-    @Push(value = PushType.E3, name = PushName.FILE,type = 1)
+    @Push(value = PushType.E3, name = PushName.FILE, type = 1)
     @PostMapping("/addTagBindFile")
     public JSONObject addTagBindFile(@RequestParam(value = "tagName") String tagName,
                                      @RequestParam(value = "bgColor") String bgColor,
@@ -1131,36 +1134,33 @@ public class FileApi extends BaseController {
 
     /**
      * 文件搜索
-     *
-     * @param pageable 分页
      */
-    @GetMapping("/{fileName}/search_file")
-    public JSONObject elSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName,
-                               @RequestParam @NotBlank(message = "projectId不能为空!") String projectId, Pageable pageable) {
+    @GetMapping("search_file")
+    public JSONObject elSearch(@RequestParam(value = "fileName") String fileName,
+                               @RequestParam(value = "projectId") String projectId,
+                               @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 1);
-        jsonObject.put("data", fileService.searchFile(fileName, projectId, pageable));
+        jsonObject.put("data", fileService.searchFile(fileName, projectId, pageNum));
         return jsonObject;
     }
 
 
     /**
      * 搜索素材库
-     *
      * @param fileName 文件名
      * @return 信息
      */
-    @GetMapping("/{fileName}/material_base_search")
-    public JSONObject materialBaseSearch(@NotBlank(message = "搜索名称不能为空!") @PathVariable String fileName, Pageable pageable) {
+    @GetMapping("material_base_search")
+    public JSONObject materialBaseSearch(@RequestParam(value = "fileName") String fileName,
+                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         JSONObject jsonObject = new JSONObject();
-        //将数据库数据更新到ES
-        //this.getFileToElastic();
-        jsonObject.put("result", 1);
-        jsonObject.put("totle", fileService.getSucaiTotle(fileName));
-        jsonObject.put("data", fileService.searchMaterialBaseFile(fileName, pageable));
-
-        jsonObject.put("page", pageable.getPageNumber());
-
+        try {
+            jsonObject.put("result", 1);
+            jsonObject.put("data", fileService.materialBaseSearch(fileName, pageNum));
+        } catch (Exception e) {
+            throw new AjaxException("网络错误，请稍后再试");
+        }
         return jsonObject;
     }
 
@@ -1172,7 +1172,6 @@ public class FileApi extends BaseController {
      */
     @GetMapping("{folderId}/material")
     public JSONObject getMaterialBaseFile(@PathVariable String folderId, Page pageable, @RequestParam(required = false) Boolean downloadCount) {
-
         return fileService.getMateriaBaseFile(folderId, pageable, downloadCount);
     }
 
@@ -1278,13 +1277,14 @@ public class FileApi extends BaseController {
 
     /**
      * 文件设置隐私模式/文件夹可见性
+     *
      * @param folderId
      * @param userIds
      * @param projectId
      * @param parentId
      * @return
      */
-    @Push(value = PushType.C8, name = PushName.FILE,type = 1)
+    @Push(value = PushType.C8, name = PushName.FILE, type = 1)
     @PutMapping("/folder/look")
     public JSONObject setFolderLook(@RequestParam String folderId,
                                     @RequestParam String userIds,
@@ -1310,7 +1310,7 @@ public class FileApi extends BaseController {
         }
     }
 
-    @Push(value = PushType.C8, name = PushName.FILE,type = 1)
+    @Push(value = PushType.C8, name = PushName.FILE, type = 1)
     @PutMapping("/folder/delUser")
     public JSONObject setFolderDelUser(@RequestParam String folderId,
                                        @RequestParam String userIds,

@@ -359,10 +359,9 @@ import java.util.List;
 	/**
 	 * 从搜索引擎来获取文件信息
 	 * @param fileName 文件名称
-	 * @param projectId 项目id
 	 * @return 文件信息集合
 	 */
-	List<File> searchFile(String fileName, String projectId,Pageable pageable);
+	Page<File> searchFile(String fileName,String projectId,Integer pageNum);
 
 	/**
 	 * 获取fileId的上级目录的id
@@ -523,4 +522,11 @@ import java.util.List;
 	List<File> initFileMenu(String projectId);
 
 
+	/**
+	 * 素材库文件搜索
+	 * @param fileName
+	 * @param pageNum
+	 * @return
+	 */
+	Page<File> materialBaseSearch(String fileName, Integer pageNum);
 }
