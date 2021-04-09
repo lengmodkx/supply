@@ -1,6 +1,9 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushName;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.common.CommonResult;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.user.UserNews;
@@ -212,6 +215,7 @@ public class NewsApi {
      * @param isRead
      * @return
      */
+    @Push(value = PushType.F4, name = PushName.NEWS,type = 0)
     @GetMapping("/changeIsRead")
     public JSONObject changeIsRead(@RequestParam(value = "ids") List<String> ids,
                                    @RequestParam(value = "isRead") int isRead) {

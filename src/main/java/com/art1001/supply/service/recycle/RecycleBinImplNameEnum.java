@@ -17,6 +17,7 @@ public enum RecycleBinImplNameEnum {
      */
     FileRecycleBin("file", "fileRecycleBinImpl"),
 
+    FileRecycleBin1("folder", "fileRecycleBinImpl"),
     /**
      * 分享回收站的业务实例名称
      */

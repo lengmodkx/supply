@@ -26,7 +26,4 @@ public class TaskTmp {
     private Boolean taskStatus;
     //优先级
     private List<String> priority;
-
-    //标签Id
-    private List<Integer> tagId;
 }

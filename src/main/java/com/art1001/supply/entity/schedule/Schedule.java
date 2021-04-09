@@ -10,6 +10,7 @@ import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -23,7 +24,7 @@ import java.util.List;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@TableName("prm_schedule")
+@TableName(value = "prm_schedule",autoResultMap = true)
 public class Schedule extends Model<Schedule> {
 	
 	private static final long serialVersionUID = 1L;
@@ -31,7 +32,7 @@ public class Schedule extends Model<Schedule> {
 	/**
 	 * schedule_id
 	 */
-	@TableId(value = "schedule_id",type = IdType.UUID)
+	@TableId(value = "schedule_id",type = IdType.ASSIGN_UUID)
 	private String scheduleId;
 
 	/**

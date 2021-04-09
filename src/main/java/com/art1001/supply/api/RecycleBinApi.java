@@ -67,7 +67,7 @@ public class RecycleBinApi {
         recycleBinService.moveOrRecovery(recycleParamsDto);
         jsonObject.put("result", 1);
         jsonObject.put("msgId",recycleParamsDto.getProjectId());
-        jsonObject.fluentPut("data", fileService.findParentId(recycleParamsDto.getProjectId()));
+        jsonObject.put("data", new JSONObject().fluentPut("projectId",recycleParamsDto.getProjectId()).fluentPut("publicType",recycleParamsDto.getPublicType()));
         return jsonObject;
     }
 

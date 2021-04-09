@@ -259,11 +259,11 @@ public class FileApi extends BaseController {
     @GetMapping("/{projectId}/folder/all")
     public JSONObject getProjectAllFolder(@PathVariable String projectId) {
         try {
-            File one = fileService.getOne(new QueryWrapper<File>().select("file_id").eq("project_id", projectId).eq("parent_id", "0"));
+            String fileId = fileService.findParentId(projectId);
             List<FileTree> fileTrees = new ArrayList<>();
-            FileTree root = new FileTree(one.getFileId(), "0", "项目文件夹", true, "https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/wx_app_icon/004e879c347daab8eb60e00a938f7dc.png", 1);
+            FileTree root = new FileTree(fileId, "0", "项目文件夹", true, "https://art1001-bim-5d.oss-cn-beijing.aliyuncs.com/wx_app_icon/004e879c347daab8eb60e00a938f7dc.png", 1);
             fileTrees.add(0, root);
-            List<FileTree> trees = fileService.querySubFileList(one.getFileId());
+            List<FileTree> trees = fileService.querySubFileList(fileId);
             fileTrees.addAll(trees);
 
             JSONObject jsonObject = new JSONObject();

@@ -261,7 +261,7 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 	public Page<UserNews> userNewsByCondition(String keyword, Long startTime, Long endTime,Integer pageSize,Integer pageNum,Integer param) {
 		Page<UserNews> page = new Page(pageNum,pageSize);
 		QueryWrapper<UserNews> query = new QueryWrapper<UserNews>().eq("news_to_user",ShiroAuthenticationManager.getUserId())
-				.eq(StringUtils.isNotEmpty(keyword),"news_name",keyword).or()
+				.eq(StringUtils.isNotEmpty(keyword),"news_name",keyword)
 				.eq(StringUtils.isNotEmpty(keyword),"news_content",keyword)
 				.ge(startTime!=null,"create_time",startTime)
 				.lt(endTime!=null,"create_time",endTime)

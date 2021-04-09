@@ -167,7 +167,7 @@ public class ScheduleApi extends BaseController {
             scheduleById.setLogs(logService.initLog(scheduleId));
             //获取日程的未读消息数
             int unMsgCount = logService.count(new QueryWrapper<Log>().eq("public_id", scheduleId)) - 10;
-            scheduleById.setUnReadMsg(unMsgCount > 0 ? unMsgCount : 0);
+            scheduleById.setUnReadMsg(Math.max(unMsgCount, 0));
             object.put("data", scheduleById);
             object.put("result", 1);
         } catch (Exception e) {

@@ -2239,7 +2239,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     @Override
     public List<Relation> searchTaskByExample(TaskTmp taskTmp) {
 
-        List<Relation> relations = relationService.list(new QueryWrapper<Relation>().eq("lable", 1).eq("groupId", taskTmp.getGroupId()).orderByAsc("order"));
+        List<Relation> relations = relationService.list(new QueryWrapper<Relation>().eq("lable", 1).eq("relation_id", taskTmp.getGroupId()).orderByAsc("`order`"));
         relations.forEach(r->{
             LambdaQueryWrapper<Task> wrapper = new LambdaQueryWrapper<Task>().eq(Task::getTaskMenuId,r.getRelationId());
             wrapper.like(StringUtils.isNotEmpty(taskTmp.getKeyword()),Task::getTaskName,taskTmp.getKeyword());
@@ -2252,7 +2252,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
             taskList = taskList.stream()
                     .filter(task -> taskTmp.getPriority() != null && taskTmp.getPriority().contains(task.getPriority()))
-                    .filter(task -> taskTmp.getTagId() != null && tagRelationService.findTaskIds(taskTmp.getTagId()).contains(task.getTaskId()))
+
                     .filter(task -> (taskTmp.getTaskUids() != null && task.getTaskUIds() != null) && taskTmp.getTaskUids().retainAll(Arrays.asList(task.getTaskUIds().split(","))))
                     .collect(Collectors.toList());
 
