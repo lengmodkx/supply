@@ -215,7 +215,6 @@ public class NewsApi {
      * @param isRead
      * @return
      */
-    @Push(value = PushType.F4, name = PushName.NEWS,type = 0)
     @GetMapping("/changeIsRead")
     public JSONObject changeIsRead(@RequestParam(value = "ids") List<String> ids,
                                    @RequestParam(value = "isRead") int isRead) {

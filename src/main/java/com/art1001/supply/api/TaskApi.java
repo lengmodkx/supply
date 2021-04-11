@@ -199,8 +199,8 @@ public class TaskApi extends BaseController {
         try {
             Task task = taskService.getById(taskId);
             //这里判断是否有子任务未完成
-            Task one = taskService.getOne(new QueryWrapper<Task>().eq("parent_id", task.getTaskId()).eq("task_status", false));
-            if(one!=null){
+            int one = taskService.count(new QueryWrapper<Task>().eq("parent_id", task.getTaskId()).eq("task_status", false));
+            if(one>=1){
                 object.put("msg", "有子任务未完成!");
                 object.put("result", 0);
                 return object;
