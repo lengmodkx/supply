@@ -745,7 +745,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                 if (count==1){
                     r.setMemberLabel(roleMapper.getRoleName( r.getOrganizationId(),r.getMemberId()));
                 }
-                UserEntity byId = userService.findById(r.getMemberId());
+                UserEntity byId = userService.getOne(new QueryWrapper<UserEntity>().eq("user_id",r.getMemberId()));
                 if (byId != null) {
                     r.setJob(byId.getJob());
                     r.setImage(byId.getImage());
