@@ -3,9 +3,10 @@ package com.art1001.supply.shiro.filter;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.shiro.util.JWTToken;
 import com.art1001.supply.shiro.util.JwtUtil;
+import com.art1001.supply.util.NumberUtils;
+import com.art1001.supply.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.shiro.authc.AuthenticationException;
@@ -15,6 +16,7 @@ import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +27,11 @@ import java.util.Date;
 
 @Slf4j
 public class JwtFilter extends AuthenticatingFilter {
+
+
+    @Resource
+    private RedisUtil redisUtil;
+
     private static final int tokenRefreshInterval = 300;
     /**
      * 这里重写了父类的方法，使用我们自己定义的Token类，提交给shiro。这个方法返回null的话会直接抛出异常，进入isAccessAllowed（）的异常处理逻辑。
@@ -74,6 +81,8 @@ public class JwtFilter extends AuthenticatingFilter {
         return false;
     }
 
+
+
     @Override
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response){
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
@@ -82,8 +91,12 @@ public class JwtFilter extends AuthenticatingFilter {
             JWTToken jwtToken = (JWTToken)token;
             UserEntity user = (UserEntity) subject.getPrincipal();
             boolean shouldRefresh = shouldTokenRefresh(JwtUtil.getIssuedAt(jwtToken.getToken()));
+
             if(shouldRefresh) {
-                newToken = JwtUtil.sign(user.getUserId(),"1qaz2wsx#EDC");
+                String random = NumberUtils.getRandom();
+                newToken = JwtUtil.sign(user.getUserId(),random);
+                redisUtil.set("power:"+user.getUserId(),random);
+//                newToken = JwtUtil.sign(user.getUserId(),"1qaz2wsx#EDC");
             }
         }
         if(StringUtils.isNotBlank(newToken))
@@ -133,4 +146,6 @@ public class JwtFilter extends AuthenticatingFilter {
         LocalDateTime issueTime = LocalDateTime.ofInstant(issueAt.toInstant(), ZoneId.systemDefault());
         return LocalDateTime.now().minusSeconds(tokenRefreshInterval).isAfter(issueTime);
     }
+
+
 }

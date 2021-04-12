@@ -627,10 +627,12 @@ public class UserApi {
             if (subject.isAuthenticated()) {
                 UserEntity byName = userService.findByName(accountName);
                 if (byName.getAccountName().equals(ADMIN)) {
+                    String secret = redisUtil.get("power:" + ShiroAuthenticationManager.getUserId());
                     object.put("fileId", Constants.MATERIAL_BASE);
                     object.put("result", 1);
                     object.put("userInfo", ShiroAuthenticationManager.getUserEntity());
-                    object.put("accessToken", JwtUtil.sign(ShiroAuthenticationManager.getUserId(), "1qaz2wsx#EDC"));
+                    object.put("accessToken", JwtUtil.sign(ShiroAuthenticationManager.getUserId(), secret));
+//                    object.put("accessToken", JwtUtil.sign(ShiroAuthenticationManager.getUserId(), "1qaz2wsx#EDC"));
                 } else {
                     object.put("result", 0);
                     object.put("msg", "很抱歉,您的身份并不是管理员");

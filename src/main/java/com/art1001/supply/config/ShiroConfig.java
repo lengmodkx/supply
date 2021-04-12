@@ -1,43 +1,35 @@
 package com.art1001.supply.config;
 
 
-import com.art1001.supply.redis.RedisManager;
 import com.art1001.supply.shiro.JWTShiroRealm;
-
 import com.art1001.supply.shiro.MyDBRealm;
-
-import com.art1001.supply.shiro.filter.*;
-
+import com.art1001.supply.shiro.filter.JwtFilter;
+import com.art1001.supply.shiro.filter.PermissionFilter;
+import com.art1001.supply.shiro.filter.RoleFilter;
 import com.art1001.supply.shiro.service.ChainDefinitionService;
 import com.art1001.supply.shiro.service.impl.ChainDefinitionServiceImpl;
+import com.art1001.supply.util.RedisUtil;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
-
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SessionStorageEvaluator;
 import org.apache.shiro.realm.Realm;
-
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
-
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
+import javax.annotation.Resource;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
-
 import java.util.*;
 @Configuration
 public class ShiroConfig {
@@ -48,6 +40,8 @@ public class ShiroConfig {
 //        return new RedisManager();
 //    }
 
+    @Resource
+    private RedisUtil redisUtil;
 
 
     @Bean("credentialsMatcher")
@@ -94,7 +88,7 @@ public class ShiroConfig {
     }
     @Bean("jwtRealm")
     public Realm jwtShiroRealm() {
-        return new JWTShiroRealm();
+        return new JWTShiroRealm(redisUtil);
     }
 
     @Bean("dbRealm")

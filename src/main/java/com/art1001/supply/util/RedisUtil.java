@@ -3,12 +3,12 @@ package com.art1001.supply.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
 
     @SuppressWarnings("rawtypes")
-    @Autowired
+    @Resource
     private RedisTemplate redisTemplate;
 
     /**

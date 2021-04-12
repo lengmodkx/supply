@@ -31,7 +31,7 @@ spring:
         exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
   #阿里云redis连接配置
   redis:
-    database: 0
+    database: 1
     host: 127.0.0.1
     port: 6379
   #password: 1qaz2wsx#EDC
