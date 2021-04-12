@@ -31,13 +31,14 @@ import java.util.Map;
 @Slf4j
 @RequestMapping("relations")
 @RestController
-public class  RelationApi {
+public class RelationApi {
 
     @Resource
     private RelationService relationService;
 
     /**
      * 添加菜单
+     *
      * @return
      */
     @Push(PushType.H2)
@@ -46,11 +47,9 @@ public class  RelationApi {
                               @RequestParam(value = "groupId") String groupId,
                               @RequestParam(value = "menuName") String menuName,
                               @RequestParam(required = false) Integer order
-    ){
+    ) {
         JSONObject jsonObject = new JSONObject();
         try {
-
-
 
 
             Relation relation = new Relation();
@@ -59,12 +58,12 @@ public class  RelationApi {
             relation.setParentId(groupId);
             relation.setOrder(order);
             relationService.saveMenu(relation);
-            jsonObject.put("menuId",relation.getRelationId());
-            jsonObject.put("result",1);
+            jsonObject.put("menuId", relation.getRelationId());
+            jsonObject.put("result", 1);
             jsonObject.put("msgId", projectId);
             jsonObject.put("data", projectId);
-        }catch (Exception e){
-            log.error("添加关系异常:",e);
+        } catch (Exception e) {
+            log.error("添加关系异常:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -72,18 +71,19 @@ public class  RelationApi {
 
     /**
      * 排序菜单顺序
+     *
      * @param menuIds 排序后的菜单数组
      * @return
      */
     @PutMapping("/{menuIds}/orderMenu")
-    public JSONObject orderMenu(@PathVariable("menuIds") String[] menuIds){
+    public JSONObject orderMenu(@PathVariable("menuIds") String[] menuIds) {
         JSONObject jsonObject = new JSONObject();
         try {
             relationService.orderMenu(menuIds);
-            jsonObject.put("msg","排序成功!");
-            jsonObject.put("result",1);
-        }catch (Exception e){
-            log.error("排序异常:",e);
+            jsonObject.put("msg", "排序成功!");
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            log.error("排序异常:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -91,12 +91,13 @@ public class  RelationApi {
 
     /**
      * 添加分组
+     *
      * @return
      */
     @PostMapping("/{projectId}/group")
     public Result addGroup(
             @PathVariable(value = "projectId") String projectId,
-            @RequestParam(value = "groupName") String groupName){
+            @RequestParam(value = "groupName") String groupName) {
         try {
             Relation relation = new Relation();
             relation.setRelationName(groupName);
@@ -111,51 +112,53 @@ public class  RelationApi {
             groupVO.setNotCompleteCount(0);
 
             return Result.success(groupVO);
-        }catch (Exception e){
-            log.error("添加关系异常:",e);
+        } catch (Exception e) {
+            log.error("添加关系异常:", e);
             throw new AjaxException(e);
         }
     }
 
     /**
      * 删除菜单
+     *
      * @param menuId 菜单id
      * @return 是否成功
      */
-    @Push(value = PushType.H8,type = 1)
+    @Push(value = PushType.H8, type = 1)
     @DeleteMapping("/{menuId}/menu")
-        public JSONObject deleteMenu(@PathVariable(value = "menuId") String menuId){
+    public JSONObject deleteMenu(@PathVariable(value = "menuId") String menuId) {
         JSONObject jsonObject = new JSONObject();
         try {
             String relationProjectId = this.getRelationProjectId(menuId);
-            if(relationService.removeMenu(menuId)){
+            if (relationService.removeMenu(menuId)) {
                 jsonObject.put("result", 1);
             } else {
                 jsonObject.put("result", 0);
             }
             jsonObject.put("data", relationProjectId);
-            jsonObject.put("msgId",relationProjectId);
-        } catch (ServiceException e){
-            throw new AjaxException(e.getMessage(),e);
-        } catch (Exception e){
-            throw new AjaxException("系统异常,删除失败!",e);
+            jsonObject.put("msgId", relationProjectId);
+        } catch (ServiceException e) {
+            throw new AjaxException(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,删除失败!", e);
         }
         return jsonObject;
     }
 
     /**
      * 删除分组
+     *
      * @param groupId 分组id
      * @return
      */
     @DeleteMapping("/{groupId}/group")
-    public JSONObject deleteGroup(@PathVariable(value = "groupId") String groupId){
+    public JSONObject deleteGroup(@PathVariable(value = "groupId") String groupId) {
         JSONObject jsonObject = new JSONObject();
         try {
             relationService.deleteGroup(groupId);
-            jsonObject.put("result",1);
-        } catch (Exception e){
-            log.error("系统异常,分组删除失败:",e);
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            log.error("系统异常,分组删除失败:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -163,13 +166,14 @@ public class  RelationApi {
 
     /**
      * 更新菜单的信息
-     * @param menuId 菜单id
+     *
+     * @param menuId   菜单id
      * @param menuName 菜单名称
      * @return 是否成功
      */
     @Push(value = PushType.H1)
     @PutMapping("/{menuId}/menu")
-        public JSONObject editMenu(@PathVariable(value = "menuId") String menuId, @RequestParam(value = "menuName") String menuName){
+    public JSONObject editMenu(@PathVariable(value = "menuId") String menuId, @RequestParam(value = "menuName") String menuName) {
         JSONObject jsonObject = new JSONObject();
         try {
             Relation relation = new Relation();
@@ -178,11 +182,11 @@ public class  RelationApi {
             relation.setUpdateTime(System.currentTimeMillis());
             relationService.editMenu(relation);
             String relationProjectId = this.getRelationProjectId(menuId);
-            jsonObject.put("msgId",relationProjectId);
-            jsonObject.put("data",relationProjectId);
-            jsonObject.put("result","1");
-        } catch (Exception e){
-            log.error("系统异常,菜单编辑失败:",e);
+            jsonObject.put("msgId", relationProjectId);
+            jsonObject.put("data", relationProjectId);
+            jsonObject.put("result", "1");
+        } catch (Exception e) {
+            log.error("系统异常,菜单编辑失败:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -190,18 +194,19 @@ public class  RelationApi {
 
     /**
      * 将分组移动到回收站中 或者 恢复分组
+     *
      * @param relationId 分组id
-     * @param groupDel 分组状态
+     * @param groupDel   分组状态
      * @return
      */
     @PutMapping("/{groupId}/recyclebin")
-    public JSONObject moveRecycleBin(@PathVariable(value = "groupId") String relationId, @RequestParam(value = "groupDel") String groupDel){
+    public JSONObject moveRecycleBin(@PathVariable(value = "groupId") String relationId, @RequestParam(value = "groupDel") String groupDel) {
         JSONObject jsonObject = new JSONObject();
         try {
-            relationService.moveRecycleBin(relationId,groupDel);
-            jsonObject.put("result","1");
-        } catch (Exception e){
-            log.error("系统异常,移动失败:",e);
+            relationService.moveRecycleBin(relationId, groupDel);
+            jsonObject.put("result", "1");
+        } catch (Exception e) {
+            log.error("系统异常,移动失败:", e);
             throw new AjaxException(e);
         }
         return jsonObject;
@@ -209,18 +214,19 @@ public class  RelationApi {
 
     /**
      * 获取该项目下的所有分组信息
+     *
      * @param projectId 项目id
      * @return
      */
     @GetMapping("/{projectId}")
-    public JSONObject projectAllGroup(@PathVariable(value = "projectId") String projectId){
+    public JSONObject projectAllGroup(@PathVariable(value = "projectId") String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             List<Relation> groupList = relationService.findAllGroupInfoByProjectId(projectId);
-            jsonObject.put("data",groupList);
-            jsonObject.put("result",1);
-        } catch (Exception e){
-            log.error("系统异常:",e);
+            jsonObject.put("data", groupList);
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            log.error("系统异常:", e);
             throw new SystemException(e);
         }
         return jsonObject;
@@ -228,18 +234,19 @@ public class  RelationApi {
 
     /**
      * 获取分组下的所有菜单信息
+     *
      * @param groupId
      * @return
      */
     @GetMapping("/{groupId}/menus")
-    public JSONObject getMenus(@PathVariable("groupId") String groupId){
+    public JSONObject getMenus(@PathVariable("groupId") String groupId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",relationService.findAllMenuInfoByGroupId(groupId));
-            jsonObject.put("result",1);
+            jsonObject.put("data", relationService.findAllMenuInfoByGroupId(groupId));
+            jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
-            throw new AjaxException("系统异常,获取菜单信息失败!",e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,获取菜单信息失败!", e);
         }
     }
 
@@ -247,19 +254,20 @@ public class  RelationApi {
      * 获取一个项目下的分组信息(分组id,分组名称,分组创建者) 根据order排序
      */
     @GetMapping("/{projectId}/bind/group_info")
-    public JSONObject getGroupByProject(@PathVariable String projectId){
+    public JSONObject getGroupByProject(@PathVariable String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",relationService.loadGroupInfo(projectId));
-            jsonObject.put("result",1);
+            jsonObject.put("data", relationService.loadGroupInfo(projectId));
+            jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
-            throw new AjaxException("系统异常,获取分组信息失败!",e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,获取分组信息失败!", e);
         }
     }
 
     /**
      * 获取一个分组下的任务和菜单信息
+     *
      * @return 信息
      */
     @GetMapping("{groupId}/bind/menu_info")
@@ -277,174 +285,181 @@ public class  RelationApi {
     /**
      * 获取一个项目下的分组信息
      * 分组信息内 包括改分组的任务完成情况 优先级分布等
+     *
      * @param projectId 项目id
      * @return 分组id
      */
     @GetMapping("/{projectId}/groups")
-    public JSONObject getGroupsAndTaskCountInfo(@PathVariable String projectId){
+    public JSONObject getGroupsAndTaskCountInfo(@PathVariable String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",relationService.getGroupsInfo(projectId));
+            jsonObject.put("data", relationService.getGroupsInfo(projectId));
             jsonObject.put("result", 1);
             return jsonObject;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new SystemException("系统异常,数据获取失败!",e);
+            throw new SystemException("系统异常,数据获取失败!", e);
         }
     }
 
     /**
      * 设置本列表所有的任务截止时间
-     * @param menuId 列表id
+     *
+     * @param menuId  列表id
      * @param endTime 截止时间
      * @return 是否成功
      */
     @Push(PushType.H3)
     @PutMapping("/{menuId}/task_end_time")
-    public JSONObject setAllTaskEndTime(@PathVariable String menuId,Long endTime){
+    public JSONObject setAllTaskEndTime(@PathVariable String menuId, Long endTime) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if(relationService.setAllTaskEndTime(menuId, endTime) == 1){
+            if (relationService.setAllTaskEndTime(menuId, endTime) == 1) {
                 jsonObject.put("result", 1);
                 String relationProjectId = this.getRelationProjectId(menuId);
-                jsonObject.put("msgId",relationProjectId);
+                jsonObject.put("msgId", relationProjectId);
                 jsonObject.put("data", relationProjectId);
-            } else{
+            } else {
                 jsonObject.put("result", 0);
             }
             return jsonObject;
-        } catch (ServiceException e){
-            throw new AjaxException(e.getMessage(),e);
-        } catch (Exception e){
-            throw new AjaxException("系统异常,设置截止时间失败!",e);
+        } catch (ServiceException e) {
+            throw new AjaxException(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,设置截止时间失败!", e);
         }
     }
 
     /**
      * 移动列表下的所有任务
-     * @param menuId 菜单id
+     *
+     * @param menuId    菜单id
      * @param projectId 移动到的项目id
-     * @param groupId 移动到的分组id
-     * @param toMenuId 移动到的菜单id
+     * @param groupId   移动到的分组id
+     * @param toMenuId  移动到的菜单id
      * @return 结果
      */
-    @Push(type = 2,value = PushType.H4)
+    @Push(type = 2, value = PushType.H4)
     @PutMapping("/{menuId}/move_all_task")
-    public JSONObject moveAllTask(@PathVariable String menuId, String projectId, String groupId, String toMenuId){
+    public JSONObject moveAllTask(@PathVariable String menuId, String projectId, String groupId, String toMenuId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if(relationService.moveAllTask(menuId,projectId,groupId,toMenuId)){
+            if (relationService.moveAllTask(menuId, projectId, groupId, toMenuId)) {
                 jsonObject.put("result", 1);
                 String relationProjectId = this.getRelationProjectId(menuId);
-                Map<String,Object> maps = new HashMap<String,Object>(2);
-                if(relationProjectId.equals(projectId)){
-                    maps.put(projectId,projectId);
-                } else{
-                    maps.put(projectId,projectId);
-                    maps.put(relationProjectId,relationProjectId);
+                Map<String, Object> maps = new HashMap<String, Object>(2);
+                if (relationProjectId.equals(projectId)) {
+                    maps.put(projectId, projectId);
+                } else {
+                    maps.put(projectId, projectId);
+                    maps.put(relationProjectId, relationProjectId);
                 }
                 jsonObject.put("data", maps);
-            } else{
+            } else {
                 jsonObject.put("result", 0);
             }
             return jsonObject;
-        } catch (ServiceException e){
-            throw new AjaxException(e.getMessage(),e);
-        } catch (Exception e){
-            throw new AjaxException("系统异常,移动事失败!",e);
+        } catch (ServiceException e) {
+            throw new AjaxException(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,移动事失败!", e);
         }
     }
 
     /**
      * 复制列表下的所有任务
-     * @param menuId 列表id
+     *
+     * @param menuId    列表id
      * @param projectId 项目id
-     * @param groupId 分组id
-     * @param toMenuId 复制到的列表id
+     * @param groupId   分组id
+     * @param toMenuId  复制到的列表id
      * @return 结果
      */
-    @Push(type = 1,value = PushType.H5)
+    @Push(type = 1, value = PushType.H5)
     @PostMapping("/{menuId}/copy_all_task")
-    public JSONObject copyAllTask(@PathVariable String menuId, String projectId, String groupId, String toMenuId){
+    public JSONObject copyAllTask(@PathVariable String menuId, String projectId, String groupId, String toMenuId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if(relationService.copyAllTask(menuId,projectId,groupId,toMenuId)){
+            if (relationService.copyAllTask(menuId, projectId, groupId, toMenuId)) {
                 String relationProjectId = this.getRelationProjectId(toMenuId);
                 jsonObject.put("result", 1);
                 jsonObject.put("msgId", relationProjectId);
                 jsonObject.put("data", relationProjectId);
-            } else{
+            } else {
                 jsonObject.put("result", 0);
             }
             return jsonObject;
-        } catch (ServiceException e){
-            throw new AjaxException(e.getMessage(),e);
-        } catch (Exception e){
-            throw new AjaxException("系统异常,复制失败!",e);
+        } catch (ServiceException e) {
+            throw new AjaxException(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,复制失败!", e);
         }
     }
 
     /**
      * 列表所有任务移动到回收站
+     *
      * @param menuId 列表id
      * @return 结果
      */
     @Push(PushType.H6)
     @PutMapping("/{menuId}/move_recycle_bin")
-    public JSONObject allTaskCycToBin(@PathVariable String menuId){
+    public JSONObject allTaskCycToBin(@PathVariable String menuId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if(relationService.allTaskMoveRecycleBin(menuId)){
+            if (relationService.allTaskMoveRecycleBin(menuId)) {
                 String relationProjectId = this.getRelationProjectId(menuId);
                 jsonObject.put("result", 1);
                 jsonObject.put("data", relationProjectId);
-                jsonObject.put("msgId",relationProjectId);
+                jsonObject.put("msgId", relationProjectId);
             } else {
                 jsonObject.put("result", 0);
             }
             return jsonObject;
-        } catch (ServiceException e){
-            throw new AjaxException(e.getMessage(),e);
-        } catch (Exception e){
-            throw new AjaxException("系统异常,复制失败!",e);
+        } catch (ServiceException e) {
+            throw new AjaxException(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,复制失败!", e);
         }
     }
 
     /**
      * 设置此列表的所有执行者
-     * @param menuId 列表id
+     *
+     * @param menuId   列表id
      * @param executor 执行者id
      * @return 是否成功
      */
     @Push(PushType.H7)
     @PutMapping("/{menuId}/all_task_executor")
-    public JSONObject setAllTaskExecutor(@PathVariable String menuId,String executor){
+    public JSONObject setAllTaskExecutor(@PathVariable String menuId, String executor) {
         JSONObject jsonObject = new JSONObject();
         try {
-            if(relationService.setAllTaskExecutor(menuId,executor)){
+            if (relationService.setAllTaskExecutor(menuId, executor)) {
                 String relationProjectId = this.getRelationProjectId(menuId);
                 jsonObject.put("result", 1);
                 jsonObject.put("data", relationProjectId);
-                jsonObject.put("msgId",relationProjectId);
+                jsonObject.put("msgId", relationProjectId);
             } else {
                 jsonObject.put("result", 0);
             }
             return jsonObject;
-        } catch (ServiceException e){
-            throw new AjaxException(e.getMessage(),e);
-        } catch (Exception e){
-            throw new AjaxException("系统异常,复制失败!",e);
+        } catch (ServiceException e) {
+            throw new AjaxException(e.getMessage(), e);
+        } catch (Exception e) {
+            throw new AjaxException("系统异常,复制失败!", e);
         }
     }
 
     /**
      * 检查是否有访问分组的权限
+     *
      * @return 结果
      */
     @GetMapping("/check_access/permissions")
     public JSONObject checkUserIsExistGroup(@RequestParam
-                                                @Validated
-                                                @NotBlank(message = "分组id不能为空！") String groupId){
+                                            @Validated
+                                            @NotBlank(message = "分组id不能为空！") String groupId) {
         log.info("Check user is exist permissions.");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", relationService.checkUserIsExistGroup(groupId));
@@ -454,56 +469,59 @@ public class  RelationApi {
 
     /**
      * 获取菜单或者分组的项目id
+     *
      * @param relationId 菜单/分组id
      * @return 项目id
      */
-    private String getRelationProjectId(String relationId){
-        return relationService.getOne(new QueryWrapper<Relation>().lambda().eq(Relation::getRelationId,relationId ).select(Relation::getProjectId)).getProjectId();
+    private String getRelationProjectId(String relationId) {
+        return relationService.getOne(new QueryWrapper<Relation>().lambda().eq(Relation::getRelationId, relationId).select(Relation::getProjectId)).getProjectId();
     }
 
 
     /**
      * 修改分组名称
+     *
      * @param relationId 菜单/分组id
-     * @param newName  新分组名称
+     * @param newName    新分组名称
      * @return json
      */
-     @Push(PushType.C15)
-     @PostMapping("/updateGroupName")
-     public JSONObject  updateGroupName(@RequestParam(value = "relationId")String relationId,@RequestParam(value = "newName")String newName){
-         JSONObject jsonObject =new JSONObject();
-         try {
-             Relation relation =new Relation();
-             relation.setRelationId(relationId);
-             relation.setRelationName(newName);
-             relationService.updateRelation(relation);
-             jsonObject.put("result",1);
-             jsonObject.put("msg","修改成功");
-             return jsonObject;
-         } catch (Exception e) {
-             e.printStackTrace();
-         }
-         jsonObject.put("result",0);
-         jsonObject.put("msg","修改失败");
-         return  jsonObject;
-     }
+    @Push(PushType.C15)
+    @PostMapping("/updateGroupName")
+    public JSONObject updateGroupName(@RequestParam(value = "relationId") String relationId, @RequestParam(value = "newName") String newName) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Relation relation = new Relation();
+            relation.setRelationId(relationId);
+            relation.setRelationName(newName);
+            relationService.updateRelation(relation);
+            jsonObject.put("result", 1);
+            jsonObject.put("msg", "修改成功");
+            return jsonObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        jsonObject.put("result", 0);
+        jsonObject.put("msg", "修改失败");
+        return jsonObject;
+    }
 
     /**
      * 小程序获取菜单列表
+     *
      * @param groupId
      * @return
      */
     @GetMapping("/relationList")
-    public JSONObject relationList(@RequestParam(value = "groupId") String groupId){
+    public JSONObject relationList(@RequestParam(value = "groupId") String groupId) {
         JSONObject jsonObject = new JSONObject();
         try {
             List<Relation> list = relationService.list(new QueryWrapper<Relation>().eq("parent_id", groupId).eq("lable", 1));
             if (CollectionUtils.isNotEmpty(list)) {
-                jsonObject.put("result",1);
-                jsonObject.put("data",list);
-            }else {
-                jsonObject.put("result",0);
-                jsonObject.put("msg","菜单列表为空");
+                jsonObject.put("result", 1);
+                jsonObject.put("data", list);
+            } else {
+                jsonObject.put("result", 0);
+                jsonObject.put("msg", "菜单列表为空");
             }
             return jsonObject;
         } catch (Exception e) {

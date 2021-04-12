@@ -215,7 +215,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         ProRole orgAdminRole = proRoleService.getOrgProjectRoleByKey(Constants.OWNER_KEY, project.getOrganizationId());
 
         ProRoleUser proRoleUser = new ProRoleUser();
-        proRoleUser.setRoleId(orgAdminRole.getRoleId());
+        if (orgAdminRole!=null) {
+            proRoleUser.setRoleId(orgAdminRole.getRoleId());
+        }
         proRoleUser.setUId(ShiroAuthenticationManager.getUserId());
         proRoleUser.setProjectId(project.getProjectId());
         proRoleUser.setTCreateTime(LocalDateTime.now());
