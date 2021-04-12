@@ -1557,7 +1557,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         //判断当前完成的是不是子任务 如果是则查询出这个子任务的同级其他子任务并且判断是否全部完成 如果全部完成 标记父任务的 "subIsAllComplete" 属性为true
         if(!StringUtils.equalsIgnoreCase(task.getParentId(),"0")){
             int one = count(new QueryWrapper<Task>().eq("parent_id", task.getParentId()).eq("task_status", false));
-            if (one >=1) {
+            if (one == 0) {
                 Task pTask = new Task();
                 pTask.setTaskId(task.getParentId());
                 pTask.setUpdateTime(System.currentTimeMillis());
