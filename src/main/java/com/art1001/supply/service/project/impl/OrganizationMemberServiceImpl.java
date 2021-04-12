@@ -752,9 +752,12 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                     r.setMemberEmail(byId.getEmail());
                     r.setUserName(byId.getUserName());
                     r.setPhone(byId.getAccountName());
-                    r.setUserEntity(byId);
-                    if (StringUtils.isEmpty(r.getBirthday())) {
+                    if (StringUtils.isNotEmpty(r.getBirthday())) {
                         r.setBirthday(byId.getBirthday() + "");
+                    }
+                    r.setUserEntity(byId);
+                    if (byId.getUserName().equals("海鸥")) {
+                        System.out.println(byId);
                     }
                 }
                 if (StringUtils.isNotEmpty(r.getEntryTime())) {
