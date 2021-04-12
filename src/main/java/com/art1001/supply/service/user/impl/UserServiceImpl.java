@@ -232,8 +232,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         Oauth2Token oauth2AccessToken = getOauth2AccessToken(code);
         WeChatUser info = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserInfo userInfo = new UserInfo();
-        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_union_id", info.getUnionid()));
-        if (userEntity == null) {//微信用户不存在，保存微信返回的信息
+        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_open_id", info.getOpenId()));
+        if (userEntity != null) {//微信用户存在，直接返回
+            BeanUtils.copyProperties(userEntity, userInfo);
+            userInfo.setBindPhone(false);
+            String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
+            userInfo.setOrgId(orgByUserId);
+            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
+        } else {//微信用户不存在
             UserEntity user = new UserEntity();
             user.setUserName(info.getNickname());
             user.setWxOpenId(info.getOpenId());
@@ -249,13 +255,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             userMapper.insert(user);
             userInfo.setUserId(user.getUserId());
             userInfo.setUserName(user.getUserName());
-            userInfo.setBindPhone(true);//微信信息存储完毕表明微信已经绑定
-        } else {
-            BeanUtils.copyProperties(userEntity, userInfo);
-            userInfo.setBindPhone(false);
-            String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
-            userInfo.setOrgId(orgByUserId);
-            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
+            userInfo.setBindPhone(true);
         }
         return userInfo;
     }
@@ -313,30 +313,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
 
         UserEntity byId = this.getById(userId);
-
-        UserEntity userEntity = new UserEntity();
-        if (this.checkUserIsExistByAccountName(phone)) {
-     /*       UserEntity byName = this.findByName(phone);
-            userEntity.setUserId(byName.getUserId());
+        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("account_name",phone));
+        if (userEntity!=null) {
             userEntity.setWxUnionId(byId.getWxUnionId());
             userEntity.setWxOpenId(byId.getWxOpenId());
             userEntity.setUpdateTime(new Date());
-            this.updateById(userEntity);
-            removeById(userId);*/
-            userEntity.setUserId(userId);
-            userEntity.setWxUnionId(byId.getWxUnionId());
-            userEntity.setWxOpenId(byId.getWxOpenId());
-            userEntity.setUpdateTime(new Date());
-            userEntity.setTelephone(phone);
-            this.updateById(userEntity);
+            updateById(userEntity);
+            userMapper.deleteById(userId);
         } else {
-            userEntity.setUserId(userId);
-            userEntity.setWxUnionId(byId.getWxUnionId());
-            userEntity.setWxOpenId(byId.getWxOpenId());
-            userEntity.setUpdateTime(new Date());
-            userEntity.setTelephone(phone);
-            userEntity.setUserName(nickName);
-            this.updateById(userEntity);
+            byId.setUpdateTime(new Date());
+            byId.setTelephone(phone);
+            byId.setUserName(nickName);
+            updateById(byId);
         }
     }
 
