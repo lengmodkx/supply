@@ -75,7 +75,7 @@ public class LogApi extends BaseController {
      */
     @Push(value = PushType.F1)
     @PostMapping("/chat")
-    public JSONObject sendChat( @RequestBody LogSendParam logSendParam) {
+    public JSONObject sendChat(@RequestBody LogSendParam logSendParam) {
         JSONObject jsonObject = new JSONObject();
         try {
             //校验publicType合法性

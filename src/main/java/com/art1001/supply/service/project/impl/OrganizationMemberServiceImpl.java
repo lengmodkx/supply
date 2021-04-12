@@ -642,7 +642,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
             OrganizationMember organizationMember = saveOrganizationMemberInfo(orgId, userEntity);
             organizationMember.setMemberLabel("成员");
             this.save(organizationMember);
-            Role role = roleService.getOne(new QueryWrapper<Role>().eq("org_id", orgId).eq("role_name", "成员"));
+            Role role = roleService.getOne(new QueryWrapper<Role>().eq("organization_id", orgId).eq("role_name", "成员"));
             if (role!=null) {
                 RoleUser roleUser = new RoleUser();
                 roleUser.setOrgId(orgId);

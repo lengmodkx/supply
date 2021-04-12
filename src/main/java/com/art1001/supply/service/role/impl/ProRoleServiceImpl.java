@@ -1,7 +1,6 @@
 package com.art1001.supply.service.role.impl;
 
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.resource.ProResourcesRole;
 import com.art1001.supply.entity.role.ProRole;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.role.ProRoleMapper;
@@ -293,9 +292,10 @@ public class ProRoleServiceImpl extends ServiceImpl<ProRoleMapper, ProRole> impl
     public ProRole getOrgProjectRoleByKey(String key, String orgId) {
         ValidatedUtil.filterNullParam(key, orgId);
 
-        LambdaQueryWrapper<ProRole> eq = new QueryWrapper<ProRole>().lambda().
+        return proRoleMapper.selectOne(new QueryWrapper<ProRole>().eq("org_id",orgId).eq("role_key",key));
+        /*LambdaQueryWrapper<ProRole> eq = new QueryWrapper<ProRole>().lambda().
                 eq(ProRole::getOrgId, orgId).eq(ProRole::getRoleKey, key);
 
-        return this.getOne(eq);
+        return this.getOne(eq);*/
     }
 }
