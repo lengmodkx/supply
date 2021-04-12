@@ -33,7 +33,7 @@ public class UserEntity extends Model<UserEntity> {
 
 	private static final long serialVersionUID = -6743567631108323096L;
 
-	@TableId(value = "user_id",type = IdType.UUID)
+	@TableId(value = "user_id",type = IdType.ASSIGN_UUID)
 	public String userId;
 
 	/**

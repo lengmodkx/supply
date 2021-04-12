@@ -498,15 +498,10 @@ public class UserApi {
             @Validated @NotNull(message = "code码不能为空！") String code,
             @Validated @NotNull(message = "用户id不能为空！") String userId,
             @RequestParam(required = false) String nickName) {
-
-
         log.info("bind phone. [{},{},{},{}]", phone, code, userId, nickName);
-
         PhoneTest.testPhone(phone);
         userService.bindPhone(phone, code, userId, nickName);
-
         UserInfo userInfo = userService.findInfo(phone);
-
         return Result.success(userInfo);
     }
 
@@ -565,14 +560,14 @@ public class UserApi {
      * 原有平台账号绑定微信号
      *
      * @param code  微信code码
-     * @param useId 用户id
+     * @param userId 用户id
      */
     @PostMapping("/bind/wechat")
     public Result bindWeChat(@Validated @NotNull(message = "code码不能为空！") String code,
-                             @Validated @NotNull(message = "useId不能为空！") String useId) {
+                             @Validated @NotNull(message = "useId不能为空！") String userId) {
 
-        log.info("bind weChat [{},{}]", code, useId);
-        userService.bindWeChat(code, useId);
+        log.info("bind weChat [{},{}]", code, userId);
+        userService.bindWeChat(code, userId);
         return Result.success();
     }
 
