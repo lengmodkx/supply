@@ -126,6 +126,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public UserInfo findInfo(String accountName) {
         UserInfo info = userMapper.findInfo(accountName);
+        String random = NumberUtils.getRandom();
+        redisUtil.set("power:"+info.getUserId(),random);
+        info.setRandom(random);
+        info.setAccessToken();
         String orgByUserId = organizationMemberService.findOrgByUserId(info.getUserId());
         info.setOrgId(orgByUserId);
         if (StringUtils.isNotEmpty(orgByUserId)) {
@@ -232,17 +236,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         Oauth2Token oauth2AccessToken = getOauth2AccessToken(code);
         WeChatUser info = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserInfo userInfo = new UserInfo();
-        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_open_id", info.getOpenId()));
-        if (userEntity != null&&StringUtils.isNotEmpty(userEntity.getAccountName())) {//微信用户存在，直接返回
-            BeanUtils.copyProperties(userEntity, userInfo);
-            userInfo.setBindPhone(false);
-            String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
-            if (StringUtils.isNotEmpty(orgByUserId)) {
-                Organization byId = organizationService.getById(orgByUserId);
-                userInfo.setOrgName(byId.getOrganizationName());
-            }
-            userInfo.setOrgId(orgByUserId);
-        } else {//微信用户不存在
+        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_union_id", info.getUnionid()));
+        if (userEntity == null) {//微信用户不存在，保存微信返回的信息
             UserEntity user = new UserEntity();
             user.setUserName(info.getNickname());
             user.setWxOpenId(info.getOpenId());
@@ -251,14 +246,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             user.setUpdateTime(new Date());
             user.setCreateTime(new Date());
             user.setAddress(info.getCity());
-            user.setUserId(userEntity!=null&&StringUtils.isNotEmpty(userEntity.getUserId())?userEntity.getUserId():IdGen.uuid());
+            user.setUserId(IdGen.uuid());
             user.setSex(info.getSex());
             user.setDefaultImage(info.getHeadImgUrl());
             user.setImage(info.getHeadImgUrl());
             userMapper.insert(user);
             userInfo.setUserId(user.getUserId());
             userInfo.setUserName(user.getUserName());
-            userInfo.setBindPhone(true);
+            userInfo.setBindPhone(true);//微信信息存储完毕表明微信已经绑定
+        } else {
+            BeanUtils.copyProperties(userEntity, userInfo);
+            userInfo.setBindPhone(false);
+            String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
+            userInfo.setOrgId(orgByUserId);
+            String secret = redisUtil.get("power:" + userEntity.getUserId());
+            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), secret));
+//            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         }
         return userInfo;
     }
@@ -316,18 +319,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
 
         UserEntity byId = this.getById(userId);
-        UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("account_name",phone));
-        if (userEntity!=null) {
+
+        UserEntity userEntity = new UserEntity();
+        if (this.checkUserIsExistByAccountName(phone)) {
+            userEntity.setUserId(userId);
             userEntity.setWxUnionId(byId.getWxUnionId());
             userEntity.setWxOpenId(byId.getWxOpenId());
             userEntity.setUpdateTime(new Date());
-            updateById(userEntity);
-            userMapper.deleteById(userId);
+            userEntity.setTelephone(phone);
+            this.updateById(userEntity);
         } else {
-            byId.setUpdateTime(new Date());
-            byId.setTelephone(phone);
-            byId.setUserName(nickName);
-            updateById(byId);
+            userEntity.setUserId(userId);
+            userEntity.setWxUnionId(byId.getWxUnionId());
+            userEntity.setWxOpenId(byId.getWxOpenId());
+            userEntity.setUpdateTime(new Date());
+            userEntity.setTelephone(phone);
+            userEntity.setUserName(nickName);
+            this.updateById(userEntity);
         }
     }
 
@@ -366,21 +374,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         LambdaQueryWrapper<UserEntity> queryWrapper = new QueryWrapper<UserEntity>()
                 .lambda().eq(UserEntity::getWxOpenId, info.getOpenId());
         if (this.getOne(queryWrapper) != null) {
-            throw new ServiceException("该微信号已经被其他手机号绑定，请更换微信号重试！");
+            throw new ServiceException("该微信号已经绑定！");
         }
         UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id", userId));
-        if (userEntity!=null) {
-            userEntity.setUpdateTime(new Date());
-            userEntity.setWxOpenId(info.getOpenId());
-            userEntity.setWxUnionId(info.getUnionid());
-            updateById(userEntity);
-        }
-        /*UserEntity updateEntity = new UserEntity();
-        updateEntity.setUpdateTime(new Date());
-        updateEntity.setWxOpenId(info.getOpenId());
-        updateEntity.setWxUnionId(info.getUnionid());
-        updateEntity.setUserId(userId);
-        updateById(updateEntity);*/
+        userEntity.setUpdateTime(new Date());
+        userEntity.setWxOpenId(info.getOpenId());
+        userEntity.setWxUnionId(info.getUnionid());
+        updateById(userEntity);
     }
 
     @Override

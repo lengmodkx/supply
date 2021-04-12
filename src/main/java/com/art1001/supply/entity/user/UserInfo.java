@@ -8,11 +8,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.io.Serializable;
 @Data
-@ToString
 @EqualsAndHashCode(callSuper = false)
 @TableName("tb_user")
 public class UserInfo extends Model<UserInfo> {
@@ -68,10 +66,16 @@ public class UserInfo extends Model<UserInfo> {
     @TableField(exist = false)
     private Boolean bindPhone;
 
+    @TableField(exist = false)
+    private String random;
+
+    public String setAccessToken(){
+        return accessToken = JwtUtil.sign(userId, random);
+    }
 
     public String getAccessToken() {
-
-        return accessToken = JwtUtil.sign(userId,"1qaz2wsx#EDC");
+        return accessToken = JwtUtil.sign(userId, random);
+//        return accessToken = JwtUtil.sign(userId,"1qaz2wsx#EDC");
     }
 
     @Override

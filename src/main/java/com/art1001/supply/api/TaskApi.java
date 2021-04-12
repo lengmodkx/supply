@@ -694,7 +694,6 @@ public class TaskApi extends BaseController {
      *
      * @param taskId    父任务id
      * @param taskName  子任务名称
-     * @param projectId 项目id
      * @param executor  子任务的执行者
      * @param startTime 子任务的结束时间
      * @return JSONObject
@@ -703,7 +702,6 @@ public class TaskApi extends BaseController {
     @PostMapping("/{taskId}/addchild")
     public JSONObject addChildTask(@PathVariable(value = "taskId") String taskId,
                                    @RequestParam(value = "taskName") String taskName,
-                                   @RequestParam(value = "projectId") String projectId,
                                    @RequestParam(value = "executor", required = false) String executor,
                                    @RequestParam(value = "startTime", required = false) String startTime) {
         JSONObject object = new JSONObject();
@@ -716,19 +714,22 @@ public class TaskApi extends BaseController {
             Task task = new Task();
             task.setParentId(taskId);
             task.setTaskName(taskName);
-            task.setProjectId(projectId);
+            task.setProjectId(this.getTaskProjectId(taskId));
 
             //子任务存分组
-            Task parentTask = taskService.getById(taskId);
-            if (StringUtils.isNotEmpty(parentTask.getTaskGroupId())) {
-                task.setTaskGroupId(parentTask.getTaskGroupId());
+            Task taskGroupId = taskService.findTaskByTaskId(taskId);
+            //getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", taskId));
+            if (StringUtils.isNotEmpty(taskGroupId.getTaskGroupId())) {
+                task.setTaskGroupId(taskGroupId.getTaskGroupId());
             }
+
             if (StringUtils.isNotEmpty(executor)) {
                 task.setExecutor(executor);
             }
             if (StringUtils.isNotEmpty(startTime)) {
                 task.setStartTime(DateUtils.strToLong(startTime));
             }
+            Task parentTask = taskService.getById(taskId);
             Integer pLevel = parentTask.getLevel();
             task.setLevel(pLevel + 1);
             taskService.saveTask(task);
@@ -739,8 +740,8 @@ public class TaskApi extends BaseController {
             taskService.updateById(pTask);
             object.put("result", 1);
             object.put("msg", "创建成功!");
-            object.put("data", new JSONObject().fluentPut("taskId", taskId).fluentPut("projectId", projectId));
-            object.put("msgId", projectId);
+            object.put("data", new JSONObject().fluentPut("taskId", taskId).fluentPut("projectId", taskService.findChildTaskProject(taskId)));
+            object.put("msgId", taskService.findChildTaskProject(taskId));
             object.put("id", taskId);
         } catch (Exception e) {
             log.error("系统异常,子任务添加失败:", e);
