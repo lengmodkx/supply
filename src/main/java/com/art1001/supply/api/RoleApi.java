@@ -1,7 +1,7 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.organization.OrganizationMember;
 import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
@@ -12,11 +12,9 @@ import com.art1001.supply.service.role.RoleService;
 import com.art1001.supply.service.role.RoleUserService;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -262,6 +260,19 @@ public class RoleApi {
         int result = roleService.updateOrgDefaultRole(orgId, roleId);
         jsonObject.put("result", result);
         return jsonObject;
+    }
+
+    /**
+     * 修改企业角色名
+     * @param roleId
+     * @param roleName
+     * @return
+     */
+    @GetMapping("/updateRoleName")
+    public Result updateRoleName(@RequestParam(value = "roleId")Integer roleId,
+                                 @RequestParam(value = "roleName")String roleName ){
+        roleService.update(new UpdateWrapper<Role>().set("role_name",roleName).eq("role_id",roleId));
+        return Result.success();
     }
 
 }

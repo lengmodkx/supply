@@ -10,6 +10,7 @@ import com.art1001.supply.service.role.ProRoleService;
 import com.art1001.supply.util.NumberUtils;
 import com.art1001.supply.util.ValidatorUtils;
 import com.art1001.supply.validation.role.AddProRoleValidation;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -163,6 +164,19 @@ public class ProRoleApi extends BaseController {
         log.info("Get role for member.[{}]", userId);
 
         return Result.success(proRoleService.roleForMember(userId, orgId,projectId));
+    }
+
+    /**
+     * 修改项目角色名
+     * @param roleId
+     * @param roleName
+     * @return
+     */
+    @GetMapping("/updateRoleName")
+    public Result updateRoleName(@RequestParam(value = "roleId")Integer roleId,
+                                 @RequestParam(value = "roleName")String roleName ){
+        proRoleService.update(new UpdateWrapper<ProRole>().set("role_name",roleName).eq("role_id",roleId));
+        return Result.success();
     }
 }
 
