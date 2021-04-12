@@ -498,15 +498,10 @@ public class UserApi {
             @Validated @NotNull(message = "code码不能为空！") String code,
             @Validated @NotNull(message = "用户id不能为空！") String userId,
             @RequestParam(required = false) String nickName) {
-
-
         log.info("bind phone. [{},{},{},{}]", phone, code, userId, nickName);
-
         PhoneTest.testPhone(phone);
         userService.bindPhone(phone, code, userId, nickName);
-
         UserInfo userInfo = userService.findInfo(phone);
-
         return Result.success(userInfo);
     }
 

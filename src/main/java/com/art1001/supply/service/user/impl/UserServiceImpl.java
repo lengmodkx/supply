@@ -233,12 +233,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         WeChatUser info = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserInfo userInfo = new UserInfo();
         UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_open_id", info.getOpenId()));
-        if (userEntity != null) {//微信用户存在，直接返回
+        if (userEntity != null&&StringUtils.isNotEmpty(userEntity.getAccountName())) {//微信用户存在，直接返回
             BeanUtils.copyProperties(userEntity, userInfo);
             userInfo.setBindPhone(false);
             String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
+            if (StringUtils.isNotEmpty(orgByUserId)) {
+                Organization byId = organizationService.getById(orgByUserId);
+                userInfo.setOrgName(byId.getOrganizationName());
+            }
             userInfo.setOrgId(orgByUserId);
-            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         } else {//微信用户不存在
             UserEntity user = new UserEntity();
             user.setUserName(info.getNickname());
@@ -248,7 +251,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             user.setUpdateTime(new Date());
             user.setCreateTime(new Date());
             user.setAddress(info.getCity());
-            user.setUserId(IdGen.uuid());
+            user.setUserId(userEntity!=null&&StringUtils.isNotEmpty(userEntity.getUserId())?userEntity.getUserId():IdGen.uuid());
             user.setSex(info.getSex());
             user.setDefaultImage(info.getHeadImgUrl());
             user.setImage(info.getHeadImgUrl());

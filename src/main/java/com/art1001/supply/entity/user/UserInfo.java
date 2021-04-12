@@ -70,6 +70,7 @@ public class UserInfo extends Model<UserInfo> {
 
 
     public String getAccessToken() {
+
         return accessToken = JwtUtil.sign(userId,"1qaz2wsx#EDC");
     }
 
