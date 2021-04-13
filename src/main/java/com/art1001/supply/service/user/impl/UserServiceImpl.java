@@ -126,10 +126,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public UserInfo findInfo(String accountName) {
         UserInfo info = userMapper.findInfo(accountName);
-        String random = NumberUtils.getRandom();
-        redisUtil.set("power:"+info.getUserId(),random);
-        info.setRandom(random);
-        info.setAccessToken();
         String orgByUserId = organizationMemberService.findOrgByUserId(info.getUserId());
         info.setOrgId(orgByUserId);
         if (StringUtils.isNotEmpty(orgByUserId)) {
