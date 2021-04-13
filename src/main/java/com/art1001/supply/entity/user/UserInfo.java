@@ -66,16 +66,8 @@ public class UserInfo extends Model<UserInfo> {
     @TableField(exist = false)
     private Boolean bindPhone;
 
-    @TableField(exist = false)
-    private String random;
-
-    public String setAccessToken(){
-        return accessToken = JwtUtil.sign(userId, random);
-    }
-
     public String getAccessToken() {
-        return accessToken = JwtUtil.sign(userId, random);
-//        return accessToken = JwtUtil.sign(userId,"1qaz2wsx#EDC");
+        return accessToken = JwtUtil.sign(userId,"1qaz2wsx#EDC");
     }
 
     @Override

@@ -58,12 +58,10 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("openId", openIdAndSessionKey.getOpenid());
         if(ObjectsUtil.isNotEmpty(userEntity)){
-            String secret = redisUtil.get("power:" + userEntity.getUserId());
             resultMap.put("updateInfo", false);
             resultMap.put("getPhone", false);
             resultMap.put("userId", userEntity.getUserId());
-            resultMap.put("accessToken", JwtUtil.sign(userEntity.getUserId(), secret));
-//            resultMap.put("accessToken", JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
+            resultMap.put("accessToken", JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         } else {
             redisUtil.set(Constants.WE_CHAT_SESSION_KEY_PRE + openIdAndSessionKey.getOpenid(), openIdAndSessionKey.getSession_key());
             resultMap.put("updateInfo", true);
@@ -87,14 +85,10 @@ public class WeChatAppLoginImpl implements WeChatAppLogin {
         userEntity.setAccountName(phoneInfo.getPhoneNumber());
         userEntity.setUpdateTime(new Date());
         userService.updateById(userEntity);
-
         userEntity = userService.getById(userId);
-
         Map<String,Object> resultMap = new HashMap<>(2);
-        String secret = redisUtil.get("power:" + userEntity.getUserId());
         resultMap.put("userInfo",userEntity);
-        resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), secret));
-//        resultMap.put("accessToken", JwtUtil.sign(userEntity.getAccountName(), "1qaz2wsx#EDC"));
+        resultMap.put("accessToken", JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         return resultMap;
 
     }

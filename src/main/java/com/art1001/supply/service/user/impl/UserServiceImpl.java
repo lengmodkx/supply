@@ -259,9 +259,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             userInfo.setBindPhone(false);
             String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
             userInfo.setOrgId(orgByUserId);
-            String secret = redisUtil.get("power:" + userEntity.getUserId());
-            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), secret));
-//            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
+            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         }
         return userInfo;
     }

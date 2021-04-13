@@ -93,10 +93,7 @@ public class JwtFilter extends AuthenticatingFilter {
             boolean shouldRefresh = shouldTokenRefresh(JwtUtil.getIssuedAt(jwtToken.getToken()));
 
             if(shouldRefresh) {
-                String random = NumberUtils.getRandom();
-                newToken = JwtUtil.sign(user.getUserId(),random);
-                redisUtil.set("power:"+user.getUserId(),random);
-//                newToken = JwtUtil.sign(user.getUserId(),"1qaz2wsx#EDC");
+                newToken = JwtUtil.sign(user.getUserId(),"1qaz2wsx#EDC");
             }
         }
         if(StringUtils.isNotBlank(newToken))

@@ -39,11 +39,6 @@ public class ShiroConfig {
 //    public RedisManager redisManager(){
 //        return new RedisManager();
 //    }
-
-    @Resource
-    private RedisUtil redisUtil;
-
-
     @Bean("credentialsMatcher")
     public HashedCredentialsMatcher credentialsMatcher(){
         //hashAlgorithmName必须的，没有默认值。可以有MD5或者SHA-1，如果对密码安全有更高要求可以用SHA-256或者更高。
@@ -88,7 +83,7 @@ public class ShiroConfig {
     }
     @Bean("jwtRealm")
     public Realm jwtShiroRealm() {
-        return new JWTShiroRealm(redisUtil);
+        return new JWTShiroRealm();
     }
 
     @Bean("dbRealm")
