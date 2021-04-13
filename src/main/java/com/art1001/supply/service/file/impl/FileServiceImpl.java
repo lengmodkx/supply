@@ -134,15 +134,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public List<File> queryFileList(String fileId, Integer current, Integer size) {
         String userId = ShiroAuthenticationManager.getUserId();
-        //Page<File> filePage = new Page<>(current,size);
-        //File isRoot = getOne(new QueryWrapper<File>().eq("file_id", fileId));
         List<File> childFile = fileMapper.findChildFile(fileId);
-//        if(isRoot.getLevel()==0){
-//            String userId = ShiroAuthenticationManager.getUserId();
-//            File file = fileService.getOne(new QueryWrapper<File>().eq("user_id", userId));
-//            file.setMemberName(userService.findById(ShiroAuthenticationManager.getUserId()).getUserName());
-//            childFile.add(file);
-//        }
         Iterator<File> iterator = childFile.iterator();
         while (iterator.hasNext()) {
             File file = iterator.next();
@@ -492,8 +484,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     private void moveSingleFile(String parentId, String projectId, String fileId) {
         File file = getOne(new QueryWrapper<File>().eq("file_id", fileId).eq("file_del", 0));
         fileMapper.moveFile(parentId, projectId, fileId);
+        UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
+        // 文件移动后存储日志
         if (file.getCatalog() == 0) {
-            dealWithFile(file.getFileId(), parentId, 1);
+            logService.saveLog(fileId, userEntity.getUserName() + " 将文件移动到了 " + file.getFileName(), 2);
+//            dealWithFile(file.getFileId(), parentId, 1);
         }
         //文件和文件夹的处理
         if (file.getCatalog() == 1) {
@@ -504,15 +499,27 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     private void recursiveFile(String projectId, String fileId) {
         List<File> fileList = fileMapper.selectList(new QueryWrapper<File>().eq("parent_id", fileId).eq("file_del", 0));
+        String userId = ShiroAuthenticationManager.getUserId();
+        UserEntity userEntity = userService.findById(userId);
         if (fileList != null && fileList.size() > 0) {
             fileList.forEach(file -> {
+                if (file.getCatalog() == 1) {
+                    recursiveFile(projectId, file.getFileId());
+                }
                 File f = new File();
                 f.setFileId(file.getFileId());
                 f.setProjectId(projectId);
                 updateById(f);
-                if (file.getCatalog() == 1) {
-                    recursiveFile(projectId, file.getFileId());
-                }
+                File file1 = fileMapper.selectOne(new QueryWrapper<File>().eq("file_id", file.getParentId()).eq("file_del", 0));
+                Log log = new Log();
+                log.setId(IdGen.uuid());
+                log.setLogFlag(2);
+                log.setPublicId(file.getFileId());
+                log.setLogType(0);
+                log.setMemberId(userId);
+                log.setCreateTime(System.currentTimeMillis());
+                log.setContent(userEntity.getUserName()+" 将文件移动到了"+file1.getFileName());
+                logService.save(log);
             });
         }
     }
@@ -1284,15 +1291,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     }
 
     @Override
-    public Page<File> searchFile(String fileName,String projectId, Integer pageNum) {
-        Page<File> page=new Page<>();
+    public Page<File> searchFile(String fileName, String projectId, Integer pageNum) {
+        Page<File> page = new Page<>();
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         boolQueryBuilder.must(QueryBuilders.termQuery("fileDel", "0"));
         boolQueryBuilder.must(QueryBuilders.termQuery("projectId", projectId));
-        boolQueryBuilder.must(QueryBuilders.matchQuery("fileName",  fileName ));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("fileName", fileName));
         sourceBuilder.query(boolQueryBuilder);
-        page=esUtil.searchListByPage(File.class,sourceBuilder,FILES,pageNum);
+        page = esUtil.searchListByPage(File.class, sourceBuilder, FILES, pageNum);
 
        /* if (CollectionUtils.isEmpty(page.getRecords())) {
             List<File> files = fileMapper.selectList(new QueryWrapper<File>().like("file_name", fileName).eq("file_del", 0).eq("project_id",projectId));
@@ -1664,13 +1671,13 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     public Page<File> materialBaseSearch(String fileName, Integer pageNum) {
-        Page<File>page=new Page<>();
+        Page<File> page = new Page<>();
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         boolQueryBuilder.must(QueryBuilders.termQuery("fileDel", "0"));
-        boolQueryBuilder.must(QueryBuilders.matchQuery("fileName",  fileName ));
+        boolQueryBuilder.must(QueryBuilders.matchQuery("fileName", fileName));
         sourceBuilder.query(boolQueryBuilder);
-        page=esUtil.searchListByPage(File.class,sourceBuilder,FILES,pageNum);
+        page = esUtil.searchListByPage(File.class, sourceBuilder, FILES, pageNum);
         return page;
     }
 
