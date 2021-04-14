@@ -86,6 +86,7 @@ public interface UserNewsMapper extends BaseMapper<UserNews> {
 	@Select("select count(0) from prm_user_news where news_handle = 0 and news_to_user = #{userId}")
     int findUserNewsCount(String userId);
 
+
 	/**
 	 * 根据用户的id 查询出该用户的所有消息
 	 * @param userId 用户id

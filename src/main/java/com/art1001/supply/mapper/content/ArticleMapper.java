@@ -30,4 +30,11 @@ public interface ArticleMapper extends BaseMapper<Article> {
      * @return
      */
     Page<Article> selectArticlePage(IPage<Article> page, @Param("ew")QueryWrapper queryWrapper);
+
+    /**
+     * 查询评论数量
+     * @param articleId
+     * @return
+     */
+    Integer selectCommentCount(@Param("articleId")String articleId);
 }

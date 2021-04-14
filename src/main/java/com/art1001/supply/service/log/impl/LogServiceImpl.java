@@ -9,21 +9,17 @@ import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.mapper.log.LogMapper;
 import com.art1001.supply.service.log.LogExportRecordService;
 import com.art1001.supply.service.log.LogService;
-import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.IdGen;
-import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.time.Instant;
@@ -76,6 +72,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
         log.setId(IdGen.uuid());
         //0:日志 1:聊天评论
         log.setLogType(0);
+        log.setLogFlag(logFlag);
         log.setContent(userEntity.getUserName() + " " + content);
         //哪个用户操作产生的日志
         log.setMemberId(userId);

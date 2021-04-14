@@ -34,4 +34,7 @@
         on pa.member_id = tu.user_id
         ${ew.customSqlSegment}
     </select>
+    <select id="selectCommentCount" resultType="java.lang.Integer">
+        select comment_count from prm_article where article_id=#{articleId}
+    </select>
 </mapper>

@@ -327,10 +327,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         source.query(bool);
         page = esUtil.searchListByPage(Article.class, source, ARTICLE, pageNum);
 
+
         if (CollectionUtils.isEmpty(page.getRecords())) {
             page.setRecords(articleMapper.selectByExample(page, acId, state));
+        }else {
+            page.getRecords().stream().forEach(r->r.setCommentCount(articleMapper.selectCommentCount(r.getArticleId())));
         }
-//        setComment(page.getRecords());
 
         Optional.ofNullable(page.getRecords()).ifPresent(list->list.forEach(r->{
             UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>().eq("user_id",r.getMemberId()));
