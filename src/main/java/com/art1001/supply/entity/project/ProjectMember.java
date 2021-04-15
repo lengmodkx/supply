@@ -158,10 +158,7 @@ public class ProjectMember extends Model<ProjectMember> {
 	@TableField(exist = false)
 	private Integer isManager;
 
-	/**
-	 * 职位角色
-	 */
-	private String position;
+
 
 	@Override
 	protected Serializable pkVal() {
