@@ -37,10 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -705,7 +703,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
      * @param orgId
      * @param userEntity
      */
-    private OrganizationMember saveOrganizationMemberInfo(String orgId, UserEntity userEntity) {
+    private OrganizationMember  saveOrganizationMemberInfo(String orgId, UserEntity userEntity) {
         OrganizationMember organizationMember = new OrganizationMember();
         organizationMember.setMemberEmail(userEntity.getEmail());
         organizationMember.setCreateTime(System.currentTimeMillis());
@@ -719,10 +717,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
         organizationMember.setAddress(userEntity.getAddress());
         organizationMember.setPartmentId("0");
         if (userEntity.getBirthday() != null) {
-            Instant instant = userEntity.getBirthday().toInstant();
-            ZoneId zoneId = ZoneId.systemDefault();
-            instant.atZone(zoneId).toLocalDate();
-            organizationMember.setBirthday(instant.atZone(zoneId).toLocalDate() + "");
+            organizationMember.setBirthday(userEntity.getBirthday());
         }
         organizationMember.setMemberLock(1);
         organizationMember.setOther(1);
@@ -746,19 +741,14 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                     r.setMemberLabel(roleMapper.getRoleName( r.getOrganizationId(),r.getMemberId()));
                 }
                 UserEntity byId = userService.getOne(new QueryWrapper<UserEntity>().eq("user_id",r.getMemberId()));
-                if (byId != null) {
-                    r.setJob(byId.getJob());
-                    r.setImage(byId.getImage());
-                    r.setMemberEmail(byId.getEmail());
+                r.setJob(byId.getJob());
+                r.setPhone(byId.getAccountName());
+                r.setImage(byId.getImage());
+                r.setMemberEmail(byId.getEmail());
+                r.setPhone(byId.getAccountName());
+                r.setBirthday(byId.getBirthday());
+                if (StringUtils.isEmpty(r.getUserName())) {
                     r.setUserName(byId.getUserName());
-                    r.setPhone(byId.getAccountName());
-                    if (StringUtils.isNotEmpty(r.getBirthday())) {
-                        r.setBirthday(byId.getBirthday() + "");
-                    }
-                    r.setUserEntity(byId);
-                    if (byId.getUserName().equals("海鸥")) {
-                        System.out.println(byId);
-                    }
                 }
                 if (StringUtils.isNotEmpty(r.getEntryTime())) {
                     LocalDate todayDate = LocalDate.now();
@@ -772,6 +762,7 @@ public class OrganizationMemberServiceImpl extends ServiceImpl<OrganizationMembe
                         r.setStayComDate("不满一年");
                     }
                 }
+
                 Partment partment = partmentService.getOne(new QueryWrapper<Partment>().eq("partment_id", r.getPartmentId()));
                 if (partment != null) {
                     r.setDeptName(partment.getPartmentName());

@@ -25,7 +25,12 @@ public interface PartmentMemberMapper extends BaseMapper<PartmentMember> {
      */
     PartmentMember selectPartmentMemberInfo(@Param("partmentId")String partmentId, @Param("memberId") String memberId);
 
-    PartmentMember getSimplePartmentMemberInfo(@Param("partmentId")String partmentId,@Param("memberId") String memberId);
+    /**
+     * 查询项目成员部门的上级
+     * @param partmentId
+     * @return
+     */
+    String getSimplePartmentMemberInfo(@Param("partmentId")String partmentId);
 
     /**
      * 根据企业id获取部门成员信息

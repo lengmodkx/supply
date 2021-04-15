@@ -10,10 +10,7 @@ import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.TimeMap;
 import com.art1001.supply.entity.file.File;
-import com.art1001.supply.entity.project.Project;
-import com.art1001.supply.entity.project.ProjectFunc;
-import com.art1001.supply.entity.project.ProjectMember;
-import com.art1001.supply.entity.project.ProjectSimpleInfo;
+import com.art1001.supply.entity.project.*;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.MemberViewResult;
 import com.art1001.supply.entity.task.Task;
@@ -24,6 +21,7 @@ import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.organization.OrganizationService;
 import com.art1001.supply.service.partment.PartmentService;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectRoleService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.project.ProjectSimpleInfoService;
 import com.art1001.supply.service.relation.RelationService;
@@ -35,6 +33,7 @@ import com.art1001.supply.util.DateUtils;
 import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -96,6 +95,9 @@ public class ProjectApi extends BaseController {
 
     @Resource
     private ProjectSimpleInfoService projectSimpleInfoService;
+
+    @Resource
+    private ProjectRoleService projectRoleService;
 
 
     /**
@@ -548,14 +550,16 @@ public class ProjectApi extends BaseController {
     public JSONObject getMembersByProject(@PathVariable String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data", projectMemberService.findByProjectId(projectId));
+            List<ProjectMember> byProjectId = projectMemberService.findByProjectId(projectId);
+            ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>().eq("project_Id", projectId).eq("member_id", ShiroAuthenticationManager.getUserId()));
+            jsonObject.put("roleKey", projectMember.getRoleKey());
+            jsonObject.put("data", byProjectId);
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException("系统异常,获取成员信息失败!", e);
         }
     }
-
     /**
      * @Author: 邓凯欣
      * @Email：dengkaixin@art1001.com
@@ -1054,4 +1058,68 @@ public class ProjectApi extends BaseController {
         return object;
     }
 
+
+    /**
+     * 添加项目角色名
+     * @param projectRoleName
+     * @return
+     */
+    @GetMapping("/addProjectRoleName")
+    public Result addProjectRoleName(@RequestParam(value = "projectRoleName") String projectRoleName,
+                                     @RequestParam(value = "projectRoleName")String projectId){
+        try {
+            projectRoleService.add(projectRoleName,projectId);
+            return Result.success("已添加");
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+
+    }
+
+    /**
+     * 编辑项目角色名
+     * @param id
+     * @return
+     */
+    @GetMapping("/editProjectRoleName")
+    public Result editProjectRoleName(@RequestParam(value = "id") String id,
+                                      @RequestParam(value = "projectRoleName") String projectRoleName){
+        try {
+            projectRoleService.update(new UpdateWrapper<ProjectRole>().set("project_role_name",projectRoleName).eq("id",id));
+            return Result.success("已修改");
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+
+    }
+
+    /**
+     * 移除项目角色名
+     * @param id
+     * @return
+     */
+    @GetMapping("/deleteProjectRoleName")
+    public Result deleteProjectRoleName(@RequestParam(value = "id") String id){
+        try {
+            projectRoleService.remove(new QueryWrapper<ProjectRole>().eq("id",id));
+            return Result.success("已移除");
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
+
+    /**
+     * 获取项目角色名列表
+     * @param
+     * @return
+     */
+    @GetMapping("/listProjectRoleName")
+    public Result listProjectRoleName(@RequestParam(value = "projectId")String projectId){
+        try {
+            List<ProjectRole> projectList = projectRoleService.list(new QueryWrapper<ProjectRole>().eq("projectId", projectId));
+            return Result.success(projectList);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+    }
 }

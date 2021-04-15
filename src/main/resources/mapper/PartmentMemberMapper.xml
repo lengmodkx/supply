@@ -23,11 +23,11 @@
     <update id="updatePartMentMaster">
         update prm_partment_member
         <set>
-           is_master=1
+            is_master=1
         </set>
         where partment_id=#{partmentId}
         <if test="memberId != null">
-           and member_id=#{memberId}
+            and member_id=#{memberId}
         </if>
     </update>
 
@@ -45,20 +45,17 @@
             LEFT JOIN tb_user AS u ON pm.member_id = u.user_id
             WHERE pm.partment_id = #{partmentId} AND pm.member_id = #{memberId}
     </select>
-    <select id="getSimplePartmentMemberInfo" resultType="com.art1001.supply.entity.partment.PartmentMember">
+    <select id="getSimplePartmentMemberInfo" resultType="string">
          SELECT
-         	pm.is_master,
-         	p.partment_id,
-         	p.partment_name as partmentName,
-         	u.user_name	as parentName
+         	u.user_name
          FROM
-         	prm_partment p
-         	JOIN prm_partment_member pm
-         	JOIN tb_user u ON p.partment_id = pm.partment_id
+         	prm_partment_member pm
+         	JOIN prm_partment p
+         	JOIN tb_user u ON pm.partment_id = p.partment_id
          	AND pm.member_id = u.user_id
+         	AND pm.member_label = 2
          WHERE
          	p.partment_id = #{partmentId}
-         	AND pm.member_id = #{memberId}
     </select>
 
     <select id="getPartmentByOrgId" resultType="com.art1001.supply.entity.partment.PartmentMember">
@@ -99,13 +96,13 @@ WHERE
 
     <select id="countPartMentMember" resultType="java.lang.Integer">
         SELECT
-        	COUNT( p.partment_id )
+        COUNT( p.partment_id )
         FROM
-        	prm_partment_member pm
-        	JOIN prm_partment p ON p.partment_id = pm.partment_id
+        prm_partment_member pm
+        JOIN prm_partment p ON p.partment_id = pm.partment_id
         WHERE
-        	p.organization_id = #{orgId} and
-            pm.member_id in
+        p.organization_id = #{orgId} and
+        pm.member_id in
         <foreach collection="ids" item="memberId" separator="," close=")" open="(">
             #{memberId}
         </foreach>

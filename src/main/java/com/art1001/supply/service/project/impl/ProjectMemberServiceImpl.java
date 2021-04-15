@@ -4,7 +4,7 @@ import com.art1001.supply.common.AuthToRedis;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.organization.OrganizationMember;
-import com.art1001.supply.entity.partment.PartmentMember;
+import com.art1001.supply.entity.partment.Partment;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.role.ProRole;
@@ -16,6 +16,7 @@ import com.art1001.supply.entity.share.Share;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
+import com.art1001.supply.mapper.partment.PartmentMapper;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.mapper.user.UserMapper;
@@ -45,6 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -88,6 +90,9 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     @Resource
     private RoleUserService roleUserService;
 
+    @Resource
+    private PartmentMapper partmentMapper;
+
     /**
      * 分享逻辑层Bean
      */
@@ -130,7 +135,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     @Resource
     private AuthToRedis authToRedis;
 
-    private static final String EXTERNALMEMBER="外部成员";
+    private static final String EXTERNALMEMBER = "外部成员";
 
     @Override
     public List<Project> findProjectByMemberId(String memberId, Integer projectDel) {
@@ -139,18 +144,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
     @Override
     public List<ProjectMember> findByProjectId(String projectId) {
-        List<ProjectMember> byProjectId = projectMemberMapper.findByProjectId(projectId);
-        Optional.ofNullable(byProjectId).ifPresent(projectMembers->{
-            projectMembers.forEach(r->{
-                ProRoleUser proRoleUser = proRoleUserService.findProRoleUser(r.getProjectId(), r.getMemberId());
-                if (Constants.MEMBER_CN.equals(proRoleUser.getRoleName())) {
-                    r.setIsManager(1);
-                }else{
-                    r.setIsManager(0);
-                }
-            });
-        });
-        return byProjectId;
+        return projectMemberMapper.findByProjectId(projectId);
     }
 
 
@@ -165,48 +159,50 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
      */
     @Override
     public OrganizationMember findMemberByProjectIdAndMemberId(String orgId, String memberId) {
-
-        try {
-            OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", memberId));
-            if (memberInfo!=null) {
-                if (memberInfo.getEntryTime() != null) {
-                    memberInfo.setEntryTime(memberInfo.getEntryTime());
-                }
-                if (!"".equals(memberInfo.getBirthday()) && memberInfo.getBirthday() != null) {
-                    memberInfo.setBirthday(memberInfo.getBirthday());
-                }
-                PartmentMember partmentMember = partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId(), memberId);
-                if (partmentMember != null) {
-                    memberInfo.setDeptName(partmentMember.getPartmentName());
-                    if (partmentMember.getIsMaster()) {
-                        memberInfo.setParentName(partmentMember.getPartmentName());
-                    } else {
-                        memberInfo.setParentName(null);
-                    }
-                }
-            }
-            return memberInfo;
-        } catch (Exception e) {
-            e.printStackTrace();
+        OrganizationMember memberInfo = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("organization_id", orgId).eq("member_id", memberId));
+        UserEntity userEntity = userService.findById(memberId);
+        memberInfo.setImage(userEntity.getImage());
+        memberInfo.setPhone(userEntity.getAccountName());
+        if (memberInfo.getBirthday() != null) {
+            memberInfo.setBirthday(userEntity.getBirthday());
         }
-        return new OrganizationMember();
+        if (StringUtils.isEmpty(memberInfo.getUserName())) {
+            memberInfo.setUserName(userEntity.getUserName());
+        }
+        if (StringUtils.isEmpty(memberInfo.getJob())) {
+            memberInfo.setJob(userEntity.getJob());
+        }
+        if (StringUtils.isEmpty(memberInfo.getAddress())) {
+            memberInfo.setAddress(userEntity.getAddress());
+        }
+        if (StringUtils.isEmpty(memberInfo.getMemberEmail())) {
+            memberInfo.setMemberEmail(userEntity.getEmail());
+        }
+        String partmentMember = partmentMemberService.getSimplePartmentMemberInfo(memberInfo.getPartmentId());
+        Partment partment = partmentMapper.selectById(memberInfo.getPartmentId());
+        if (partment!=null) {
+            memberInfo.setDeptName(partment.getPartmentName());
+        }
+        memberInfo.setParentName(partmentMember);
+        return memberInfo;
     }
 
     /**
-    * @Author: 邓凯欣
-    * @Email：dengkaixin@art1001.com
-    * @Param: memberName成员名称 memberPhone 成员电话
-    * @return: 根据成员名称或成员电话模糊查询项目成员
-    * @Description:
-    * @create: 16:15 2020/5/15
-    */
+     * @Author: 邓凯欣
+     * @Email：dengkaixin@art1001.com
+     * @Param: memberName成员名称 memberPhone 成员电话
+     * @return: 根据成员名称或成员电话模糊查询项目成员
+     * @Description:
+     * @create: 16:15 2020/5/15
+     */
     @Override
-    public List<ProjectMember> searchMemberByName(String condition,String projectId) {
-        return projectMemberMapper.searchMemberByName(condition,projectId);
+    public List<ProjectMember> searchMemberByName(String condition, String projectId) {
+        return projectMemberMapper.searchMemberByName(condition, projectId);
     }
 
     /**
      * 删除成员
+     *
      * @param memberId
      * @param projectId
      * @return
@@ -217,19 +213,19 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         if (!Constants.OWNER_CN.equals(proRole.getRoleName())) {
             return removeMemberAndRole(memberId, projectId);
         }
-        Integer result=proRoleUserService.getManagersByProject(projectId);
-        if (result>1) {
+        Integer result = proRoleUserService.getManagersByProject(projectId);
+        if (result > 1) {
             return removeMemberAndRole(memberId, projectId);
-        }else{
+        } else {
             return 0;
         }
 
     }
 
 
-
     /**
      * 移除项目成员
+     *
      * @param memberId
      * @param projectId
      * @return
@@ -378,11 +374,11 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
         //如果是企业外部成员，权限变为外部成员权限
         OrganizationMember organizationMember = organizationMemberMapper.selectOne(new QueryWrapper<OrganizationMember>().eq("member_id", memberId).eq("organization_id", orgId));
-        if (organizationMember.getOther()==0) {
+        if (organizationMember.getOther() == 0) {
             List<Role> roles = roleService.list(new QueryWrapper<Role>().eq("organization_id", orgId));
-            Optional.ofNullable(roles).ifPresent(r->r.stream().forEach(e->{
+            Optional.ofNullable(roles).ifPresent(r -> r.stream().forEach(e -> {
                 if (e.getRoleName().equals(EXTERNALMEMBER)) {
-                    RoleUser roleUser=new RoleUser();
+                    RoleUser roleUser = new RoleUser();
                     roleUser.setUId(memberId);
                     roleUser.setTCreateTime(LocalDateTime.now());
                     roleUser.setRoleId(e.getRoleId());
@@ -391,7 +387,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                 }
             }));
         }
-        authToRedis.setPermsAuth(projectId,memberId);
+        authToRedis.setPermsAuth(projectId, memberId);
         return 1;
     }
 
@@ -618,8 +614,8 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
                 .lambda().in(Project::getProjectId, projectIdList).eq(Project::getOrganizationId, orgId);
 
         List<Project> list = projectService.list(getProjectListQW);
-        Optional.ofNullable(list).ifPresent(projects->{
-            projects.stream().forEach(r->{
+        Optional.ofNullable(list).ifPresent(projects -> {
+            projects.stream().forEach(r -> {
                 r.setProjectSchedule(organizationService.automaticUpdateProjectSchedule(r));
             });
         });

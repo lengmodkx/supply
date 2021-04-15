@@ -139,4 +139,11 @@ public interface ArticleService extends IService<Article> {
      * @param checkFailReason     审核失败原因
      */
     Article checkArticle(String articleId,Integer state,String checkFailReason);
+
+    /**
+     * 判断是否关注过目标
+     * @param memberId
+     * @return
+     */
+    Boolean judgeIsAttention(String memberId);
 }

@@ -17,11 +17,9 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -105,8 +103,8 @@ public class PartmentMemberServiceImpl extends ServiceImpl<PartmentMemberMapper,
     }
 
     @Override
-    public PartmentMember getSimplePartmentMemberInfo(String partmentId, String memberId) {
-        return partmentMemberMapper.getSimplePartmentMemberInfo(partmentId,memberId);
+    public String getSimplePartmentMemberInfo(String partmentId) {
+        return partmentMemberMapper.getSimplePartmentMemberInfo(partmentId);
     }
 
     @Override

@@ -137,7 +137,7 @@ public class OrganizationMemberApi {
                 organizationMember.setUserName(byId.getUserName());
                 organizationMember.setMemberEmail(byId.getEmail());
                 if (byId.getBirthday() != null) {
-                    organizationMember.setBirthday(byId.getBirthday() + "");
+                    organizationMember.setBirthday(byId.getBirthday());
                 }
                 organizationMember.setPhone(byId.getAccountName());
                 organizationMember.setJob(byId.getJob());

@@ -37,10 +37,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -182,10 +179,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
 
+    /**
+     * 关注/取消关注 用户
+     * @param memberId 被关注人id
+     * @return
+     */
     @Override
     public int attentionUserStatus(String memberId) {
         // 0 = 取消关注 1 = 关注
         int isFollow = 0;
+        // follow 关注列表 当前登录人的列表
         Long rank = redisUtil.zRank(FOLLOWING + ShiroAuthenticationManager.getUserId(), memberId);
         // 关注操作
         if (rank == null) {
@@ -532,6 +535,20 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
         updateById(article);
         return article;
+    }
+
+    @Override
+    public Boolean judgeIsAttention(String memberId) {
+        Set<String> list = redisUtil.zrange(FANS + memberId, 0, 9999);
+        Boolean result=false;
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (String s : list) {
+                if (s.equals(ShiroAuthenticationManager.getUserId())) {
+                    result=true;
+                }
+            }
+        }
+        return result;
     }
 
 

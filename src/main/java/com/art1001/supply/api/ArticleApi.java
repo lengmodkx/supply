@@ -115,13 +115,12 @@ public class ArticleApi {
      * @param memberId 被关注人id
      * @return
      */
-    @GetMapping("/attentionUserStatus")
+    @GetMapping("/attentionUser")
     public Result attentionUserStatus(@RequestParam(value = "memberId") String memberId) {
         try {
             int i = articleService.attentionUserStatus(memberId);
             if (i == 1) {
                 return Result.success("已关注");
-
             } else {
                 return Result.success("已取消关注");
             }
@@ -130,6 +129,21 @@ public class ArticleApi {
         }
     }
 
+    /**
+     * 判断是否关注过目标
+     * @param memberId
+     * @return
+     */
+    @GetMapping("/judgeIsAttention")
+    public Result judgeIsAttention(@RequestParam("memberId") String memberId){
+        try {
+            Boolean result= articleService.judgeIsAttention(memberId);
+            return Result.success(result);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+
+    }
     /**
      * 根据用户id获取用户自己的文章
      *
@@ -253,6 +267,8 @@ public class ArticleApi {
             throw new AjaxException(e);
         }
     }
+
+
 
     /**
      * 审核文章

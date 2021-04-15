@@ -10,9 +10,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 
-import javax.naming.Name;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Date;
 
 /**
  * @author 汪亚锋
@@ -114,7 +113,7 @@ public class OrganizationMember extends Model<OrganizationMember> {
 	 * 生日
 	 */
 	@Excel(name = "生日")
-	private String birthday;
+	private Date birthday;
 
 	/**
 	 * 入职时间

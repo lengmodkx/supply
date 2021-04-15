@@ -457,14 +457,16 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      * @create: 18:48 2020/4/22
      */
     @Override
-    public Integer updateMembersInfo(String memberId, String orgId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId) {
+    public Integer updateMembersInfo(String memberId, String orgId, String userName, String entryTime, String job, String memberLabel, String address, String memberEmail, String phone, String birthday, String deptId) throws ParseException {
         OrganizationMember memberInfo = new OrganizationMember();
         memberInfo.setOrganizationId(orgId);
         if (StringUtils.isNotEmpty(userName)) {
             memberInfo.setUserName(userName);
         }
         if (StringUtils.isNotEmpty(birthday)) {
-            memberInfo.setBirthday(birthday);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = simpleDateFormat.parse(birthday);
+            memberInfo.setBirthday(date);
         }
         if (StringUtils.isNotEmpty(entryTime)) {
             memberInfo.setEntryTime(entryTime);

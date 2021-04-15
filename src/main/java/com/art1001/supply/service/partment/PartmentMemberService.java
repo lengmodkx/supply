@@ -49,10 +49,10 @@ public interface PartmentMemberService extends IService<PartmentMember> {
     /**
      * 获取部门的部门id，部门名称及是否负责人信息
      * @param partmentId
-     * @param memberId
+
      * @return
      */
-    PartmentMember getSimplePartmentMemberInfo(String partmentId, String memberId);
+    String getSimplePartmentMemberInfo(String partmentId);
 
     /**
      * 根据企业id获取部门成员信息
