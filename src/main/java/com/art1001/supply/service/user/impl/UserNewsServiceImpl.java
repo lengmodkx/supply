@@ -206,24 +206,25 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 				}
 			}
 			//查询该用户有没有该信息的 消息记录 如果没有添加一条 如果有在原来的消息数上 +1
-			int result = userNewsMapper.findUserNewsByPublicId(publicId,users[i]);
-			if(result == 0){
-				 userNews = new UserNews(
-				 		IdGen.uuid(),name,content,publicId,0,
-						 ShiroAuthenticationManager.getUserId(),users[i],publicType,
-						 1,System.currentTimeMillis(),System.currentTimeMillis(),isMention
-				 );
-				 userNewsMapper.saveUserNews(userNews);
-			} else{
-				userNews.setNewsContent(content);
-				userNews.setNewsPublicId(publicId);
-				userNews.setNewsHandle(0);
-				userNews.setNewsToUserId(users[i]);
-				userNews.setNewsCount(userNewsMapper.findNewsCountByPublicId(publicId,users[i])+1);
-				userNews.setUpdateTime(System.currentTimeMillis());
-				userNews.setIsMention(isMention);
-				userNewsMapper.updateUserNews(userNews);
-			}
+//			int result = userNewsMapper.findUserNewsByPublicId(publicId,users[i]);
+//			if(result == 0){
+//
+//			} else{
+//				userNews.setNewsContent(content);
+//				userNews.setNewsPublicId(publicId);
+//				userNews.setNewsHandle(0);
+//				userNews.setNewsToUserId(users[i]);
+//				userNews.setNewsCount(userNewsMapper.findNewsCountByPublicId(publicId,users[i])+1);
+//				userNews.setUpdateTime(System.currentTimeMillis());
+//				userNews.setIsMention(isMention);
+//				userNewsMapper.updateUserNews(userNews);
+//			}
+			userNews = new UserNews(
+					IdGen.uuid(),name,content,publicId,0,
+					ShiroAuthenticationManager.getUserId(),users[i],publicType,
+					1,System.currentTimeMillis(),System.currentTimeMillis(),isMention
+			);
+			userNewsMapper.saveUserNews(userNews);
 			//查询出该用户的所有未读消息的总条数
 			int newsCount = userNewsMapper.findUserNewsCount(users[i]);
 			messagingTemplate.convertAndSendToUser(users[i],"/message",new JSONObject().fluentPut("count",newsCount).fluentPut("message",userNewsMapper.findUserNewsByToUser(users[i],publicId)));
