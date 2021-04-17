@@ -1314,7 +1314,10 @@ public class TaskApi extends BaseController {
                 Task task = new Task();
                 task.setExecutor(executor);
                 task.setUpdateTime(System.currentTimeMillis());
-                boolean update = taskService.update(task, new QueryWrapper<Task>().in("task_id", taskIds));
+                boolean update = taskService.updat
+
+
+                e(task, new QueryWrapper<Task>().in("task_id", taskIds));
                 if (update) {
                     jsonObject.put("result",1);
                     jsonObject.put("message","指派成功");

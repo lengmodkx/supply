@@ -122,7 +122,10 @@ public class DemandServiceImpl extends ServiceImpl<DemandMapper, Demand> impleme
                     }
                     break;
                 case 4:
-                    page = page(page, new QueryWrapper<Demand>().eq("is_del", 0).eq("is_check",1).eq("demand_state",0));
+                    page = page(page, new QueryWrapper<Demand>().eq("is_del", 0).eq("is_check",1));
+                    if (CollectionUtils.isNotEmpty(page.getRecords())) {
+                        page.setRecords(page.getRecords().stream().filter(r->r.getDemandState()!=3).collect(Collectors.toList()));
+                    }
                 default:
                     break;
             }
