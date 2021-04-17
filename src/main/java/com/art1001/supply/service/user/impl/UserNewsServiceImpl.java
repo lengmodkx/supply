@@ -186,22 +186,21 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 			name = shareService.findShareNameById(publicId);
 
 		}
-		List<String> collect = Arrays.asList(users).stream().distinct().collect(Collectors.toList());
-		users = collect.toArray(new String[collect.size()]);
-		for(int i = 0; i < users.length; i++){
-			String currentUserId = users[i];
+		users = Arrays.stream(users).distinct().toArray(String[]::new);
+		for (String currentUserId : users) {
 			UserNews userNews = new UserNews();
 			//如果本次循环的id  是当前操作的用户id 则跳过
-			if(currentUserId.equals(ShiroAuthenticationManager.getUserId())){
+			if (currentUserId.equals(ShiroAuthenticationManager.getUserId())) {
 				continue;
 			}
 
 
-			Boolean isMention = false;
-			if(CollectionUtils.isNotEmpty(mentionList)){
+			boolean isMention = false;
+			if (CollectionUtils.isNotEmpty(mentionList)) {
 				for (String s : mentionList) {
-					if(s.equals(currentUserId)){
+					if (s.equals(currentUserId)) {
 						isMention = true;
+						break;
 					}
 				}
 			}
@@ -220,14 +219,14 @@ public class UserNewsServiceImpl extends ServiceImpl<UserNewsMapper,UserNews> im
 //				userNewsMapper.updateUserNews(userNews);
 //			}
 			userNews = new UserNews(
-					IdGen.uuid(),name,content,publicId,0,
-					ShiroAuthenticationManager.getUserId(),users[i],publicType,
-					1,System.currentTimeMillis(),System.currentTimeMillis(),isMention
+					IdGen.uuid(), name, content, publicId, 0,
+					ShiroAuthenticationManager.getUserId(), currentUserId, publicType,
+					1, System.currentTimeMillis(), System.currentTimeMillis(), isMention
 			);
 			userNewsMapper.saveUserNews(userNews);
 			//查询出该用户的所有未读消息的总条数
-			int newsCount = userNewsMapper.findUserNewsCount(users[i]);
-			messagingTemplate.convertAndSendToUser(users[i],"/message",new JSONObject().fluentPut("count",newsCount).fluentPut("message",userNewsMapper.findUserNewsByToUser(users[i],publicId)));
+			int newsCount = userNewsMapper.findUserNewsCount(currentUserId);
+			messagingTemplate.convertAndSendToUser(currentUserId, "/message", new JSONObject().fluentPut("data", newsCount));
 		}
 	}
 

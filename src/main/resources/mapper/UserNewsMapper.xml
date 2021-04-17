@@ -17,10 +17,10 @@
         <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
         <!-- 谁的消息 用户实体信息 -->
         <association property="newsToUser" javaType="com.art1001.supply.entity.user.UserEntity" column="news_to_user"
-                     select="com.art1001.supply.mapper.user.UserMapper.findById"></association>
+                     select="com.art1001.supply.mapper.user.UserMapper.findById"/>
         <!-- 消息是谁发送的实体信息 -->
         <association property="newsFromUser" javaType="com.art1001.supply.entity.user.UserEntity"
-                     column="news_from_user" select="com.art1001.supply.mapper.user.UserMapper.findById"></association>
+                     column="news_from_user" select="com.art1001.supply.mapper.user.UserMapper.findById"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -249,7 +249,7 @@
     <select id="findUserNewsByToUser" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from prm_user_news where news_to_user = #{userId} and news_public_id = #{publicId}
+        from prm_user_news where news_to_user = #{userId}
     </select>
 
     <!-- 删除多个信息的所有通知消息 -->

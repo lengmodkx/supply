@@ -1929,18 +1929,12 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     public void completionTaskInfo(Task task) {
-        //todo 问题待解决
-        //判断当前用户有没有对该任务点赞
-//        task.setIsFabulous(fabulousService.count(new QueryWrapper<Fabulous>().eq("member_id", ShiroAuthenticationManager.getUserId()).eq("public_id", task.getTaskId())) > 0);
-        //查询任务得赞数
-//        task.setFabulousCount(fabulousService.count(new QueryWrapper<Fabulous>().eq("public_id",task.getTaskId())));
-        if (task.getTaskGroupId() != null && !"undefined".equals(task.getTaskGroupId())) {
-            //获取任务名称
+        if (StringUtils.isNotEmpty(task.getTaskGroupId())) {
+            //获取任务组名称
             task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
         }
         if (StringUtils.isNotEmpty(task.getTaskMenuId())) {
             task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskMenuId()).select("relation_name")).getRelationName());
-
         }
         //判断当前用户有没有收藏该任务
         task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", task.getTaskId()).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);

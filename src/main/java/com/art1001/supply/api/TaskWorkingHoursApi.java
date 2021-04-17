@@ -1,6 +1,10 @@
 package com.art1001.supply.api;
 
 
+import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushName;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.request.WorkingHoursRequestParam;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.service.task.TaskWorkingHoursService;
@@ -9,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -50,11 +55,18 @@ public class TaskWorkingHoursApi {
      * @param id 任务工时id
      * @return 结果
      */
+    @Push(value = PushType.A32, name =PushName.TASK,type = 1)
     @RequestMapping("/remove")
-    public Result removeWorkingHours(@NotBlank(message = "工时id不能为空！") String id){
+    public JSONObject removeWorkingHours(@RequestParam String id,
+                                         @RequestParam String taskId,
+                                         @RequestParam String projectId){
+        JSONObject jsonObject = new JSONObject();
         log.info("Remove working hours by id.[{}]", id);
         taskWorkingHoursService.removeWorkingHours(id);
-        return Result.success();
+        jsonObject.put("result", 1);
+        jsonObject.put("data", taskId);
+        jsonObject.put("msgId", projectId);
+        return jsonObject;
     }
 
     /**
@@ -62,16 +74,16 @@ public class TaskWorkingHoursApi {
      * @param workingHoursRequestParam 参数信息
      * @return 结果
      */
+    @Push(value = PushType.A32, name = PushName.TASK,type = 1)
     @RequestMapping("/addition")
-    public Result additionWorkingHours(@Validated WorkingHoursRequestParam workingHoursRequestParam){
+    public JSONObject additionWorkingHours(@Validated WorkingHoursRequestParam workingHoursRequestParam){
+        JSONObject jsonObject = new JSONObject();
         log.info("Addition working hours. [{}]", workingHoursRequestParam);
         taskWorkingHoursService.addition(workingHoursRequestParam);
-        return Result.success();
+        jsonObject.put("result", 1);
+        jsonObject.put("data", workingHoursRequestParam.getTaskId());
+        jsonObject.put("msgId", workingHoursRequestParam.getProjectId());
+        return jsonObject;
     }
-
-
-
-
-
 }
 

@@ -30,4 +30,5 @@ public class WorkingHoursRequestParam {
      */
     private Long hoursDate;
 
+    private String projectId;
 }

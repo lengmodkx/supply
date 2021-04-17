@@ -71,13 +71,6 @@ public class TaskApi extends BaseController {
 
     @Resource
     private UserService userService;
-
-    @Resource
-    private RelationService relationService;
-
-    @Resource
-    private WeChatAppMessageService weChatAppMessageService;
-
     @Resource
     private TaskRemindRuleService taskRemindRuleService;
 
@@ -88,16 +81,7 @@ public class TaskApi extends BaseController {
     private UserNewsService userNewsService;
 
     @Resource
-    private WeChatAppMessageTemplateDataBuildService updateTaskJoinInfo;
-
-    @Resource
     private ProjectService projectService;
-
-    @Resource
-    private ProjectMemberService projectMemberService;
-
-
-    private static final String ZERO = "0";
 
     /**
      * 任务页面初始化
@@ -218,6 +202,7 @@ public class TaskApi extends BaseController {
             object.put("msgId", projectId);
             object.put("msg", "更新成功");
             object.put("publicType", Constants.TASK);
+            object.put("name",task.getTaskName());
             object.put("id", taskId);
         } catch (ServiceException e) {
             throw new AjaxException(e.getMessage(), e);
@@ -269,7 +254,7 @@ public class TaskApi extends BaseController {
                 object.put("data", new JSONObject().fluentPut("taskId", taskId).fluentPut("projectId", object.getString("msgId")));
             }
             object.put("id", taskId);
-
+            object.put("name",task.getTaskName());
             object.put("publicType", Constants.TASK);
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -314,27 +299,17 @@ public class TaskApi extends BaseController {
     @Push(value = PushType.A5, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/name")
     public JSONObject upadteTaskName(@PathVariable(value = "taskId") String taskId,
-                                     @RequestParam(value = "taskName") String taskName) {
+                                     @RequestParam(value = "taskName") String taskName,
+                                     @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskName(taskName);
             taskService.updateById(task);
-            String[] taskJoinAndExecutorId = taskService.getTaskJoinAndExecutorId(taskId);
-            if (taskJoinAndExecutorId != null) {
-                for (String s : taskJoinAndExecutorId) {
-                    UserNews userNews = new UserNews();
-                    userNews.setNewsToUserId(s);
-                    userNews.setNewsPublicId(taskId);
-                    userNews.setNewsName(taskName);
-                    userNewsService.updateUserNews(userNews);
-                }
-            }
-
             object.put("result", 1);
             object.put("msg", "更新成功");
-            object.put("msgId", this.getTaskProjectId(taskId));
+            object.put("msgId", projectId);
             object.put("data", taskId);
             object.put("id", taskId);
             object.put("name", taskName);
@@ -357,7 +332,8 @@ public class TaskApi extends BaseController {
     @Push(value = PushType.A6, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/executor")
     public JSONObject upadteTaskExecutor(@PathVariable(value = "taskId") String taskId,
-                                         @RequestParam(value = "executor") String userId) {
+                                         @RequestParam(value = "userId") String userId,
+                                         @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
             Task task = new Task();
@@ -370,10 +346,10 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             Task one = taskService.getOne(new QueryWrapper<Task>().lambda().select(Task::getParentId, Task::getTaskId).eq(Task::getTaskId, taskId));
             if (one.getParentId().equals("0")) {
-                object.put("msgId", this.getTaskProjectId(taskId));
+                object.put("msgId", projectId);
                 object.put("data", taskId);
             } else {
-                object.put("msgId", taskService.findChildTaskProject(taskId));
+                object.put("msgId", projectId);
                 object.put("data", one.getParentId());
             }
             object.put("result", 1);
@@ -397,7 +373,8 @@ public class TaskApi extends BaseController {
     @Push(value = PushType.A7, name =PushName.TASK,type = 3)
     @PutMapping(value = "/{taskId}/starttime")
     public JSONObject upadteTaskStartTime(@PathVariable(value = "taskId") String taskId,
-                                          @RequestParam(value = "startTime") Long startTime) {
+                                          @RequestParam(value = "startTime") Long startTime,
+                                          @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
             taskService.updateStartTime(taskId, startTime);
@@ -411,7 +388,7 @@ public class TaskApi extends BaseController {
             }
             object.put("result", 1);
             object.put("msg", "更新成功");
-            object.put("msgId", this.getTaskProjectId(taskId));
+            object.put("msgId", projectId);
             object.put("data", taskId);
             object.put("id", taskId);
             object.put("publicType", Constants.TASK);
@@ -433,7 +410,8 @@ public class TaskApi extends BaseController {
     @Push(value = PushType.A8, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/endtime")
     public JSONObject upadteTaskEndTime(@PathVariable(value = "taskId") String taskId,
-                                        @RequestParam(value = "endTime") Long endTime) {
+                                        @RequestParam(value = "endTime") Long endTime,
+                                        @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
             Task task = new Task();
@@ -447,7 +425,7 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result", 1);
             object.put("msg", "更新成功");
-            object.put("msgId", this.getTaskProjectId(taskId));
+            object.put("msgId", projectId);
             object.put("data", taskId);
             object.put("id", taskId);
             object.put("publicType", Constants.TASK);
@@ -469,7 +447,8 @@ public class TaskApi extends BaseController {
     @Push(value = PushType.A9, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/repeat")
     public JSONObject upadteTaskRepeat(@PathVariable(value = "taskId") String taskId,
-                                       @RequestParam(value = "repeat") String repeat) {
+                                       @RequestParam(value = "repeat") String repeat,
+                                       @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
             Task task = new Task();
@@ -478,7 +457,7 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result", 1);
             object.put("msg", "更新成功");
-            object.put("msgId", this.getTaskProjectId(taskId));
+            object.put("msgId", projectId);
             object.put("data", taskId);
             object.put("id", taskId);
             object.put("publicType", Constants.TASK);
@@ -634,7 +613,8 @@ public class TaskApi extends BaseController {
     @Push(value = PushType.A11, name =PushName.TASK,type = 1)
     @PutMapping("/{taskId}/remarks")
     public JSONObject upadteTaskRemarks(@PathVariable(value = "taskId") String taskId,
-                                        @RequestParam(value = "remarks") String remarks) {
+                                        @RequestParam(value = "remarks") String remarks,
+                                        @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
             Task task = new Task();
@@ -647,7 +627,7 @@ public class TaskApi extends BaseController {
             taskService.updateById(task);
             object.put("result", 1);
             object.put("remarks", remarks);
-            object.put("msgId", getTaskProjectId(taskId));
+            object.put("msgId", projectId);
             object.put("data", taskId);
             //object.put("data",new JSONObject().fluentPut("type","任务").fluentPut("id", taskId));
             object.put("id", taskId);
@@ -670,7 +650,8 @@ public class TaskApi extends BaseController {
     @Push(value = PushType.A12, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/priority")
     public JSONObject upadteTaskPriority(@PathVariable(value = "taskId") String taskId,
-                                         @RequestParam(value = "priority") String priority) {
+                                         @RequestParam(value = "priority") String priority,
+                                         @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
             Task task = new Task();
@@ -678,7 +659,7 @@ public class TaskApi extends BaseController {
             task.setPriority(priority);
             taskService.updateById(task);
             object.put("result", 1);
-            object.put("msgId", this.getTaskProjectId(taskId));
+            object.put("msgId", projectId);
             object.put("data", taskId);
             object.put("id", taskId);
             object.put("publicType", Constants.TASK);
@@ -703,7 +684,8 @@ public class TaskApi extends BaseController {
     public JSONObject addChildTask(@PathVariable(value = "taskId") String taskId,
                                    @RequestParam(value = "taskName") String taskName,
                                    @RequestParam(value = "executor", required = false) String executor,
-                                   @RequestParam(value = "startTime", required = false) String startTime) {
+                                   @RequestParam(value = "startTime", required = false) String startTime,
+                                   @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
             if (StringUtils.isEmpty(taskName)) {
@@ -714,7 +696,7 @@ public class TaskApi extends BaseController {
             Task task = new Task();
             task.setParentId(taskId);
             task.setTaskName(taskName);
-            task.setProjectId(this.getTaskProjectId(taskId));
+            task.setProjectId(projectId);
 
             //子任务存分组
             Task taskGroupId = taskService.findTaskByTaskId(taskId);
@@ -740,8 +722,8 @@ public class TaskApi extends BaseController {
             taskService.updateById(pTask);
             object.put("result", 1);
             object.put("msg", "创建成功!");
-            object.put("data", new JSONObject().fluentPut("taskId", taskId).fluentPut("projectId", taskService.findChildTaskProject(taskId)));
-            object.put("msgId", taskService.findChildTaskProject(taskId));
+            object.put("data", new JSONObject().fluentPut("taskId", taskId).fluentPut("projectId", projectId));
+            object.put("msgId", projectId);
             object.put("id", taskId);
         } catch (Exception e) {
             log.error("系统异常,子任务添加失败:", e);
@@ -758,33 +740,20 @@ public class TaskApi extends BaseController {
      * @return
      */
     @SuppressWarnings("unchecked")
-    @Push(value = PushType.A14, name =PushName.TASK,type = 1)
+    @Push(value = PushType.A14, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/members")
     public JSONObject addTaskUids(@PathVariable(value = "taskId") String taskId,
-                                  @RequestParam(value = "taskUids") String taskUids) {
+                                  @RequestParam(value = "taskUids") String taskUids,
+                                  @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
             Task task = new Task();
             task.setTaskId(taskId);
             task.setTaskUIds(taskUids);
             taskService.updateById(task);
-
-            String[] taskIdList = taskUids.split(",");
-            UserEntity byId = userService.findById(ShiroAuthenticationManager.getUserId());
-            userNewsService.saveUserNews(taskIdList, taskId, Constants.TASK, byId.getUserName() + PushType.A14.getName(), null);
-
-//            //推送微信小程序消息给多个用户
-//            WeChatAppMessageTemplate weChatAppMessageTemplate = WeChatAppMessageTemplateBuild.updateTaskJoin();
-//            weChatAppMessageService.pushToMultipleUsers(
-//                    Arrays.asList(taskIdList),
-//                    weChatAppMessageTemplate,
-//                    updateTaskJoinInfo
-//            );
-
-
             object.put("result", 1);
             object.put("msg", "更新成功");
-            object.put("msgId", this.getTaskProjectId(taskId));
+            object.put("msgId", projectId);
             object.put("data", taskId);
             object.put("id", taskId);
         } catch (Exception e) {
@@ -871,28 +840,28 @@ public class TaskApi extends BaseController {
      * @param taskId 任务id
      * @returnF
      */
-    @Push(value = PushType.A17, name =PushName.TASK,type = 3)
-    @PutMapping("/{taskId}/recyclebin")
-    public JSONObject moveToRecycleBin(@PathVariable(value = "taskId") String taskId) {
-        JSONObject object = new JSONObject();
-        try {
-            Task task = new Task();
-            task.setTaskId(taskId);
-            task.setTaskDel(1);
-            task.setUpdateTime(System.currentTimeMillis());
-            taskService.updateById(task);
-            object.put("result", 1);
-            object.put("msg", "移入成功");
-            object.put("msgId", this.getTaskProjectId(taskId));
-            object.put("data", taskId);
-            object.put("id", taskId);
-            object.put("publicType", Constants.TASK);
-        } catch (Exception e) {
-            log.error("系统异常,移入回收站失败:", e);
-            throw new AjaxException(e);
-        }
-        return object;
-    }
+//    @Push(value = PushType.A17, name =PushName.TASK,type = 3)
+//    @PutMapping("/{taskId}/recyclebin")
+//    public JSONObject moveToRecycleBin(@PathVariable(value = "taskId") String taskId) {
+//        JSONObject object = new JSONObject();
+//        try {
+//            Task task = new Task();
+//            task.setTaskId(taskId);
+//            task.setTaskDel(1);
+//            task.setUpdateTime(System.currentTimeMillis());
+//            taskService.updateById(task);
+//            object.put("result", 1);
+//            object.put("msg", "移入成功");
+//            object.put("msgId", this.getTaskProjectId(taskId));
+//            object.put("data", taskId);
+//            object.put("id", taskId);
+//            object.put("publicType", Constants.TASK);
+//        } catch (Exception e) {
+//            log.error("系统异常,移入回收站失败:", e);
+//            throw new AjaxException(e);
+//        }
+//        return object;
+//    }
 
     /**
      * 任务隐私模式
@@ -902,10 +871,11 @@ public class TaskApi extends BaseController {
      */
     @Push(value = PushType.A18, name =PushName.TASK,type = 1)
     @PutMapping("/{taskId}/privacy")
-    public JSONObject taskPrivacy(@PathVariable(value = "taskId") String taskId, @RequestParam Integer privacy) {
+    public JSONObject taskPrivacy(@PathVariable(value = "taskId") String taskId,
+                                  @RequestParam Integer privacy,
+                                  @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
-            String projectId = getTaskProjectId(taskId);
             Task task = new Task();
             task.setTaskId(taskId);
             task.setPrivacyPattern(privacy);
@@ -1173,14 +1143,18 @@ public class TaskApi extends BaseController {
      * @param progress 进度值
      * @return 结果
      */
+    @Push(value = PushType.A33, name =PushName.TASK)
     @PostMapping("/progress")
-    public Result updateProgress(@NotBlank(message = "任务id不能为空") String taskId,
-
+    public JSONObject updateProgress(@NotBlank(message = "任务id不能为空") String taskId,
                                  @NotNull(message = "进度值不能为空！")
-                                 @Range(message = "进度值不符合规范", min = 1, max = 100) Integer progress) {
-
+                                 @Range(message = "进度值不符合规范", min = 1, max = 100) Integer progress,
+                                     @RequestParam String projectId) {
+        JSONObject jsonObject = new JSONObject();
         taskService.updateProgress(taskId, progress);
-        return Result.success();
+        jsonObject.put("result", 1);
+        jsonObject.put("data", taskId);
+        jsonObject.put("msgId", projectId);
+        return jsonObject;
     }
 
     /**
@@ -1190,20 +1164,19 @@ public class TaskApi extends BaseController {
      * @param workingHours 进度值
      * @return 结果
      */
-    @Push(value = PushType.A31, name =PushName.TASK,type = 1)
+    @Push(value = PushType.A31, name =PushName.TASK)
     @PostMapping("/work_hours")
     public JSONObject updateWorkHours(@NotBlank(message = "任务id不能为空") String taskId,
-
                                       @NotNull(message = "计划值不能为空！")
-                                      @Range(message = "计划值不符合规范", min = 1, max = 1000) Double workingHours) {
+                                      @Range(message = "计划值不符合规范", min = 1, max = 1000) Double workingHours,
+                                      String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
             taskService.updatePlanWorkHours(taskId, workingHours);
             log.info("Update work hours.[{},{}]", taskId, workingHours);
-            Task task = taskService.findTaskByTaskId(taskId);
             jsonObject.put("result", 1);
-            jsonObject.put("data", task.getTaskId());
-            jsonObject.put("msgId", task.getProjectId());
+            jsonObject.put("data", taskId);
+            jsonObject.put("msgId", projectId);
         } catch (Exception e) {
             e.printStackTrace();
         }
