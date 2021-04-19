@@ -168,6 +168,11 @@ public class Project extends Model<Project> {
      */
     private Integer projectSchedule;
 
+    /**
+     * 模板id
+     */
+    private String templateId;
+
     @Override
     protected Serializable pkVal() {
         return this.projectId;

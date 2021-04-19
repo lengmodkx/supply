@@ -13,12 +13,14 @@ import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.vo.MenuVo;
+import com.art1001.supply.entity.template.TemplateRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.mapper.role.RoleMapper;
 import com.art1001.supply.mapper.role.RoleUserMapper;
+import com.art1001.supply.mapper.template.TemplateRelationMapper;
 import com.art1001.supply.mapper.user.UserMapper;
 import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.partment.PartmentMemberService;
@@ -119,6 +121,9 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Resource
     private RoleUserMapper roleUserMapper;
+
+    @Resource
+    private TemplateRelationMapper templateRelationMapper;
     /**
      * 通过projectId获取单条project数据
      *
@@ -183,6 +188,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         //初始化项目文件夹
         fileService.initProjectFolder(project.getProjectId());
 
+
         //初始化项目功能菜单
         String[] funcs = new String[]{"任务", "分享", "文件", "日程", "群聊", "统计"};
         JSONArray array = new JSONArray();
@@ -196,9 +202,20 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
         project.setFunc(array.toString());
         save(project);
-        //初始化菜单
-        String[] menus = new String[]{"待处理", "进行中", "已完成", "已审核", "已拒绝"};
-        relationService.saveRelationBatch(Arrays.asList(menus), project.getProjectId(), relation.getRelationId());
+
+        if (StringUtils.isNotEmpty(project.getTemplateId())) {
+            List<TemplateRelation> templates = templateRelationMapper.selectList(new QueryWrapper<TemplateRelation>().eq("template_id", project.getTemplateId()));
+            if (CollectionUtils.isNotEmpty(templates)) {
+                List<String> collect = templates.stream().map(TemplateRelation::getRelationName).collect(Collectors.toList());
+                relationService.saveRelationBatch(collect, project.getProjectId(), relation.getRelationId());
+
+            }
+        }else {
+            //初始化菜单
+            String[] menus = new String[]{"待处理", "进行中", "已完成", "已审核", "已拒绝"};
+            relationService.saveRelationBatch(Arrays.asList(menus), project.getProjectId(), relation.getRelationId());
+        }
+
 
         //往项目用户关联表插入数据
         ProjectMember projectMember = new ProjectMember();

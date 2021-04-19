@@ -1,10 +1,12 @@
 package com.art1001.supply.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.annotation.*;
+import com.art1001.supply.annotation.AutomationRule;
+import com.art1001.supply.annotation.Push;
+import com.art1001.supply.annotation.PushName;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
-import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.automation.constans.AutomationRuleConstans;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
@@ -12,23 +14,17 @@ import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskRemindRule;
 import com.art1001.supply.entity.task.TaskTmp;
-import com.art1001.supply.entity.user.UserEntity;
-import com.art1001.supply.entity.user.UserNews;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.file.FileService;
-import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
-import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.task.TaskRemindRuleService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
 import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.wechat.message.service.WeChatAppMessageService;
-import com.art1001.supply.wechat.message.service.WeChatAppMessageTemplateDataBuildService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -38,7 +34,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -332,7 +329,7 @@ public class TaskApi extends BaseController {
     @Push(value = PushType.A6, name =PushName.TASK,type = 3)
     @PutMapping("/{taskId}/executor")
     public JSONObject upadteTaskExecutor(@PathVariable(value = "taskId") String taskId,
-                                         @RequestParam(value = "userId") String userId,
+                                         @RequestParam( value = "userId") String userId,
                                          @RequestParam(value = "projectId") String projectId) {
         JSONObject object = new JSONObject();
         try {
