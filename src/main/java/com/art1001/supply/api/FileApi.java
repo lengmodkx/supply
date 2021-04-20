@@ -1431,4 +1431,35 @@ public class FileApi extends BaseController {
         return Result.success();
     }
 
+    /**
+     * 下载
+     *
+     * @param fileId 文件id
+     */
+    @GetMapping("/{fileId}/preview")
+    public void preview(@PathVariable(value = "fileId") String fileId, HttpServletResponse response) {
+        try {
+            File file = fileService.getOne(new QueryWrapper<File>().eq("file_id", fileId));
+            String fileName = file.getFileName();
+            InputStream inputStream = AliyunOss.downloadInputStream(file.getFileUrl(), response);
+            // 设置响应类型
+            //response.setContentType("multipart/form-data");
+            // 设置头信息
+            // 设置fileName的编码
+            fileName = URLEncoder.encode(fileName + file.getExt(), "UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            response.setContentType("application/octet-stream");
+            ServletOutputStream outputStream = response.getOutputStream();
+            assert inputStream != null;
+            IOUtils.copy(inputStream, outputStream);
+            outputStream.close();
+            inputStream.close();
+        } catch (NullPointerException e) {
+            log.error("系统异常,文件不存在:", e);
+            throw new AjaxException("文件不存在");
+        } catch (Exception e) {
+            log.error("系统异常:", e);
+            throw new AjaxException(e);
+        }
+    }
 }
