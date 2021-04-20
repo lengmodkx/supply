@@ -135,6 +135,9 @@ public class ProjectApi extends BaseController {
         project.setUpdateTime(System.currentTimeMillis());
         project.setEndTime(endTime);
         project.setMemberId(ShiroAuthenticationManager.getUserId());
+
+        project.setTemplateId(templateId);
+
         projectService.saveProject(project);
 
         //写资源表
@@ -148,16 +151,16 @@ public class ProjectApi extends BaseController {
     /**
      * 局部更新项目
      *
-     * @param projectId     项目id
-     * @param projectName   项目名称
-     * @param projectDes    项目简介
-     * @param isPublic      是否公开
-     * @param projectCover  项目封面
-     * @param projectDel    是否移入回收站
-     * @param projectStatus 是否归档
-     * @param newProjectId 修改的项目id
+     * @param projectId       项目id
+     * @param projectName     项目名称
+     * @param projectDes      项目简介
+     * @param isPublic        是否公开
+     * @param projectCover    项目封面
+     * @param projectDel      是否移入回收站
+     * @param projectStatus   是否归档
+     * @param newProjectId    修改的项目id
      * @param projectSchedule 项目进度 默认0
-     * @param updateSchedule 自动更新项目进度 0不自动更新 1自动更新 默认0
+     * @param updateSchedule  自动更新项目进度 0不自动更新 1自动更新 默认0
      * @return json
      */
     @PutMapping("/{projectId}")
@@ -171,8 +174,8 @@ public class ProjectApi extends BaseController {
                                     @RequestParam(value = "startTime", required = false) Long startTime,
                                     @RequestParam(value = "endTime", required = false) Long endTime,
                                     @RequestParam(value = "newProjectId", required = false) String newProjectId,
-                                    @RequestParam(value = "projectSchedule",defaultValue = "0",required = false) Integer projectSchedule,
-                                    @RequestParam(value = "updateSchedule",defaultValue = "0",required = false)Integer updateSchedule
+                                    @RequestParam(value = "projectSchedule", defaultValue = "0", required = false) Integer projectSchedule,
+                                    @RequestParam(value = "updateSchedule", defaultValue = "0", required = false) Integer updateSchedule
     ) {
         JSONObject object = new JSONObject();
         try {
@@ -195,7 +198,7 @@ public class ProjectApi extends BaseController {
             }
             if (Constants.ONE.equals(updateSchedule)) {
                 project.setProjectSchedule(organizationService.automaticUpdateProjectSchedule(project));
-            }else {
+            } else {
                 project.setProjectSchedule(projectSchedule);
             }
             projectService.updateProject(project);
@@ -341,15 +344,16 @@ public class ProjectApi extends BaseController {
 
     /**
      * 用于自动化流程显示列表
+     *
      * @param projectId
      * @return
      */
     @GetMapping("/{projectId}/taskIndex2")
-    public JSONObject taskIndex2(@PathVariable("projectId") String projectId){
-               JSONObject object = new JSONObject();
+    public JSONObject taskIndex2(@PathVariable("projectId") String projectId) {
+        JSONObject object = new JSONObject();
         try {
             String userId = ShiroAuthenticationManager.getUserId();
-            List<MenuVo>menuVos=projectService.taskIndex(projectId,userId);
+            List<MenuVo> menuVos = projectService.taskIndex(projectId, userId);
 
             ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>()
                     .eq("project_Id", projectId).eq("member_id", userId));
@@ -560,6 +564,7 @@ public class ProjectApi extends BaseController {
             throw new AjaxException("系统异常,获取成员信息失败!", e);
         }
     }
+
     /**
      * @Author: 邓凯欣
      * @Email：dengkaixin@art1001.com
@@ -1019,15 +1024,16 @@ public class ProjectApi extends BaseController {
 
     /**
      * 项目角色判断 成员1 拥有者或管理员0
+     *
      * @param projectId
      * @return
      */
     @GetMapping("/judgmentRoles/{projectId}")
-    public JSONObject judgmentRoles(@PathVariable("projectId") String projectId){
+    public JSONObject judgmentRoles(@PathVariable("projectId") String projectId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("result",1);
-            jsonObject.put("data",projectService.judgmentRoles(projectId));
+            jsonObject.put("result", 1);
+            jsonObject.put("data", projectService.judgmentRoles(projectId));
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -1037,6 +1043,7 @@ public class ProjectApi extends BaseController {
 
     /**
      * 获取项目下文件名列表
+     *
      * @param projectId
      * @return
      */
@@ -1048,7 +1055,7 @@ public class ProjectApi extends BaseController {
             if (CollectionUtils.isEmpty(list)) {
                 object.put("result", 0);
                 object.put("msg", "null");
-            }else {
+            } else {
                 object.put("result", 1);
                 object.put("data", list);
             }
@@ -1061,14 +1068,15 @@ public class ProjectApi extends BaseController {
 
     /**
      * 添加项目角色名
+     *
      * @param projectRoleName
      * @return
      */
     @GetMapping("/addProjectRoleName")
     public Result addProjectRoleName(@RequestParam(value = "projectRoleName") String projectRoleName,
-                                     @RequestParam(value = "projectRoleName")String projectId){
+                                     @RequestParam(value = "projectRoleName") String projectId) {
         try {
-            projectRoleService.add(projectRoleName,projectId);
+            projectRoleService.add(projectRoleName, projectId);
             return Result.success("已添加");
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -1078,14 +1086,15 @@ public class ProjectApi extends BaseController {
 
     /**
      * 编辑项目角色名
+     *
      * @param id
      * @return
      */
     @GetMapping("/editProjectRoleName")
     public Result editProjectRoleName(@RequestParam(value = "id") String id,
-                                      @RequestParam(value = "projectRoleName") String projectRoleName){
+                                      @RequestParam(value = "projectRoleName") String projectRoleName) {
         try {
-            projectRoleService.update(new UpdateWrapper<ProjectRole>().set("project_role_name",projectRoleName).eq("id",id));
+            projectRoleService.update(new UpdateWrapper<ProjectRole>().set("project_role_name", projectRoleName).eq("id", id));
             return Result.success("已修改");
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -1095,13 +1104,14 @@ public class ProjectApi extends BaseController {
 
     /**
      * 移除项目角色名
+     *
      * @param id
      * @return
      */
     @GetMapping("/deleteProjectRoleName")
-    public Result deleteProjectRoleName(@RequestParam(value = "id") String id){
+    public Result deleteProjectRoleName(@RequestParam(value = "id") String id) {
         try {
-            projectRoleService.remove(new QueryWrapper<ProjectRole>().eq("id",id));
+            projectRoleService.remove(new QueryWrapper<ProjectRole>().eq("id", id));
             return Result.success("已移除");
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -1109,12 +1119,13 @@ public class ProjectApi extends BaseController {
     }
 
     /**
-     * 获取项目角色名列表
+     * 获取项目角色名列表tasks
+     *
      * @param
      * @return
      */
     @GetMapping("/listProjectRoleName")
-    public Result listProjectRoleName(@RequestParam(value = "projectId")String projectId){
+    public Result listProjectRoleName(@RequestParam(value = "projectId") String projectId) {
         try {
             List<ProjectRole> projectList = projectRoleService.list(new QueryWrapper<ProjectRole>().eq("projectId", projectId));
             return Result.success(projectList);

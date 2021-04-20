@@ -71,7 +71,7 @@ public class DemandBidServiceImpl extends ServiceImpl<DemandBidMapper, DemandBid
     @Override
     public String successBidding(String demandId, String id) {
         String userId = ShiroAuthenticationManager.getUserId();
-        Demand demand = demandMapper.selectOne(new QueryWrapper<Demand>().eq("member_id", userId).eq("is_del", 0));
+        Demand demand = demandMapper.selectOne(new QueryWrapper<Demand>().eq("demand_id", demandId).eq("is_del", 0));
         if (demand!=null) {
             if (demand.getMemberId().equals(userId)) {
                 demand.setUpdateTime(System.currentTimeMillis());
