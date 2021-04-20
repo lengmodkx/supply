@@ -79,6 +79,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * taskServiceImpl
@@ -1415,15 +1416,13 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             taskMapper.updateById(task);
         }
         String[] split = taskIds.split(",");
-        int index = 0;
-        for (String id : split) {
-            index++;
+        Stream.iterate(0, i -> i + 1).limit(split.length).forEach(index->{
             Task task = new Task();
-            task.setTaskId(id);
+            task.setTaskId(split[index]);
             task.setOrder(index);
             task.setUpdateTime(System.currentTimeMillis());
             taskMapper.updateById(task);
-        }
+        });
     }
 
     /**
