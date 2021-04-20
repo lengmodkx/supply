@@ -53,12 +53,14 @@ import java.util.List;
 	 void saveOssFile(File file);
 
 	/**
-	 * 单个普通文件上传
+	 * 更新文件版本
+	 * @param parentId 当前文件父id（文件夹id）
+	 * @param fileId 当前文件id
 	 * @param projectId 项目id
-	 * @param fileId 文件id
-	 * @param multipartFile 文件
+	 * @param files 更新的文件
+	 * @return
 	 */
-	 void uploadFile(String projectId, String fileId, MultipartFile multipartFile);
+	 void uploadFile(String projectId, String fileId,String parentId, String files);
 
 	 void saveFile(String files,String publicId,String projectId);
 

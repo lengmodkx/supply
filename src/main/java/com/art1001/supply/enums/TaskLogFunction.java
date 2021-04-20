@@ -66,7 +66,9 @@ public enum TaskLogFunction {
     A32(57,"添加普通附件"),
     A33(58,"恢复了文件夹"),
     A34(59, "更新了进度为 "),
-    A35(60, "更新了计划工时为 ");
+    A35(60, "更新了计划工时为 "),
+    A36(61, "更新了文件版本"),
+    A37(62, "上传了文件");
     private String name;
     private TaskLogFunction(int id,String name){
         this.name = name;

@@ -24,7 +24,7 @@ public class FileVersion extends Model<FileVersion> {
 	/**
 	 * id
 	 */
-	@TableId(value = "version_id",type = IdType.UUID)
+	@TableId(value = "version_id",type = IdType.ASSIGN_UUID)
 	private String versionId;
 
 
@@ -42,6 +42,8 @@ public class FileVersion extends Model<FileVersion> {
 	 * 是否主版本，默认新创建的文件为1，一个文件只能有一个主版本
 	 */
 	private Integer isMaster;
+
+	private String originalFileId;
 
 	@Override
 	protected Serializable pkVal() {

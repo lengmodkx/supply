@@ -58,6 +58,6 @@ public class FileRecycleBinImpl extends AbstractRecycleBin {
             return;
         }
 
-        logService.saveLog(publicId, TaskLogFunction.A28.getName(),1);
+        logService.saveLog(publicId, TaskLogFunction.A28.getName(),2);
     }
 }

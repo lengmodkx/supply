@@ -3,6 +3,7 @@ package com.art1001.supply.service.file.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
@@ -134,8 +135,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public List<File> queryFileList(String fileId, Integer current, Integer size) {
         String userId = ShiroAuthenticationManager.getUserId();
+        List<File> fileList = list(new QueryWrapper<File>().eq("parent_id", fileId).eq("file_del", 0));
         List<File> childFile = fileMapper.findChildFile(fileId);
-        Iterator<File> iterator = childFile.iterator();
+        fileList = fileList.stream().filter(file -> file.getCatalog() == 1).sorted(Comparator.comparing(File::getCreateTime)).collect(Collectors.toList());
+        fileList.addAll(childFile);
+        Iterator<File> iterator = fileList.iterator();
         while (iterator.hasNext()) {
             File file = iterator.next();
             if (StringUtils.isNotEmpty(file.getFileUids())) {
@@ -157,7 +161,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             }
         }
 
-        return childFile;
+        return fileList;
     }
 
     /*  获取素材库树状图数据
@@ -244,48 +248,50 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      *
      * @param projectId     项目id
      * @param fileId        文件id
-     * @param multipartFile 文件
+     * @param files 文件
      */
     @Override
-    public void uploadFile(String projectId, String fileId, MultipartFile multipartFile) {
+    public void uploadFile(String projectId, String fileId,String parentId, String files) {
         String userId = ShiroAuthenticationManager.getUserId();
-        File originFile = getOne(new QueryWrapper<File>().eq("file_id", fileId));
+        FileVersion originalVersion= fileVersionMapper.selectOne(new QueryWrapper<FileVersion>().eq("file_id", fileId));
         UserEntity userEntity = userService.findById(userId);
-        // 得到文件名
-        String originalFilename = multipartFile.getOriginalFilename();
-        // 重置文件名
-        assert originalFilename != null;
-        int indexOf = originalFilename.lastIndexOf(".");
-        // 获取后缀名
-        String ext = originalFilename.substring(indexOf).toLowerCase();
-        String fileName = System.currentTimeMillis() + ext;
-        String fileUrl = "upload/file/" + fileName;
-
-        // 写库
-        File file = new File();
-        // 用原本的文件名
-        file.setFileName(originalFilename);
-        file.setExt(ext);
-        file.setProjectId(projectId);
-        file.setFileUrl(fileUrl);
-        if (FileExt.extMap.get("images").contains(ext)) {
-            file.setFileThumbnail(fileUrl);
+        if (StringUtils.isNotEmpty(files)) {
+            JSONArray array = JSON.parseArray(files);
+            JSONObject object = array.getJSONObject(0);
+            String fileName = object.getString("fileName");
+            String fileUrl = object.getString("fileUrl");
+            String size = object.getString("size");
+            String ext = object.getString("ext");
+            int level = object.getInteger("level");
+            // 写库
+            File myFile = new File();
+            // 用原本的文件名
+            myFile.setFileName(fileName.substring(0, fileName.lastIndexOf(".")));
+            myFile.setExt(ext);
+            myFile.setProjectId(projectId);
+            myFile.setFileUrl(fileUrl);
+            myFile.setSize(size);
+            myFile.setIsModel(0);
+            //文件的层级
+            myFile.setLevel(level);
+            myFile.setParentId(parentId);
+            myFile.setMemberId(userId);
+            myFile.setFileUids(userId);
+            myFile.setCreateTime(System.currentTimeMillis());
+            if (FileExt.extMap.get("images").contains(ext)) {
+                myFile.setFileThumbnail(fileUrl);
+            }
+            save(myFile);
+            fileEsService.saveFile(myFile);
+            System.out.println(myFile.getFileName() + " 文件ES上传成功");
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(myFile.getFileId());
+            fileVersion.setOriginalFileId(originalVersion.getOriginalFileId());
+            fileVersion.setIsMaster(1);
+            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
+            fileVersionMapper.insert(fileVersion);
+            logService.saveLog(myFile.getFileId(), TaskLogFunction.A36.getName(),2);
         }
-        // 得到上传文件的大小
-        long contentLength = multipartFile.getSize();
-        file.setSize(FileUtils.convertFileSize(contentLength));
-        file.setFileUids(originFile.getFileUids());
-        file.setLevel(originFile.getLevel());
-        save(file);
-        // 修改文件版本
-        FileVersion fileVersion = new FileVersion();
-        fileVersion.setFileId(file.getFileId());
-        fileVersion.setIsMaster(1);
-        Date time = Calendar.getInstance().getTime();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String format = simpleDateFormat.format(time);
-        fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + format);
-        fileVersionMapper.insert(fileVersion);
     }
 
 
@@ -487,7 +493,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
         // 文件移动后存储日志
         if (file.getCatalog() == 0) {
-            logService.saveLog(fileId, userEntity.getUserName() + " 将文件移动到了 " + file.getFileName(), 2);
+            logService.saveLog(fileId, " 将文件移动到了 " + file.getFileName(), 2);
 //            dealWithFile(file.getFileId(), parentId, 1);
         }
         //文件和文件夹的处理
@@ -730,7 +736,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public Integer recoveryFile(String fileId) {
         fileMapper.recoveryFile(fileId, System.currentTimeMillis());
-        logService.saveLog(fileId, TaskLogFunction.A28.getName(), 1);
+        logService.saveLog(fileId, TaskLogFunction.A28.getName(), 2);
         return 1;
     }
 
@@ -785,8 +791,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Override
     public void saveFileBatch(String projectId, String files, String parentId, String publicId) {
         UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
-        List<File> fileList = new ArrayList<>();
-        List<FileVersion> versionList = new ArrayList<>();
         if (StringUtils.isNotEmpty(files)) {
             JSONArray array = JSON.parseArray(files);
             for (int i = 0; i < array.size(); i++) {
@@ -794,32 +798,23 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 String fileName = object.getString("fileName");
                 String fileUrl = object.getString("fileUrl");
                 String size = object.getString("size");
-                String ext = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
+                String ext = object.getString("ext");
+                int level = object.getInteger("level");
                 // 写库
                 File myFile = new File();
-                myFile.setFileId(IdGen.uuid());
                 // 用原本的文件名
                 myFile.setFileName(fileName.substring(0, fileName.lastIndexOf(".")));
                 myFile.setExt(ext);
                 myFile.setProjectId(projectId);
                 myFile.setFileUrl(fileUrl);
-                myFile.setCatalog(0);
-                // 得到上传文件的大小
                 myFile.setSize(size);
                 myFile.setIsModel(0);
                 //文件的层级
-                if (StringUtils.isNotEmpty(parentId)) {
-                    //查询出当前文件夹的level
-                    int parentLevel = getOne(new QueryWrapper<File>().select("level").eq("file_id", parentId)).getLevel();
-                    myFile.setLevel(parentLevel + 1);
-                    myFile.setParentId(parentId);
-                }
-                myFile.setMemberImg(userEntity.getImage());
-                myFile.setMemberName(userEntity.getUserName());
+                myFile.setLevel(level);
+                myFile.setParentId(parentId);
                 myFile.setMemberId(ShiroAuthenticationManager.getUserId());
                 myFile.setFileUids(ShiroAuthenticationManager.getUserId());
                 myFile.setCreateTime(System.currentTimeMillis());
-                myFile.setUpdateTime(System.currentTimeMillis());
                 if (FileExt.extMap.get("images").contains(ext)) {
                     myFile.setFileThumbnail(fileUrl);
                 }
@@ -827,18 +822,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                     myFile.setPublicId(publicId);
                     myFile.setPublicLable(0);
                 }
-                fileList.add(myFile);
+                save(myFile);
                 fileEsService.saveFile(myFile);
-//                fileRepository.save(myFile);
                 System.out.println(myFile.getFileName() + " 文件ES上传成功");
                 FileVersion fileVersion = new FileVersion();
                 fileVersion.setFileId(myFile.getFileId());
+                fileVersion.setOriginalFileId(myFile.getFileId());
                 fileVersion.setIsMaster(1);
                 fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
                 fileVersionMapper.insert(fileVersion);
+                logService.saveLog(myFile.getFileId(), TaskLogFunction.A37.getName(),2);
             }
-            saveBatch(fileList);
-
         }
     }
 

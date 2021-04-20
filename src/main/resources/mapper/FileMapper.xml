@@ -190,11 +190,12 @@
 			f.file_privacy
 		FROM
 			prm_file f
-			LEFT JOIN prm_file_version v ON (f.file_id = v.file_id AND v.is_master = 1) left join tb_user as u on u.user_id = f.member_id
+			LEFT JOIN prm_file_version v ON f.file_id = v.file_id  left join tb_user as u on u.user_id = f.member_id
 		WHERE
 			f.file_del = 0
-			AND public_lable = 0
-			AND parent_id = #{fileId} order by f.`catalog` desc,f.create_time asc
+            AND f.parent_id = #{fileId}
+            AND v.is_master = 1
+			order by f.create_time asc
 	</select>
 
     <select id="findByProjectIdAndFileId" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -594,7 +595,8 @@ update prm_file set user_id = #{userId} where user_id = #{id}
 		 	f.file_name as `name`,
 		 	f.file_uids,
 		 	f.member_id,
-		 	f.file_privacy
+		 	f.file_privacy,
+		    f.create_time
 		from prm_file f where `catalog`=1 and file_del=0 and parent_id = #{fileId}
 	</select>
 
