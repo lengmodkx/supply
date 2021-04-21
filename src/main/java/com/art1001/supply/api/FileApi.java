@@ -140,16 +140,6 @@ public class FileApi extends BaseController {
     @Resource
     private MemberDownloadService memberDownloadService;
 
-
-    @Resource
-    private RedisUtil redisUtil;
-
-    @Resource
-    private ProRoleService proRoleService;
-
-    @Resource
-    private ProRoleUserService proRoleUserService;
-
     /**
      * 加载项目下文件列表数据
      *
@@ -204,7 +194,7 @@ public class FileApi extends BaseController {
         fileTrees.add(0, root);
         //查询项目文件夹
         List<FileTree> trees = fileService.querySubFileList(fileId);
-        fileTrees.addAll(trees);
+        fileTrees.addAll(trees.stream().sorted(Comparator.comparing(FileTree::getCreateTime)).collect(Collectors.toList()));
 
 //        File file = fileService.getOne(new QueryWrapper<File>().eq("user_id", userId));
 //
@@ -346,7 +336,10 @@ public class FileApi extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
             File file = fileService.findFileById(fileId);
-            List<FileVersion> versions = fileVersionService.list(new QueryWrapper<FileVersion>().eq("file_id", fileId));
+            FileVersion fileVersion = fileVersionService.getOne(new QueryWrapper<FileVersion>().eq("file_id", fileId));
+
+
+            List<FileVersion> versions = fileVersionService.list(new QueryWrapper<FileVersion>().eq("original_file_id", fileVersion.getOriginalFileId()));
             file.setVersions(versions);
             file.setLogs(logService.initLog(fileId));
             file.setIsCollect(publicCollectService.isCollItem(file.getFileId()));
@@ -397,7 +390,6 @@ public class FileApi extends BaseController {
      *
      * @param projectId 项目id
      */
-//    @Log(PushType.C2)
     @Push(value = PushType.C2, name = PushName.FILE, type = 1)
     @PostMapping("/{parentId}/upload")
     public JSONObject uploadFile(
@@ -529,20 +521,21 @@ public class FileApi extends BaseController {
 
 
     /**
-     * 更新普通文件版本
-     *
-     * @param fileId    文件id
+     * 更新文件版本
+     * @param parentId 当前文件父id（文件夹id）
+     * @param fileId 当前文件id
      * @param projectId 项目id
-     * @param mfile     文件对象
+     * @param files 更新的文件
      * @return
      */
     @Log(PushType.C4)
     @Push(value = PushType.C4, name = PushName.FILE, type = 1)
-    @PostMapping("/{fileId}/version")
+    @PostMapping("/{parentId}/version")
     public JSONObject updateUploadFile(
-            @PathVariable(value = "fileId") String fileId,
+            @PathVariable(value = "parentId") String parentId,
+            @RequestParam(value = "fileId") String fileId,
             @RequestParam(value = "projectId") String projectId,
-            @RequestParam("mfile") MultipartFile mfile
+            @RequestParam("files") String files
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -550,9 +543,9 @@ public class FileApi extends BaseController {
             FileVersion fileVersion = new FileVersion();
             fileVersion.setFileId(fileId);
             fileVersion.setIsMaster(0);
-            fileVersionService.updateById(fileVersion);
+            fileVersionService.update(new UpdateWrapper<FileVersion>().set("is_master",0).eq("file_id",fileId));
 
-            fileService.uploadFile(projectId, fileId, mfile);
+            fileService.uploadFile(projectId, fileId, parentId,files);
             // 设置返回数据
             jsonObject.put("msg", "更新成功");
             jsonObject.put("result", 1);

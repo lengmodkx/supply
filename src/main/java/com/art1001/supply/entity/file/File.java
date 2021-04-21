@@ -32,7 +32,7 @@ public class File extends Model<File> {
 
 
     @Id
-    @TableId(value = "file_id",type = IdType.UUID)
+    @TableId(value = "file_id",type = IdType.ASSIGN_UUID)
     private String fileId;
 
 
