@@ -486,6 +486,26 @@ public class UserApi {
     }
 
     /**
+     * 修改email and phone
+     *
+     * @param userId
+     * @param email
+     * @return
+     */
+    @GetMapping("/updateEmailAndPhone")
+    public Result updateEmailAndPhone(@RequestParam(value = "userId") String userId,
+                                      @RequestParam(value = "email", required = false) String email) {
+        UserEntity userEntity = userService.findById(userId);
+        userEntity.setEmail(email);
+        if (StringUtils.isEmpty(email)) {
+            userEntity.setTelephone("");
+        }
+        userService.updateById(userEntity);
+        return Result.success("已修改");
+    }
+
+
+    /**
      * 用户绑定手机号码
      *
      * @param phone 手机号码
@@ -564,7 +584,7 @@ public class UserApi {
     /**
      * 原有平台账号绑定微信号
      *
-     * @param code  微信code码
+     * @param code   微信code码
      * @param userId 用户id
      */
     @PostMapping("/bind/wechat")
@@ -632,9 +652,11 @@ public class UserApi {
             if (subject.isAuthenticated()) {
                 UserEntity byName = userService.findByName(accountName);
                 if (byName.getAccountName().equals(ADMIN)) {
+//                    String secret = redisUtil.get("power:" + ShiroAuthenticationManager.getUserId());
                     object.put("fileId", Constants.MATERIAL_BASE);
                     object.put("result", 1);
                     object.put("userInfo", ShiroAuthenticationManager.getUserEntity());
+//                    object.put("accessToken", JwtUtil.sign(ShiroAuthenticationManager.getUserId(), secret));
                     object.put("accessToken", JwtUtil.sign(ShiroAuthenticationManager.getUserId(), "1qaz2wsx#EDC"));
                 } else {
                     object.put("result", 0);

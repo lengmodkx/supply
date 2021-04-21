@@ -13,7 +13,6 @@ import com.art1001.supply.entity.role.Role;
 import com.art1001.supply.entity.role.RoleUser;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.vo.MenuVo;
-import com.art1001.supply.entity.template.TemplateRelation;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.project.OrganizationMemberMapper;
@@ -124,6 +123,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Resource
     private TemplateRelationMapper templateRelationMapper;
+
     /**
      * 通过projectId获取单条project数据
      *
@@ -132,7 +132,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
      */
     @Override
     public Project findProjectByProjectId(String projectId) {
-        Project project = getOne(new QueryWrapper<Project>().eq("project_id",projectId).eq("project_del",0));
+        Project project = getOne(new QueryWrapper<Project>().eq("project_id", projectId).eq("project_del", 0));
         Optional.ofNullable(project).ifPresent(p -> {
             UserEntity userEntity = userMapper.selectById(p.getMemberId());
             p.setImage(userEntity.getImage());
@@ -203,18 +203,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         project.setFunc(array.toString());
         save(project);
 
-        if (StringUtils.isNotEmpty(project.getTemplateId())) {
-            List<TemplateRelation> templates = templateRelationMapper.selectList(new QueryWrapper<TemplateRelation>().eq("template_id", project.getTemplateId()));
-            if (CollectionUtils.isNotEmpty(templates)) {
-                List<String> collect = templates.stream().map(TemplateRelation::getRelationName).collect(Collectors.toList());
-                relationService.saveRelationBatch(collect, project.getProjectId(), relation.getRelationId());
 
-            }
-        }else {
-            //初始化菜单
-            String[] menus = new String[]{"待处理", "进行中", "已完成", "已审核", "已拒绝"};
-            relationService.saveRelationBatch(Arrays.asList(menus), project.getProjectId(), relation.getRelationId());
-        }
+        //初始化菜单
+        String[] menus = new String[]{"待处理", "进行中", "已完成", "已审核", "已拒绝"};
+        relationService.saveRelationBatch(Arrays.asList(menus), project.getProjectId(), relation.getRelationId());
 
 
         //往项目用户关联表插入数据
@@ -232,7 +224,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         ProRole orgAdminRole = proRoleService.getOrgProjectRoleByKey(Constants.OWNER_KEY, project.getOrganizationId());
 
         ProRoleUser proRoleUser = new ProRoleUser();
-        if (orgAdminRole!=null) {
+        if (orgAdminRole != null) {
             proRoleUser.setRoleId(orgAdminRole.getRoleId());
         }
         proRoleUser.setUId(ShiroAuthenticationManager.getUserId());
@@ -637,16 +629,16 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     }
 
     @Override
-    public List<MenuVo> taskIndex(String projectId,String userId) {
-        List<MenuVo>menuVos=Lists.newArrayList();
+    public List<MenuVo> taskIndex(String projectId, String userId) {
+        List<MenuVo> menuVos = Lists.newArrayList();
         List<String> keyList = proResourcesService.getMemberResourceKey(projectId, userId);
         redisUtil.remove("perms:" + userId);
         redisUtil.lset("perms:" + userId, keyList);
         redisUtil.set("userId:" + userId, projectId);
         List<Relation> list = relationService.list(new QueryWrapper<Relation>().eq("project_id", projectId).eq("parent_id", 0));
-        List<String> relationIds=Lists.newArrayList();
+        List<String> relationIds = Lists.newArrayList();
         if (CollectionUtils.isNotEmpty(list)) {
-            relationIds = list.stream().filter(f->f.getParentId().equals(Constants.ZERO)).map(Relation::getRelationId).collect(Collectors.toList());
+            relationIds = list.stream().filter(f -> f.getParentId().equals(Constants.ZERO)).map(Relation::getRelationId).collect(Collectors.toList());
         }
 
         for (String relationId : relationIds) {
@@ -655,7 +647,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             relation.setLable(1);
             Relation byId = relationService.getById(relationId);
             List<Relation> taskMenu = relationService.findRelationAllList(relation);
-            MenuVo menuVo =  MenuVo.builder().name(byId.getRelationName()).taskMenu(taskMenu).build();
+            MenuVo menuVo = MenuVo.builder().name(byId.getRelationName()).taskMenu(taskMenu).build();
             menuVos.add(menuVo);
         }
         return menuVos;

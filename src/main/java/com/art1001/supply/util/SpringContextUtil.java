@@ -1,6 +1,6 @@
 package com.art1001.supply.util;
 
-import com.art1001.supply.shiro.JWTShiroRealm;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -40,7 +40,6 @@ public class SpringContextUtil implements ApplicationContextAware {
      * 从spring容器获取bean实例</br>
      * 	<font color='red'>注意，这里beanId是spring ioc中bean实例的名字,如果是注解扫描方式，没有特意指定名称，一般为类名，首字母小写(java遵从驼峰命名规则)，如果有指定名称，则为指定的bean名称</font>
      * @param name    bean name,infact it's name in spring IOC
-     * @param requiredType
      * @return	bean实例
      *
      * @author wjggwm

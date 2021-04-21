@@ -114,8 +114,7 @@ public class ProjectApi extends BaseController {
                                     @RequestParam(value = "projectDes") String projectDes,
                                     @RequestParam(value = "startTime") Long startTime,
                                     @RequestParam(required = false) @Length(max = 32, message = "parentId参数不正确!") String parentId,
-                                    @RequestParam(value = "endTime") Long endTime,
-                                    @RequestParam(value = "templateId", required = false) String templateId) {
+                                    @RequestParam(value = "endTime") Long endTime) {
         JSONObject object = new JSONObject();
         if (endTime < startTime) {
             object.put("result", 1);
@@ -135,8 +134,6 @@ public class ProjectApi extends BaseController {
         project.setUpdateTime(System.currentTimeMillis());
         project.setEndTime(endTime);
         project.setMemberId(ShiroAuthenticationManager.getUserId());
-
-        project.setTemplateId(templateId);
 
         projectService.saveProject(project);
 
