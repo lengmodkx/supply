@@ -251,7 +251,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      * @param files 文件
      */
     @Override
-    public void uploadFile(String projectId, String fileId,String parentId, String files) {
+    public String uploadFile(String projectId, String fileId,String parentId, String files) {
         String userId = ShiroAuthenticationManager.getUserId();
         FileVersion originalVersion= fileVersionMapper.selectOne(new QueryWrapper<FileVersion>().eq("file_id", fileId));
         UserEntity userEntity = userService.findById(userId);
@@ -291,7 +291,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
             fileVersionMapper.insert(fileVersion);
             logService.saveLog(myFile.getFileId(), TaskLogFunction.A36.getName(),2);
+            return myFile.getFileId();
         }
+        return "";
     }
 
 

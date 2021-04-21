@@ -38,7 +38,7 @@ public class FileEsServiceImpl implements FileEsService {
 
     @Override
     public List<File> searchEsFile(String fileName/*, Integer pageNumber,Integer pageSize*/) {
-        SearchRequest searchRequest = new SearchRequest("file");
+        SearchRequest searchRequest = new SearchRequest("files");
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 
         /*sourceBuilder.from(pageNumber);
@@ -64,7 +64,7 @@ public class FileEsServiceImpl implements FileEsService {
 
     @Override
     public long getSucaiTotle(String fileName) {
-        SearchRequest searchRequest = new SearchRequest("file");
+        SearchRequest searchRequest = new SearchRequest("files");
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.query(QueryBuilders.multiMatchQuery(fileName, "fileName", "ext"));
         searchRequest.source(sourceBuilder);
@@ -81,7 +81,7 @@ public class FileEsServiceImpl implements FileEsService {
 
     @Override
     public void deleteFile(String fileId) {
-        SearchRequest searchRequest = new SearchRequest("file");
+        SearchRequest searchRequest = new SearchRequest("files");
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.query(QueryBuilders.matchPhraseQuery(fileId, "fileId"));
         searchRequest.source(sourceBuilder);
@@ -89,7 +89,7 @@ public class FileEsServiceImpl implements FileEsService {
             SearchResponse search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
             List<SearchHit> searchHits = Arrays.asList(search.getHits().getHits());
             searchHits.forEach(e -> {
-                DeleteRequest deleteRequest = new DeleteRequest("file", e.getType(), e.getId());
+                DeleteRequest deleteRequest = new DeleteRequest("files", e.getType(), e.getId());
                 try {
                     restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
                 } catch (IOException e1) {
@@ -105,7 +105,7 @@ public class FileEsServiceImpl implements FileEsService {
     @Override
     public void saveFile(File file) {
         try {
-            IndexRequest indexRequest = new IndexRequest("file","docs");
+            IndexRequest indexRequest = new IndexRequest("files","docs");
             Map<String, String> fileMap = BeanUtils.describe(file);
             indexRequest.source(fileMap);
             restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);

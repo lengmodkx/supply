@@ -338,7 +338,6 @@ public class FileApi extends BaseController {
             File file = fileService.findFileById(fileId);
             FileVersion fileVersion = fileVersionService.getOne(new QueryWrapper<FileVersion>().eq("file_id", fileId));
 
-
             List<FileVersion> versions = fileVersionService.list(new QueryWrapper<FileVersion>().eq("original_file_id", fileVersion.getOriginalFileId()));
             file.setVersions(versions);
             file.setLogs(logService.initLog(fileId));
@@ -528,7 +527,6 @@ public class FileApi extends BaseController {
      * @param files 更新的文件
      * @return
      */
-    @Log(PushType.C4)
     @Push(value = PushType.C4, name = PushName.FILE, type = 1)
     @PostMapping("/{parentId}/version")
     public JSONObject updateUploadFile(
@@ -545,11 +543,12 @@ public class FileApi extends BaseController {
             fileVersion.setIsMaster(0);
             fileVersionService.update(new UpdateWrapper<FileVersion>().set("is_master",0).eq("file_id",fileId));
 
-            fileService.uploadFile(projectId, fileId, parentId,files);
+            String newFileId = fileService.uploadFile(projectId, fileId, parentId, files);
             // 设置返回数据
             jsonObject.put("msg", "更新成功");
             jsonObject.put("result", 1);
             jsonObject.put("msgId", projectId);
+            jsonObject.put("data",new JSONObject().fluentPut("parentId",parentId).fluentPut("fileId",newFileId));
         } catch (ServiceException e) {
             log.error("文件版本更新失败:", e);
             throw new AjaxException(e);
@@ -559,6 +558,48 @@ public class FileApi extends BaseController {
         }
         return jsonObject;
     }
+
+    @Push(value = PushType.C4, name = PushName.FILE, type = 1)
+    @PostMapping("/{fileId}/version/change")
+    public JSONObject changeVersion(
+            @PathVariable(value = "fileId") String fileId,
+            @RequestParam(value = "projectId") String projectId,
+            @RequestParam(value = "oldFileId") String oldFileId,
+            @RequestParam(value = "parentId") String parentId
+    ) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            //现将数据库中文件的主版本都置成0，然后再插入主版本
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(fileId);
+            fileVersion.setIsMaster(0);
+            fileVersionService.update(new UpdateWrapper<FileVersion>().set("is_master",0).eq("file_id",fileId));
+
+            fileVersionService.update(new UpdateWrapper<FileVersion>().set("is_master",1).eq("file_id",oldFileId));
+            // 设置返回数据
+            jsonObject.put("msg", "更新成功");
+            jsonObject.put("result", 1);
+            jsonObject.put("msgId", projectId);
+            jsonObject.put("data",new JSONObject().fluentPut("parentId",parentId).fluentPut("fileId",oldFileId));
+        } catch (ServiceException e) {
+            log.error("文件版本更新失败:", e);
+            throw new AjaxException(e);
+        } catch (Exception e) {
+            log.error("系统异常:", e);
+            throw new AjaxException(e);
+        }
+        return jsonObject;
+    }
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 更新模型文件

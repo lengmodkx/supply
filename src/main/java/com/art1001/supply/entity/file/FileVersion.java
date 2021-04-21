@@ -1,6 +1,7 @@
 package com.art1001.supply.entity.file;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -44,7 +45,8 @@ public class FileVersion extends Model<FileVersion> {
 	private Integer isMaster;
 
 	private String originalFileId;
-
+    @TableField(exist = false)
+	private boolean visible;
 	@Override
 	protected Serializable pkVal() {
 		return this.versionId;

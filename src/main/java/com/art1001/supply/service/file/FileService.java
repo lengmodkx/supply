@@ -60,7 +60,7 @@ import java.util.List;
 	 * @param files 更新的文件
 	 * @return
 	 */
-	 void uploadFile(String projectId, String fileId,String parentId, String files);
+	 String uploadFile(String projectId, String fileId,String parentId, String files);
 
 	 void saveFile(String files,String publicId,String projectId);
 
