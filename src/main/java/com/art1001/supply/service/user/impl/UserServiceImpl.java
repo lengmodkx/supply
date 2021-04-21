@@ -126,6 +126,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public UserInfo findInfo(String accountName) {
         UserInfo info = userMapper.findInfo(accountName);
+        // String random = NumberUtils.getRandom();
+        // redisUtil.set("power:"+info.getUserId(),random);
+        // info.setRandom(random);
+        // info.setAccessToken();
         String orgByUserId = organizationMemberService.findOrgByUserId(info.getUserId());
         info.setOrgId(orgByUserId);
         if (StringUtils.isNotEmpty(orgByUserId)) {
@@ -139,7 +143,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     @Override
     public UserEntity findById(String id) {
-        return getById(id);
+        UserEntity userEntity = getById(id);
+        if (StringUtils.isEmpty(userEntity.getTelephone())) {
+            userEntity.setTelephone("");
+        }
+        return userEntity;
     }
 
     /**
@@ -255,6 +263,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             userInfo.setBindPhone(false);
             String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
             userInfo.setOrgId(orgByUserId);
+//            String secret = redisUtil.get("power:" + userEntity.getUserId());
+//            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), secret));
             userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
         }
         return userInfo;

@@ -3,7 +3,6 @@ package com.art1001.supply.shiro.filter;
 import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.shiro.util.JWTToken;
 import com.art1001.supply.shiro.util.JwtUtil;
-import com.art1001.supply.util.NumberUtils;
 import com.art1001.supply.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -93,6 +92,9 @@ public class JwtFilter extends AuthenticatingFilter {
             boolean shouldRefresh = shouldTokenRefresh(JwtUtil.getIssuedAt(jwtToken.getToken()));
 
             if(shouldRefresh) {
+//                String random = NumberUtils.getRandom();
+//                newToken = JwtUtil.sign(user.getUserId(),random);
+//                redisUtil.set("power:"+user.getUserId(),random);
                 newToken = JwtUtil.sign(user.getUserId(),"1qaz2wsx#EDC");
             }
         }
