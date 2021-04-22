@@ -337,9 +337,11 @@ public class FileApi extends BaseController {
         try {
             File file = fileService.findFileById(fileId);
             FileVersion fileVersion = fileVersionService.getOne(new QueryWrapper<FileVersion>().eq("file_id", fileId));
+            if(fileVersion!=null){
+                List<FileVersion> versions = fileVersionService.list(new QueryWrapper<FileVersion>().eq("original_file_id", fileVersion.getOriginalFileId()));
+                file.setVersions(versions);
+            }
 
-            List<FileVersion> versions = fileVersionService.list(new QueryWrapper<FileVersion>().eq("original_file_id", fileVersion.getOriginalFileId()));
-            file.setVersions(versions);
             file.setLogs(logService.initLog(fileId));
             file.setIsCollect(publicCollectService.isCollItem(file.getFileId()));
             //设置关联信息
