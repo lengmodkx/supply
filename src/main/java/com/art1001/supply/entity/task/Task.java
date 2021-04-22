@@ -203,7 +203,7 @@ Task extends Model<Task> {
 	private Long finishTime;
 
 	/**
-	 * 任务的隐私模式
+	 * 任务的隐私模式 隐私模式(0 参与者可见  1 所有项目成员可见)
 	 */
 	private Integer privacyPattern;
 

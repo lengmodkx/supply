@@ -1,9 +1,10 @@
 package com.art1001.supply.api;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.entity.statistics.*;
 import com.art1001.supply.service.statistics.StatisticsService;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -208,13 +209,7 @@ public class StatisticsApi {
      */
     @GetMapping(value = "getBurnoutSource/{projectId}")
     public Statistics burnoutStatistics(@PathVariable("projectId") String projectId, @RequestParam("data") String dto) {
-
         StaticDto sto = this.getStaticDto(dto);
-        if (dto != null) {
-            JSONObject jsonObject = JSONObject.fromObject(dto);
-            sto = (StaticDto) JSONObject.toBean(jsonObject, StaticDto.class);
-        }
-
         try {
             Statistics statistics = this.getCondition(projectId);
             //根据项目id获取燃尽图数据
@@ -252,11 +247,6 @@ public class StatisticsApi {
     public Statistics addStatistics(@PathVariable("projectId") String projectId, @RequestParam("data") String dto) {
 
         StaticDto sto = this.getStaticDto(dto);
-        if (dto != null) {
-            JSONObject jsonObject = JSONObject.fromObject(dto);
-            sto = (StaticDto) JSONObject.toBean(jsonObject, StaticDto.class);
-        }
-
         try {
             Statistics statistics = this.getCondition(projectId);
             //根据项目id获取燃尽图数据
@@ -292,8 +282,6 @@ public class StatisticsApi {
     public Statistics getCountData(@PathVariable("projectId") String projectId, @RequestParam("data") String dto) {
         StaticDto sto = this.getStaticDto(dto);
         if (dto != null) {
-            JSONObject jsonObject = JSONObject.fromObject(dto);
-            sto = (StaticDto) JSONObject.toBean(jsonObject, StaticDto.class);
             if (!sto.getTaskCase().isEmpty()) {
                 if ("已完成".equals(sto.getTaskCase())) {
                     sto.setTaskCondition(1);
@@ -337,9 +325,7 @@ public class StatisticsApi {
 
 
     private StaticDto getStaticDto(String dto) {
-        JSONObject jsonObject = JSONObject.fromObject(dto);
-        StaticDto sto = (StaticDto) JSONObject.toBean(jsonObject, StaticDto.class);
-        return sto;
+        return JSON.parseObject(dto,StaticDto.class);
     }
 
 }

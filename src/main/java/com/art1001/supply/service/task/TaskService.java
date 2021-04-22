@@ -524,6 +524,7 @@ public interface TaskService extends IService<Task> {
 	 */
 	void orderTask(String taskIds, String taskId, String newMenu);
 
+	void orderTask1(String taskIds, String taskId, String userId);
 	/**
 	 * 返回任务的视图信息
 	 * @param taskId 任务id

@@ -37,6 +37,7 @@ import javax.annotation.Resource;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * relationServiceImpl
@@ -156,18 +157,20 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	@Override
 	public List<Relation> findRelationAllList(Relation relation){
 		List<Relation> relationAllList = relationMapper.findRelationAllList(relation);
+		String userId = ShiroAuthenticationManager.getUserId();
 		relationAllList.forEach(r -> {
-			r.getTaskList().forEach(t -> t.setCompleteCount((int)t.getTaskList().stream().filter(Task::getTaskStatus).count()));
 			r.getTaskList().forEach(t -> {
+				t.setCompleteCount((int)t.getTaskList().stream().filter(Task::getTaskStatus).count());
 				t.setIsExistSub(t.getTaskList().size() > 0);
 				t.setChildCount(t.getTaskList().size());
 			});
+
 			Iterator<Task> iterator = r.getTaskList().iterator();
 			while(iterator.hasNext()){
 				Task task = iterator.next();
 				if(task.getPrivacyPattern() == 0){
-					if(!(Objects.equals(ShiroAuthenticationManager.getUserId(),task.getExecutor()))){
-						if(!(task.getTaskUIds() != null && Arrays.asList(task.getTaskUIds().split(",")).contains(ShiroAuthenticationManager.getUserId()))){
+					if(!(Objects.equals(userId,task.getExecutor()))){
+						if(!(task.getTaskUIds() != null && Arrays.asList(task.getTaskUIds().split(",")).contains(userId))){
 							iterator.remove();
 						}
 					}

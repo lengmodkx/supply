@@ -286,6 +286,25 @@ public class TaskApi extends BaseController {
         return object;
     }
 
+
+    @Push(value = PushType.A27, name =PushName.TASK, type = 1)
+    @PutMapping("/order1")
+    public JSONObject orderSetExcutor(@RequestParam(value = "projectId") String projectId,
+                            @RequestParam(value = "taskId", required = false) String taskId,
+                            @RequestParam(value = "taskIds") String taskIds,
+                            @RequestParam(value = "userId", required = false) String userId) {
+        JSONObject object = new JSONObject();
+        try {
+            taskService.orderTask1(taskIds, taskId, userId);
+            object.put("result", 1);
+            object.put("msg", "更新成功");
+            object.put("msgId", projectId);
+            object.put("data", projectId);
+        } catch (Exception e) {
+            throw new AjaxException(e);
+        }
+        return object;
+    }
     /**
      * 更新任务名称
      *

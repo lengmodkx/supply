@@ -1425,6 +1425,24 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         });
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void orderTask1(String taskIds, String taskId, String userId) {
+        if (StringUtils.isNotEmpty(userId)) {
+            Task task = new Task();
+            task.setTaskId(taskId);
+            task.setExecutor(userId);
+            taskMapper.updateById(task);
+        }
+        String[] split = taskIds.split(",");
+        Stream.iterate(0, i -> i + 1).limit(split.length).forEach(index->{
+            Task task = new Task();
+            task.setTaskId(split[index]);
+            task.setOrder(index);
+            task.setUpdateTime(System.currentTimeMillis());
+            taskMapper.updateById(task);
+        });
+    }
     /**
      * 永久删除多个任务
      *
@@ -2036,6 +2054,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         }
 
         List<MemberViewResult> groups = new ArrayList<>();
+
         List<ProjectMember> projectMembers = projectMemberService.findByProjectId(projectId);
         projectMembers.forEach(v -> {
             MemberViewResult result = new MemberViewResult();
@@ -2044,8 +2063,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             result.setTaskList(taskMapper.findTaskByExcutorId(v.getMemberId(), v.getProjectId()));
             groups.add(result);
         });
+        List<MemberViewResult> s = groups.stream().sorted((x1,x2)->x2.getTaskList().size()-x1.getTaskList().size()).collect(Collectors.toList());
+        MemberViewResult result0 = new MemberViewResult();
+        result0.setUserId("");
+        result0.setUserName("待认领");
+        List<Task> taskByProject = taskMapper.findTaskByProject(projectId);
+        taskByProject = taskByProject.stream().filter(task->StringUtils.isEmpty(task.getExecutor())).collect(Collectors.toList());
+        result0.setTaskList(taskByProject);
+        s.add(0,result0);
 
-        return groups;
+        return s;
     }
 
     @Override

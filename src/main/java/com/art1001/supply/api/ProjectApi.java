@@ -325,6 +325,7 @@ public class ProjectApi extends BaseController {
             Relation relation = new Relation();
             relation.setParentId(groupId);
             relation.setLable(1);
+            relation.setProjectId(projectId);
             List<Relation> taskMenu = relationService.findRelationAllList(relation);
             ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>()
                     .eq("project_Id", projectId).eq("member_id", userId));
