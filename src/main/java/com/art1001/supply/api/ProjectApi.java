@@ -374,9 +374,10 @@ public class ProjectApi extends BaseController {
      * @return 数据
      */
     @RequestMapping("view_member")
-    public Result memberView(@NotNull(message = "项目id不能为空!") String projectId) {
-        log.info("Get member view data. [{}]", projectId);
-        List<MemberViewResult> memberViewResults = taskService.memberView(projectId);
+    public Result memberView(@NotNull(message = "项目id不能为空!") String projectId,
+                             @NotNull(message = "默认组id不能为空!") String groupId) {
+        log.info("Get member view data. [{},{}]", projectId,groupId);
+        List<MemberViewResult> memberViewResults = taskService.memberView(projectId,groupId);
         return Result.success(memberViewResults);
 
     }

@@ -143,7 +143,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 */
     List<Task> findTaskByMenuId(String menuId);
 
-	List<Task> findTaskByExcutorId(String excutorId,String projectId);
+	List<Task> findTaskByExcutorId(String excutorId,String projectId,String groupId);
 	/**
 	 * 查询某个人执行的所有任务
 	 * @param uId 执行者的id

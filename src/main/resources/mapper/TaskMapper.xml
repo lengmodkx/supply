@@ -78,6 +78,7 @@
         <result column="executor_img" property="executorImg" jdbcType="VARCHAR"/>
         <result column="task_type" property="taskType" jdbcType="VARCHAR"/>
         <result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR"/>
+        <result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR"/>
         <result column="task_status" property="taskStatus" jdbcType="VARCHAR"/>
         <result column="task_code" property="taskCode" jdbcType="VARCHAR"/>
         <result column="task_del" property="taskDel" jdbcType="INTEGER"/>
@@ -180,7 +181,7 @@
         <result column="end_time" property="endTime"/>
         <result column="level" property="level"/>
         <result column="image" property="executorImg"/>
-        <result column="task_group_id" property="groupId"/>
+        <result column="task_group_id" property="taskGroupId"/>
         <result column="project_id" property="projectId"/>
         <association property="project" javaType="com.art1001.supply.entity.project.Project">
             <id column="project_id" property="projectId"/>
@@ -226,6 +227,7 @@
         <result column="end_time" property="endTime"/>
         <result column="repeat" property="repeat"/>
         <result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR"/>
+        <result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR"/>
         <result column="user_name" property="executorName"/>
         <result column="user_id" property="executor"/>
         <result column="image" property="executorImg"/>
@@ -303,6 +305,7 @@
 		prm_task.executor,
 		prm_task.task_type,
 		prm_task.task_menu_id,
+        prm_task.task_group_id,
 		prm_task.task_status,
 		prm_task.task_code,
 		prm_task.task_del,
@@ -331,6 +334,7 @@
 		prm_task.executor,
 		prm_task.task_type,
 		prm_task.task_menu_id,
+        prm_task.task_group_id,
 		prm_task.task_status,
 		prm_task.task_code,
 		prm_task.task_del,
@@ -381,12 +385,6 @@
 		tg.tag_name,
 		tg.bg_color
 	</sql>
-
-    <sql id="Base_Column_List4">
-
-    </sql>
-
-
     <sql id="whereStatement">
         <where>
             1 = 1
@@ -1564,7 +1562,7 @@
 			project_id = #{projectId} and t.executor != '0'
 	</select>
     <select id="findTaskByExcutorId" resultType="com.art1001.supply.entity.task.Task">
-select
+        select
 		t.task_id,
 		t.project_id,
 		t.task_name,
@@ -1609,7 +1607,11 @@ select
 		left join tb_user u on t.executor = u.user_id
 		LEFT JOIN prm_binding as bd on bd.public_id = t.task_id
 		LEFT JOIN prm_file as f on f.public_id = t.task_id
-		where t.executor = #{excutorId} and t.project_id = #{projectId} and t.task_del = 0 GROUP BY task_id order by t.`order` asc
+		where t.executor = #{excutorId}
+		  and t.project_id = #{projectId}
+		  and t.task_del = 0
+          and t.task_group_id = #{groupId}
+        order by t.`order` asc
 	</select>
 
 

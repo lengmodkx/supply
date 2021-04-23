@@ -1428,19 +1428,17 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void orderTask1(String taskIds, String taskId, String userId) {
-        if (StringUtils.isNotEmpty(userId)) {
-            Task task = new Task();
-            task.setTaskId(taskId);
-            task.setExecutor(userId);
-            taskMapper.updateById(task);
-        }
+        Task task = new Task();
+        task.setTaskId(taskId);
+        task.setExecutor(userId);
+        taskMapper.updateById(task);
         String[] split = taskIds.split(",");
         Stream.iterate(0, i -> i + 1).limit(split.length).forEach(index->{
-            Task task = new Task();
-            task.setTaskId(split[index]);
-            task.setOrder(index);
-            task.setUpdateTime(System.currentTimeMillis());
-            taskMapper.updateById(task);
+            Task task1 = new Task();
+            task1.setTaskId(split[index]);
+            task1.setOrder(index);
+            task1.setUpdateTime(System.currentTimeMillis());
+            taskMapper.updateById(task1);
         });
     }
     /**
@@ -2045,20 +2043,15 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     }
 
     @Override
-    public List<MemberViewResult> memberView(String projectId) {
-        if (!projectService.checkIsExist(projectId)) {
-            log.error("project not exist ->>> [{}]", projectId);
-            throw new ServiceException("项目不存在!");
-        }
+    public List<MemberViewResult> memberView(String projectId,String groupId) {
 
         List<MemberViewResult> groups = new ArrayList<>();
-
         List<ProjectMember> projectMembers = projectMemberService.findByProjectId(projectId);
         projectMembers.forEach(v -> {
             MemberViewResult result = new MemberViewResult();
             result.setUserId(v.getMemberId());
             result.setUserName(v.getMemberName());
-            result.setTaskList(taskMapper.findTaskByExcutorId(v.getMemberId(), v.getProjectId()));
+            result.setTaskList(taskMapper.findTaskByExcutorId(v.getMemberId(), v.getProjectId(),groupId));
             groups.add(result);
         });
         List<MemberViewResult> s = groups.stream().sorted((x1,x2)->x2.getTaskList().size()-x1.getTaskList().size()).collect(Collectors.toList());
@@ -2066,7 +2059,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         result0.setUserId("");
         result0.setUserName("待认领");
         List<Task> taskByProject = taskMapper.findTaskByProject(projectId);
-        taskByProject = taskByProject.stream().filter(task->StringUtils.isEmpty(task.getExecutor())).collect(Collectors.toList());
+        taskByProject = taskByProject.stream().filter(task->task.getTaskGroupId().equals(groupId)&&StringUtils.isEmpty(task.getExecutor())).collect(Collectors.toList());
         result0.setTaskList(taskByProject);
         s.add(0,result0);
 

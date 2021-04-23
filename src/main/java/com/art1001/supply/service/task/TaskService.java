@@ -665,7 +665,7 @@ public interface TaskService extends IService<Task> {
 	 * @param projectId 项目id
 	 * @return 成员视图数据
 	 */
-    List<MemberViewResult> memberView(String projectId);
+    List<MemberViewResult> memberView(String projectId,String groupId);
 
 	/**
 	 * 查询项目下没有执行者的所有任务
