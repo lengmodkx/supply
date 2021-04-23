@@ -122,6 +122,9 @@ public class ProjectMember extends Model<ProjectMember> {
 	@TableField(exist = false)
 	private Boolean visible = false;
 
+	@TableField(exist = false)
+	private Boolean visable1;
+
 	/**
 	 * 创建时间
 	 */

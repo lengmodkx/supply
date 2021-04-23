@@ -1772,9 +1772,10 @@
             </if>
         </where>
     </select>
-
-
-
+    <select id="selectListAddExecutorImage" resultType="com.art1001.supply.entity.task.Task">
+        select t.*,u.image as executorImg from prm_task t join tb_user u on t.executor=u.user_id
+        where t.task_del='0' and t.parent_id='0' and t.project_id=#{projectId}
+    </select>
 
 
 </mapper>

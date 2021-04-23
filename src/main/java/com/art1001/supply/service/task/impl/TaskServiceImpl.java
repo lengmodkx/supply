@@ -1893,12 +1893,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      * @return 任务数据
      */
     @Override
-    public List<Task> getTaskPanel(String projectId) {
-
-        List<Task> taskList = taskMapper.selectList(new QueryWrapper<Task>()
-        .eq("task_del",0).eq("parent_id",0).eq("project_id",projectId));
-
-        return taskList;
+    public List<Task>   getTaskPanel(String projectId) {
+        return taskMapper.selectListAddExecutorImage(projectId);
     }
 
     @Override

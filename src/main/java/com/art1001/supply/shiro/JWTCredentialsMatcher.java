@@ -16,7 +16,7 @@ public class JWTCredentialsMatcher implements CredentialsMatcher {
 
 	private RedisUtil redisUtil;
 
-    public JWTCredentialsMatcher(RedisUtil redisUtil) {
+    public      JWTCredentialsMatcher(RedisUtil redisUtil) {
         this.redisUtil=redisUtil;
     }
 

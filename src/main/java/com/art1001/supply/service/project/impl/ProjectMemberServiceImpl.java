@@ -144,7 +144,9 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
     @Override
     public List<ProjectMember> findByProjectId(String projectId) {
-        return projectMemberMapper.findByProjectId(projectId);
+        List<ProjectMember> byProjectId = projectMemberMapper.findByProjectId(projectId);
+        Optional.ofNullable(byProjectId).ifPresent(l-> l.forEach(r->r.setVisable1(false)));
+        return byProjectId;
     }
 
 
