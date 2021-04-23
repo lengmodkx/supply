@@ -1896,13 +1896,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      */
     @Override
     public List<Task> getTaskPanel(String projectId) {
-        String projectAllTask = projectService.findProjectAllTask(projectId);
-        if (StringUtils.isEmpty(projectAllTask)) {
-            return new ArrayList<>();
-        }
-        List<String> taskIds = Arrays.asList(projectAllTask.split(","));
 
-        return taskMapper.getTaskPanel(taskIds);
+        List<Task> taskList = taskMapper.selectList(new QueryWrapper<Task>()
+        .eq("task_del",0).eq("parent_id",0).eq("project_id",projectId));
+
+        return taskList;
     }
 
     @Override
