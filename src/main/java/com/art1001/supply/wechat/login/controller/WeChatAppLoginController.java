@@ -86,7 +86,7 @@ public class WeChatAppLoginController extends BaseController {
             userService.updateById(saveUserInfo);
 
 //            String secret = redisUtil.get("power:" + one.getUserId());
-            jsonObject.put("userId",one.getUserId());
+            jsonObject.put("userId", one.getUserId());
 //            jsonObject.put("accessToken", JwtUtil.sign(one.getUserId(), secret));
             jsonObject.put("accessToken", JwtUtil.sign(one.getUserId(), "1qaz2wsx#EDC"));
             jsonObject.put("result", 1);

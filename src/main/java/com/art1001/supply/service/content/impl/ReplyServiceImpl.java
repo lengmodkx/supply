@@ -120,9 +120,11 @@ public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements
 
         if (CollectionUtils.isNotEmpty(page.getRecords())) {
             page.getRecords().forEach(r->{
-                UserEntity userEntity = userMapper.selectById(r.getReplyMemberId());
-                r.setReplyMemberName(userEntity.getUserName());
-                r.setReplyMemberImage(userEntity.getImage());
+                if (StringUtils.isNotBlank(r.getReplyMemberId())) {
+                    UserEntity userEntity = userMapper.selectById(r.getReplyMemberId());
+                    r.setReplyMemberName(userEntity.getUserName());
+                    r.setReplyMemberImage(userEntity.getImage());
+                }
             });
             page.setRecords(page.getRecords().stream()
                     .sorted(Comparator.comparingLong(Reply::getCreateTime).reversed())

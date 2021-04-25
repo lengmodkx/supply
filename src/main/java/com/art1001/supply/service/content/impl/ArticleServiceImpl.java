@@ -344,7 +344,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 r.setUserName(userEntity.getUserName());
             }
         }));
-        log.info(page.getRecords()+"");
         page.setCurrent(pageNum);
         page.setSize(20);
         return page;

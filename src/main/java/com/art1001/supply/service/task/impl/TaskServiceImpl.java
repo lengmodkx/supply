@@ -1894,7 +1894,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      */
     @Override
     public List<Task>   getTaskPanel(String projectId) {
-        return taskMapper.selectListAddExecutorImage(projectId);
+        List<Task> list = taskMapper.selectListAddExecutorImage(projectId);
+        Optional.ofNullable(list).ifPresent(l->l.stream().forEach(r->{
+            if (!"0".equals(r.getParentId())) {
+                Task task = getById(r.getParentId());
+                r.setParentTask(task);
+            }
+        }));
+        return list;
     }
 
     @Override
