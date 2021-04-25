@@ -334,7 +334,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (CollectionUtils.isEmpty(page.getRecords())) {
             page.setRecords(articleMapper.selectByExample(page, acId, state));
         }else {
-            page.getRecords().stream().forEach(r->r.setCommentCount(articleMapper.selectCommentCount(r.getArticleId())));
+
+            page.getRecords().stream().forEach(r->{
+                Integer count = articleMapper.selectCommentCount(r.getArticleId());
+                r.setCommentCount(count);
+            });
         }
 
         Optional.ofNullable(page.getRecords()).ifPresent(list->list.forEach(r->{

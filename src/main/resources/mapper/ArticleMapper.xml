@@ -35,6 +35,6 @@
         ${ew.customSqlSegment}
     </select>
     <select id="selectCommentCount" resultType="java.lang.Integer">
-        select comment_count from prm_article where article_id=#{articleId}
+        select IFNULL(comment_count,0) comment_count from prm_article where article_id=#{articleId}
     </select>
 </mapper>
