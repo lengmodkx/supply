@@ -171,7 +171,7 @@ public class Project extends Model<Project> {
     /**
      * 模板id
      */
-    private String templateId;
+//    private String templateId;
 
     @Override
     protected Serializable pkVal() {
