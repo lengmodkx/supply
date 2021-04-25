@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 组织成员管理控制器
@@ -255,7 +256,8 @@ public class OrganizationApi {
         try {
             OrganizationMember one = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>().eq("member_id", userId).eq("user_default", 1));
             if (one!=null) {
-                List<Project>list=organizationService.getProjects(one.getOrganizationId());
+                List<Project> list=projectService.findOrgProject(userId,one.getOrganizationId());
+                list = list.stream().filter(project -> project.getProjectDel()==0).collect(Collectors.toList());
                 jsonObject.put("result",1);
                 jsonObject.put("data",list);
             }
