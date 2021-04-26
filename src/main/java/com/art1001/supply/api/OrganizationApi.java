@@ -22,6 +22,7 @@ import com.art1001.supply.util.ValidatorUtils;
 import com.art1001.supply.validation.organization.SaveOrg;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -257,9 +258,11 @@ public class OrganizationApi {
             OrganizationMember one = organizationMemberService.getOne(new QueryWrapper<OrganizationMember>().eq("member_id", userId).eq("user_default", 1));
             if (one!=null) {
                 List<Project> list=projectService.findOrgProject(userId,one.getOrganizationId());
-                list = list.stream().filter(project -> project.getProjectDel()==0).collect(Collectors.toList());
-                jsonObject.put("result",1);
-                jsonObject.put("data",list);
+                if (CollectionUtils.isNotEmpty(list)) {
+                    list = list.stream().filter(project -> project.getProjectDel()==0).collect(Collectors.toList());
+                    jsonObject.put("result",1);
+                    jsonObject.put("data",list);
+                }
             }
             else {
                 jsonObject.put("result",0);
