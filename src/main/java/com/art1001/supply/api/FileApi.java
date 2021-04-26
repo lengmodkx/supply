@@ -27,8 +27,6 @@ import com.art1001.supply.service.file.MemberDownloadService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.notice.NoticeService;
 import com.art1001.supply.service.project.ProjectService;
-import com.art1001.supply.service.role.ProRoleService;
-import com.art1001.supply.service.role.ProRoleUserService;
 import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserService;
@@ -36,7 +34,6 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.art1001.supply.util.CommonUtils;
 import com.art1001.supply.util.DateUtils;
-import com.art1001.supply.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -47,7 +44,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -1172,7 +1168,7 @@ public class FileApi extends BaseController {
      * 文件搜索
      */
     @GetMapping("search_file")
-    public JSONObject elSearch(@RequestParam(value = "fileName") String fileName,
+        public JSONObject elSearch(@RequestParam(value = "fileName") String fileName,
                                @RequestParam(value = "projectId") String projectId,
                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         JSONObject jsonObject = new JSONObject();

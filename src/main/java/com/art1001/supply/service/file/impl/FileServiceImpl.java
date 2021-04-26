@@ -1289,14 +1289,14 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         boolQueryBuilder.must(QueryBuilders.termQuery("fileDel", "0"));
         boolQueryBuilder.must(QueryBuilders.termQuery("projectId", projectId));
-        boolQueryBuilder.must(QueryBuilders.matchQuery("fileName", fileName));
+        boolQueryBuilder.must(QueryBuilders.wildcardQuery("fileName", fileName));
         sourceBuilder.query(boolQueryBuilder);
         page = esUtil.searchListByPage(File.class, sourceBuilder, FILES, pageNum);
 
-       /* if (CollectionUtils.isEmpty(page.getRecords())) {
+        if (CollectionUtils.isEmpty(page.getRecords())) {
             List<File> files = fileMapper.selectList(new QueryWrapper<File>().like("file_name", fileName).eq("file_del", 0).eq("project_id",projectId));
             page.setRecords(files);
-        }*/
+        }
         return page;
     }
 
