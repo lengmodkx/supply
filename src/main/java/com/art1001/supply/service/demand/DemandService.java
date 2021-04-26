@@ -47,7 +47,7 @@ public interface DemandService extends IService<Demand> {
      * @param state        1 审核过的 2未审核的
      * @return  Page<Demand>
      */
-    IPage<Demand> getList(Integer pageNum, Integer pageSize,Integer type,Integer state);
+    IPage<Demand> getList(Integer pageNum, Integer pageSize,Integer type,Integer state,String userId);
 
     /**
      * 审核/发布需求

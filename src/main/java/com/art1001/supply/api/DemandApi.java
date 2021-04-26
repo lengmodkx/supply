@@ -101,9 +101,10 @@ public class DemandApi {
     public Result list(@RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
                        @RequestParam(value = "pageSize",defaultValue = "20") Integer pageSize,
                        @RequestParam(value = "type",defaultValue = "1") Integer type,
-                       @RequestParam(value = "state",defaultValue = "1") Integer state){
+                       @RequestParam(value = "state",defaultValue = "1") Integer state,
+                       @RequestParam(value = "userId")String userId){
         try {
-            IPage<Demand> page=demandService.getList(pageNum,pageSize,type,state);
+            IPage<Demand> page=demandService.getList(pageNum,pageSize,type,state,userId);
             return Result.success(page);
         } catch (Exception e) {
             throw new AjaxException(e);

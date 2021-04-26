@@ -94,9 +94,8 @@ public class DemandServiceImpl extends ServiceImpl<DemandMapper, Demand> impleme
      * @return  Page<Demand>
      */
     @Override
-    public IPage<Demand> getList(Integer pageNum, Integer pageSize, Integer type,Integer state) {
+    public IPage<Demand> getList(Integer pageNum, Integer pageSize, Integer type,Integer state,String userId) {
         Page<Demand> page = new Page<>(pageNum, pageSize);
-        String userId = ShiroAuthenticationManager.getUserId();
         List<String> demandIds;
         // 审核过的
         if (state.equals(ONE)) {
