@@ -3,7 +3,6 @@ package com.art1001.supply.service.file.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
@@ -26,7 +25,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -41,14 +39,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.Adler32;
@@ -1655,14 +1651,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     @Override
     public List<File> initFileMenu(String projectId) {
-        List<File> files = Lists.newArrayList();
-        List<File> list = list(new QueryWrapper<File>().eq("project_id", projectId).eq("file_del", 0));
+
+        List<File> list = list(new QueryWrapper<File>().eq("project_id", projectId).eq("file_del", 0).eq("catalog", 1));
         if (CollectionUtils.isNotEmpty(list)) {
-            List<File> collect = list.stream().filter(f -> f.getParentId().equals(Constants.ZERO)).collect(Collectors.toList());
-            File file = collect.get(0);
-            files = list.stream().filter(f -> f.getParentId().equals(file.getFileId())).collect(Collectors.toList());
+            list=list.stream().filter(f->!"0".equals(f.getParentId())).collect(Collectors.toList());
         }
-        return files;
+        return list;
     }
 
     @Override
