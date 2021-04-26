@@ -241,13 +241,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         WeChatUser info = getSNSUserInfo(oauth2AccessToken.getAccessToken(), oauth2AccessToken.getOpenId());
         UserInfo userInfo = new UserInfo();
         UserEntity userEntity = getOne(new QueryWrapper<UserEntity>().eq("wx_union_id", info.getUnionid()));
-        if (userEntity == null) {//微信用户不存在，保存微信返回的信息
+        if(userEntity!=null&&StringUtils.isNotEmpty(userEntity.getAccountName())){
+            BeanUtils.copyProperties(userEntity, userInfo);
+            userInfo.setBindPhone(false);
+            String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
+            userInfo.setOrgId(orgByUserId);
+            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
+        }else{//微信用户存在，但是没有绑定手机号
             UserEntity user = new UserEntity();
             user.setUserName(info.getNickname());
             user.setWxOpenId(info.getOpenId());
             user.setWxUnionId(info.getUnionid());
-            user.setCredentialsSalt(IdGen.uuid());
-            user.setUpdateTime(new Date());
             user.setCreateTime(new Date());
             user.setAddress(info.getCity());
             user.setUserId(IdGen.uuid());
@@ -257,15 +261,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             userMapper.insert(user);
             userInfo.setUserId(user.getUserId());
             userInfo.setUserName(user.getUserName());
-            userInfo.setBindPhone(true);//微信信息存储完毕表明微信已经绑定
-        } else {
-            BeanUtils.copyProperties(userEntity, userInfo);
-            userInfo.setBindPhone(false);
-            String orgByUserId = organizationMemberService.findOrgByUserId(userEntity.getUserId());
-            userInfo.setOrgId(orgByUserId);
-//            String secret = redisUtil.get("power:" + userEntity.getUserId());
-//            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), secret));
-            userInfo.setAccessToken(JwtUtil.sign(userEntity.getUserId(), "1qaz2wsx#EDC"));
+            userInfo.setBindPhone(true);
         }
         return userInfo;
     }
