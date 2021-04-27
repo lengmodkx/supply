@@ -95,7 +95,7 @@ public class PushAspect extends BaseController {
             this.saveLog(object, push);
             //需要往不同的频道推送不同的数据，日志在service处理完了
         } else if (push.type() == 2) {
-            Map<String, Object> data = JSONObject.parseObject(object.toJSONString(), new TypeReference<Map<String, Object>>(){});
+            Map<String, Object> data = JSONObject.parseObject(object.getJSONObject("data").toJSONString(), new TypeReference<Map<String, Object>>(){});
             data.keySet().forEach(key -> {
                 noticeService.pushMsg(key, push.value().name(), data.get(key));
             });
