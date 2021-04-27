@@ -7,12 +7,17 @@ import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.annotation.Log;
 import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.collect.PublicCollect;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.share.Share;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.SystemException;
 import com.art1001.supply.service.collect.PublicCollectService;
+import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.share.ShareService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.AliyunOss;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -22,7 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author heshaohua
@@ -49,6 +56,14 @@ public class ShareApi {
     @Resource
     private PublicCollectService collectService;
 
+    @Resource
+    UserService userService;
+
+    @Resource
+    ProjectService projectService;
+
+    @Resource
+    LogService logService;
     /**
      * 加载分享页面
      * @param projectId 项目id
@@ -233,6 +248,9 @@ public class ShareApi {
         JSONObject jsonObject = new JSONObject();
         try{
             shareService.copyShare(shareId,projectId);
+            UserEntity entity = userService.getById(ShiroAuthenticationManager.getUserId());
+            Project project = projectService.getById(projectId);
+            logService.saveLog(shareId,entity + "将分享复制到了" + project.getProjectName() ,4);
             jsonObject.put("result",1);
             jsonObject.put("data",projectId);
             jsonObject.put("msgId",projectId);
@@ -248,18 +266,27 @@ public class ShareApi {
      * @param projectId 项目id
      * @return
      */
-    @Log(PushType.B5)
-    @Push(PushType.B5)
+    @Push(value = PushType.B5,type = 2)
     @PostMapping("/{shareId}/move")
     public JSONObject move(@PathVariable(value = "shareId")String shareId,
                             @RequestParam(value = "projectId")String projectId,
                            @RequestParam(value = "curProjectId")String curProjectId){
         JSONObject jsonObject = new JSONObject();
         try{
-            shareService.moveShare(shareId,projectId);
+            shareService.moveShare(shareId,curProjectId);
+            UserEntity entity = userService.getById(ShiroAuthenticationManager.getUserId());
+            Project project = projectService.getById(curProjectId);
+            logService.saveLog(shareId,entity + "将分享移动到了" + project.getProjectName() ,4);
+
+            Map<String, Object> maps = new HashMap<String, Object>(2);
+            if (projectId.equals(curProjectId)) {
+                maps.put(projectId, projectId);
+            } else {
+                maps.put(projectId, projectId);
+                maps.put(curProjectId, curProjectId);
+            }
+            jsonObject.put("data", maps);
             jsonObject.put("result",1);
-            jsonObject.put("data",curProjectId);
-            jsonObject.put("msgId",curProjectId);
         }catch(Exception e){
             log.error("系统异常,移动失败:",e);
         }

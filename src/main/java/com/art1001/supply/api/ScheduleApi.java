@@ -9,17 +9,21 @@ import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.entity.collect.PublicCollect;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.log.Log;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.schedule.Schedule;
 import com.art1001.supply.entity.schedule.ScheduleListVO;
 import com.art1001.supply.entity.schedule.ScheduleVo;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.log.LogService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.schedule.ScheduleService;
 import com.art1001.supply.service.task.TaskService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -62,8 +66,10 @@ public class ScheduleApi extends BaseController {
     private LogService logService;
 
     @Resource
-    private TaskService taskService;
+    private UserService userService;
 
+    @Resource
+    ProjectService projectService;
     /**
      * 点击日程菜单栏时页面初始化
      */
@@ -446,6 +452,9 @@ public class ScheduleApi extends BaseController {
             schedule.setProjectId(projectId);
             //清空参与者和评论
             scheduleService.saveSchedule(schedule);
+            UserEntity entity = userService.getById(ShiroAuthenticationManager.getUserId());
+            Project project = projectService.getById(projectId);
+            logService.saveLog(scheduleId,entity + "将日程复制到了" + project.getProjectName() ,3);
             object.put("msgId", projectId);
             object.put("result", 1);
             object.put("data", projectId);
@@ -474,6 +483,9 @@ public class ScheduleApi extends BaseController {
             schedule.setProjectId(projectId);
             schedule.setUpdateTime(System.currentTimeMillis());
             scheduleService.updateById(schedule);
+            UserEntity entity = userService.getById(ShiroAuthenticationManager.getUserId());
+            Project project = projectService.getById(projectId);
+            logService.saveLog(scheduleId,entity + "将日程移动到了" + project.getProjectName() ,3);
             Map<String, Object> maps = new HashMap<String, Object>(2);
             if (projectId.equals(pId)) {
                 maps.put(projectId, projectId);

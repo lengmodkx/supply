@@ -22,6 +22,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -488,11 +489,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     private void moveSingleFile(String parentId, String projectId, String fileId) {
         File file = getOne(new QueryWrapper<File>().eq("file_id", fileId).eq("file_del", 0));
         fileMapper.moveFile(parentId, projectId, fileId);
-        UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
-        // 文件移动后存储日志
+        // 文件移动后处理文件版本
         if (file.getCatalog() == 0) {
-            logService.saveLog(fileId, " 将文件移动到了 " + file.getFileName(), 2);
-//            dealWithFile(file.getFileId(), parentId, 1);
+            dealWithFile(file.getFileId(), parentId, 1);
         }
         //文件和文件夹的处理
         if (file.getCatalog() == 1) {
@@ -503,27 +502,18 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     private void recursiveFile(String projectId, String fileId) {
         List<File> fileList = fileMapper.selectList(new QueryWrapper<File>().eq("parent_id", fileId).eq("file_del", 0));
-        String userId = ShiroAuthenticationManager.getUserId();
-        UserEntity userEntity = userService.findById(userId);
         if (fileList != null && fileList.size() > 0) {
             fileList.forEach(file -> {
-                if (file.getCatalog() == 1) {
-                    recursiveFile(projectId, file.getFileId());
-                }
                 File f = new File();
                 f.setFileId(file.getFileId());
                 f.setProjectId(projectId);
                 updateById(f);
-                File file1 = fileMapper.selectOne(new QueryWrapper<File>().eq("file_id", file.getParentId()).eq("file_del", 0));
-                Log log = new Log();
-                log.setId(IdGen.uuid());
-                log.setLogFlag(2);
-                log.setPublicId(file.getFileId());
-                log.setLogType(0);
-                log.setMemberId(userId);
-                log.setCreateTime(System.currentTimeMillis());
-                log.setContent(userEntity.getUserName()+" 将文件移动到了"+file1.getFileName());
-                logService.save(log);
+                if (file.getCatalog() == 0) {
+                    dealWithFile(file.getFileId(), fileId, 1);
+                }
+                if (file.getCatalog() == 1) {
+                    recursiveFile(projectId, file.getFileId());
+                }
             });
         }
     }
@@ -550,7 +540,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         //判断是否是同项目->解除绑定关系
         save(file);
         if (file.getCatalog() == 0) {
-            dealWithFile(file.getFileId(), "", 0);
+            dealWithFile(file.getFileId(), folderId, 0);
         }
 
         if (file.getCatalog() == 1) {
@@ -566,6 +556,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 file.setProjectId(projectId);
                 file.setParentId(parentId);
                 save(file);
+                if (file.getCatalog() == 0) {
+                    dealWithFile(file.getFileId(), parentId, 0);
+                }
                 if (file.getCatalog() == 1) {
                     recursiveCopyFile(projectId, file.getFileId());
                 }
@@ -581,17 +574,22 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     //处理文件版本信息以及和文件相关的信息
     private void dealWithFile(String fileId, String parentId, Integer flag) {
         UserEntity userEntity = userService.findById(ShiroAuthenticationManager.getUserId());
-        FileVersion fileVersion = new FileVersion();
-        fileVersion.setFileId(fileId);
-        fileVersion.setIsMaster(1);
-        if (flag == 0) {
-            fileVersion.setInfo(userEntity.getUserName() + " 上传于 " + DateUtils.getDateStr(new Date(), "yyyy-MM-dd HH:mm"));
-        } else {
+        if(flag==1){
             File file = getOne(new QueryWrapper<File>().eq("file_id", parentId).eq("file_del", 0));
+            FileVersion fileVersion = fileVersionMapper.selectOne(new QueryWrapper<FileVersion>().eq("file_id", fileId).eq("is_master", 1));
             fileVersion.setInfo(userEntity.getUserName() + " 将文件移动到了 " + file.getFileName());
+            fileVersionMapper.updateById(fileVersion);
+            logService.saveLog(file.getFileId(),userEntity + "将文件复制到了" + file.getFileName() ,2);
+        }else{
+            FileVersion fileVersion = new FileVersion();
+            fileVersion.setFileId(fileId);
+            fileVersion.setIsMaster(1);
+            fileVersion.setOriginalFileId(fileId);
+            File file = getOne(new QueryWrapper<File>().eq("file_id", parentId).eq("file_del", 0));
+            fileVersion.setInfo(userEntity.getUserName() + " 将文件复制到了 " + file.getFileName());
+            fileVersionMapper.insert(fileVersion);
+            logService.saveLog(file.getFileId(),userEntity + "将文件复制到了" + file.getFileName() ,2);
         }
-
-        fileVersionMapper.insert(fileVersion);
     }
 
 

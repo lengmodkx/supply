@@ -835,7 +835,7 @@ public class FileApi extends BaseController {
      * @param toProjectId 目标项目id
      * @return
      */
-    @Push(value = PushType.C10, name = PushName.FILE, type = 1)
+    @Push(value = PushType.C10, name = PushName.FILE, type = 2)
     @PostMapping("/{folderId}/copy")
     public JSONObject copyFile(
             @PathVariable String folderId,
