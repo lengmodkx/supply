@@ -642,11 +642,12 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         }
 
         for (String relationId : relationIds) {
-            Relation relation = new Relation();
-            relation.setParentId(relationId);
-            relation.setLable(1);
+//            Relation relation = new Relation();
+//            relation.setParentId(relationId);
+//            relation.setLable(1);
             Relation byId = relationService.getById(relationId);
-            List<Relation> taskMenu = relationService.findRelationAllList(relation);
+//            List<Relation> taskMenu = relationService.findRelationAllList(relation);
+            List<Relation> taskMenu = relationService.list(new QueryWrapper<Relation>().eq("project_id", projectId).eq("lable", 1).eq("parent_id", relationId).orderByDesc("order"));
             MenuVo menuVo = MenuVo.builder().name(byId.getRelationName()).taskMenu(taskMenu).build();
             menuVos.add(menuVo);
         }
