@@ -2,12 +2,14 @@ package com.art1001.supply.service.relation.impl;
 
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
+import com.art1001.supply.entity.user.UserEntity;
 import com.art1001.supply.exception.ServiceException;
 import com.art1001.supply.mapper.relation.RelationMapper;
 import com.art1001.supply.mapper.task.TaskMapper;
@@ -16,10 +18,12 @@ import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
+import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
+import com.art1001.supply.service.user.UserService;
 import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.art1001.supply.util.IdGen;
 import com.art1001.supply.util.ValidatedUtil;
@@ -77,7 +81,11 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 
 	@Resource
 	private ProjectMemberService projectMemberService;
+	@Resource
+	private UserService userService;
 
+	@Resource
+	private ProjectService projectService;
 	/**
 	 * 删除分组
 	 * 
@@ -583,7 +591,9 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
      */
     @Override
     public boolean moveAllTask(String menuId, String projectId, String groupId, String toMenuId) {
-        List<Task> tasks = taskService.getMoveData(menuId);
+		UserEntity entity = userService.getById(ShiroAuthenticationManager.getUserId());
+		Project project = projectService.getById(projectId);
+    	List<Task> tasks = taskService.getMoveData(menuId);
         if(CollectionUtils.isEmpty(tasks)){
             throw new ServiceException("此列表下的任务为0,无法移动!");
         }
@@ -610,7 +620,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 				subTaskSet.eq(Task::getTaskId, sub.getTaskId());
 				//更新子任务
 				taskService.update(sub, subTaskSet);
-
+				logService.saveLog(sub.getTaskId(),entity+ "将任务移动到了"+ project.getProjectName(),1);
 			});
 			//如果移动到其他项目中则清除任务的执行者和参与者并且更新任务创建者id为当前操作用户
 			if(!task.getProjectId().equals(projectId)){
@@ -630,6 +640,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 			}
 			//更新父任务
 			taskService.update(task, taskSet);
+			logService.saveLog(task.getTaskId(),entity+ "将任务移动到了"+ project.getProjectName(),1);
 		});
         return true;
     }

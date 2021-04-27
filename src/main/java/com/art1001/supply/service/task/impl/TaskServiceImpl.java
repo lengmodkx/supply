@@ -295,20 +295,25 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      */
     @Override
     public void mobileTask(String taskId, String projectId, String groupId, String menuId) {
-        Task task = taskMapper.selectById(taskId);
+        UserEntity entity = userService.getById(ShiroAuthenticationManager.getUserId());
+        Project project = projectService.getById(projectId);
+        Task task = getById(taskId);
         task.setProjectId(projectId);
         task.setTaskMenuId(menuId);
         task.setTaskGroupId(groupId);
         task.setUpdateTime(System.currentTimeMillis());
         task.setTaskUIds(null);
+        task.setExecutor(null);
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         int maxOrder = relationService.findMenuTaskMaxOrder(menuId);
         task.setOrder(++maxOrder);
         updateById(task);
+        logService.saveLog(taskId,entity+ "将任务移动到了"+ project.getProjectName(),1);
         //移动子任务
         if (CollectionUtils.isNotEmpty(task.getTaskList())) {
             task.getTaskList().forEach(subTask -> {
                 subTask.setTaskUIds(null);
+                subTask.setExecutor(null);
                 updateById(subTask);
             });
         }

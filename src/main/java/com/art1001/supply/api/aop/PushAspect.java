@@ -1,6 +1,7 @@
 package com.art1001.supply.api.aop;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.art1001.supply.annotation.Push;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
@@ -92,13 +93,12 @@ public class PushAspect extends BaseController {
         } else if (push.type() == 1) {
             noticeService.pushMsg(object.getString("msgId"), push.value().name(), object.get("data"));
             this.saveLog(object, push);
-            //需要往不同的频道推送不同的数据
+            //需要往不同的频道推送不同的数据，日志在service处理完了
         } else if (push.type() == 2) {
-            Map<String, Object> data = object.getObject("data", HashMap.class);
+            Map<String, Object> data = JSONObject.parseObject(object.toJSONString(), new TypeReference<Map<String, Object>>(){});
             data.keySet().forEach(key -> {
                 noticeService.pushMsg(key, push.value().name(), data.get(key));
             });
-            this.saveLog(object, push);
             //即需要推送到项目频道也要推送到指定用户频道
         } else if (push.type() == 3) {
             noticeService.pushMsg(object.getString("msgId"), push.value().name(), object.get("data"));
