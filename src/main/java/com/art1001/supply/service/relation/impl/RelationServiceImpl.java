@@ -178,8 +178,6 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		List<Relation> relationAllList = relationMapper.findRelationAllList(relation);
 		String userId = ShiroAuthenticationManager.getUserId();
 		relationAllList.forEach(r -> {
-			r.getTaskList().forEach(t -> { t.setCompleteCount((int)t.getTaskList().stream().filter(Task::getTaskStatus).count()); });
-
 			Iterator<Task> iterator = r.getTaskList().iterator();
 			while(iterator.hasNext()){
 				Task task = iterator.next();

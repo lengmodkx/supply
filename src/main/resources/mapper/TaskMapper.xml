@@ -95,6 +95,7 @@
         <result column="file_count" property="fileCount" jdbcType="INTEGER"/>
         <result column="bind_count" property="bindCount" jdbcType="INTEGER"/>
         <result column="child_count" property="childCount" jdbcType="INTEGER"/>
+        <result column="complete_count" property="completeCount" jdbcType="INTEGER"/>
         <collection property="tagList" column="task_id" javaType="java.util.ArrayList"
                     select="com.art1001.supply.mapper.tag.TagMapper.findTagByTaskId"/>
     </resultMap>
@@ -809,7 +810,8 @@
 		       tu.user_name as executor_name,tu.image as executor_img,
                (SELECT count(0) FROM prm_file where prm_file.public_id = t.task_id) as file_count,
                (SELECT count(0) FROM prm_binding where prm_binding.public_id = t.task_id) as bind_count,
-               (SELECT count(0) FROM prm_task where prm_task.parent_id = t.task_id) as child_count
+               (SELECT count(0) FROM prm_task where prm_task.parent_id = t.task_id) as child_count,
+               (SELECT count(0) FROM prm_task where prm_task.parent_id = t.task_id and prm_task.task_status=1) as complete_count
 		from prm_task t left join tb_user tu on t.executor = tu.user_id
 		where t.task_menu_id = #{menuId} and t.task_del = 0
         order by t.`order` asc
