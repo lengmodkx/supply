@@ -1955,7 +1955,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             task.setGroupName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskGroupId()).select("relation_name")).getRelationName());
         }
         if (StringUtils.isNotEmpty(task.getTaskMenuId())) {
-            task.setMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskMenuId()).select("relation_name")).getRelationName());
+            task.setTaskMenuName(relationService.getOne(new QueryWrapper<Relation>().eq("relation_id", task.getTaskMenuId()).select("relation_name")).getRelationName());
         }
         //判断当前用户有没有收藏该任务
         task.setIsCollect(publicCollectService.count(new QueryWrapper<PublicCollect>().eq("public_id", task.getTaskId()).eq("member_id", ShiroAuthenticationManager.getUserId())) > 0);
