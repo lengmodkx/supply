@@ -217,6 +217,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 				task.setExecutorImg(entity.getImage());
 				List<Task> list = taskService.list(new LambdaQueryWrapper<Task>().eq(Task::getParentId, task.getTaskId()));
 				if(list!=null&&list.size() > 0){
+					task.setChildCount(list.size());
 					task.setCompleteCount((int)list.stream().filter(Task::getTaskStatus).count());
 					task.setTaskList(list);
 				}
