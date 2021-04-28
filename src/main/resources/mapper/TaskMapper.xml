@@ -1744,7 +1744,7 @@
                (SELECT count(0) FROM prm_task where prm_task.parent_id = t.task_id) as child_count,
                (SELECT count(0) FROM prm_task where prm_task.parent_id = t.task_id and prm_task.task_status=1) as complete_count
         from prm_task t left join tb_user tu on t.executor = tu.user_id
-        where t.task_menu_id = #{menuId} and t.task_del = 0
+        where t.parent_id = #{taskId} and t.task_del = 0
         order by t.`order` asc
     </select>
 </mapper>
