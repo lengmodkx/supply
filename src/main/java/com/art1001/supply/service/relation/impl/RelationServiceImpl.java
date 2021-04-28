@@ -221,6 +221,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 					task.setTaskList(list);
 				}
 			});
+			relation.setTaskList(tasks);
 		});
 		return relations;
 	}
