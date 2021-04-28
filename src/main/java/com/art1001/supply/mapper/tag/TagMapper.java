@@ -113,4 +113,6 @@ public interface TagMapper extends BaseMapper<Tag> {
 	@Update("update prm_tag set is_del = 0 where tag_id = #{tagId}")
 	void recoveryTag(String tagId);
 
+	List<Tag> findTagByTaskId(String taskId);
+
 }

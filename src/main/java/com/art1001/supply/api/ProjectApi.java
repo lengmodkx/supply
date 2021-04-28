@@ -320,16 +320,10 @@ public class ProjectApi extends BaseController {
             redisUtil.remove("perms:" + userId);
             redisUtil.lset("perms:" + userId, keyList);
             redisUtil.set("userId:" + userId, projectId);
-            String groupId = projectMemberService.findDefaultGroup(projectId, userId);
             //查询项目默认分组
-            Relation relation = new Relation();
-            relation.setParentId(groupId);
-            relation.setLable(1);
-            relation.setProjectId(projectId);
-            List<Relation> taskMenu = relationService.findRelationAllList(relation);
-            ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>()
-                    .eq("project_Id", projectId).eq("member_id", userId));
-            object.put("roleKey", projectMember.getRoleKey());
+            String groupId = projectMemberService.findDefaultGroup(projectId, userId);
+            //查询默认分组下的菜单（包含任务）
+            List<Relation> taskMenu = relationService.findMenus(groupId);
             object.put("userId", userId);
             object.put("result", 1);
             object.put("menus", taskMenu);

@@ -64,16 +64,6 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	@Resource
 	private ScheduleService scheduleServcie;
 
-    /**
-     * ElasticSearch 查询接口
-     */
-   /* @Autowired
-    private FileRepository fileRepository;
-*/
-    @Resource
-	private ProRoleUserService proRoleUserService;
-
-
 	/**
 	 * 通过tagId获取单条tag数据
 	 *
@@ -333,5 +323,10 @@ public class TagServiceImpl extends ServiceImpl<TagMapper,Tag> implements TagSer
 	public List<Tag> getByProjectId(String projectId) {
 		LambdaQueryWrapper<Tag> eq = new QueryWrapper<Tag>().lambda().select(Tag::getTagId, Tag::getTagName, Tag::getBgColor).eq(Tag::getProjectId, projectId).eq(Tag::getIsDel,0);
 		return tagMapper.selectList(eq.orderByDesc(Tag::getCreateTime));
+	}
+
+	@Override
+	public List<Tag> findTagByTaskId(String taskId) {
+		return tagMapper.findTagByTaskId(taskId);
 	}
 }

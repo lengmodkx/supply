@@ -56,7 +56,7 @@
 		bg_color,
 		member_id,
 		project_id,
-            is_del,
+        is_del,
 		create_time,
 		update_time
 	</sql>
@@ -315,6 +315,12 @@
     <select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
         select tag_id as id ,tag_name as publicName ,update_time
         from prm_tag where is_del = 1 and project_id = #{projectId}
+    </select>
+    <select id="findTagByTaskId" resultType="com.art1001.supply.entity.tag.Tag">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from prm_tag left join prm_tag_relation ptr on prm_tag.tag_id = ptr.tag_id
+        where ptr.task_id = #{taskId}
     </select>
 
 </mapper>

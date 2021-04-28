@@ -2,10 +2,13 @@ package com.art1001.supply.service.relation.impl;
 
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
+import com.art1001.supply.entity.binding.Binding;
+import com.art1001.supply.entity.file.File;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.GroupVO;
 import com.art1001.supply.entity.relation.Relation;
+import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.task.TaskMenuVO;
 import com.art1001.supply.entity.template.TemplateData;
@@ -16,10 +19,12 @@ import com.art1001.supply.mapper.task.TaskMapper;
 import com.art1001.supply.service.binding.BindingService;
 import com.art1001.supply.service.collect.PublicCollectService;
 import com.art1001.supply.service.fabulous.FabulousService;
+import com.art1001.supply.service.file.FileService;
 import com.art1001.supply.service.log.LogService;
 import com.art1001.supply.service.project.ProjectMemberService;
 import com.art1001.supply.service.project.ProjectService;
 import com.art1001.supply.service.relation.RelationService;
+import com.art1001.supply.service.tag.TagService;
 import com.art1001.supply.service.tagrelation.TagRelationService;
 import com.art1001.supply.service.task.TaskService;
 import com.art1001.supply.service.user.UserNewsService;
@@ -86,6 +91,12 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 
 	@Resource
 	private ProjectService projectService;
+
+	@Resource
+	TagService tagService;
+
+	@Resource
+	FileService fileService;
 	/**
 	 * 删除分组
 	 * 
@@ -187,6 +198,30 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 
 		});
 		return relationAllList;
+	}
+
+	@Override
+	public List<Relation> findMenus(String groupId) {
+		String userId = ShiroAuthenticationManager.getUserId();
+		List<Relation> relations = list(new LambdaQueryWrapper<Relation>().eq(Relation::getParentId, groupId).orderByAsc(Relation::getOrder));
+		relations.parallelStream().forEach(relation -> {
+			List<Task> tasks = taskService.findTaskByMenuId(relation.getRelationId());
+			tasks.parallelStream().
+					filter(task -> task.getPrivacyPattern()==1&&userId.equals(task.getExecutor())&&(task.getTaskUIds() != null && Arrays.asList(task.getTaskUIds().split(",")).contains(userId)))
+					.forEach(task -> {
+				UserEntity entity = userService.getById(task.getExecutor());
+				task.setTagList(tagService.findTagByTaskId(task.getTaskId()));
+				task.setBindCount(bindingService.count(new LambdaQueryWrapper<Binding>().eq(Binding::getPublicId,task.getTaskId())));
+				task.setFileCount(fileService.count(new LambdaQueryWrapper<File>().eq(File::getPublicId,task.getTaskId())));
+				task.setExecutorName(entity.getUserName());
+				task.setExecutorImg(entity.getImage());
+				List<Task> list = taskService.list(new LambdaQueryWrapper<Task>().eq(Task::getParentId, task.getTaskId()));
+				if(list!=null&&list.size() > 0){
+					task.setCompleteCount((int)list.stream().filter(Task::getTaskStatus).count());
+				}
+			});
+		});
+		return relations;
 	}
 
 	/**

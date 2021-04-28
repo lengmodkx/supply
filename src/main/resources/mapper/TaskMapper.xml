@@ -92,22 +92,6 @@
         <result column="task_uids" property="taskUIds" jdbcType="CLOB"/>
         <result column="total_work_hours" property="totalWorkHours"/>
         <result column="plan_work_hours" property="planWorkHours"/>
-        <result column="bind_id" property="bindId"/>
-        <result column="file_id" property="fileId"/>
-        <!--查询标签-->
-        <collection property="tagList" ofType="com.art1001.supply.entity.tag.Tag">
-            <id property="tagId" column="tag_id"/>
-            <result property="tagName" column="tag_name"/>
-            <result property="bgColor" column="bg_color"/>
-        </collection>
-
-        <!-- 查询子任务 -->
-        <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
-            <id column="sub_task_id" property="taskId"/>
-            <result column="sub_task_name" property="taskName"/>
-            <result column="sub_executor" property="executor"/>
-            <result column="sub_status" property="taskStatus"/>
-        </collection>
     </resultMap>
 
     <!-- 任务看板模式专用 -->
@@ -826,8 +810,6 @@
 		t.parent_id,
 		t.member_id,
 		t.executor,
-		u.user_name AS executor_name,
-		u.image AS executor_img,
 		t.task_type,
 		t.task_menu_id,
 		t.task_group_id,
@@ -841,23 +823,8 @@
 		t.privacy_pattern,
 		t.other,
 		t.`order`,
-		t.task_uids,
-		tg.tag_id,
-		tg.tag_name,
-		tg.bg_color,
-		sub.task_id AS sub_task_id,
-		sub.task_name AS sub_task_name,
-		sub.executor AS sub_executor,
-		sub.task_status as sub_status,
-		bd.bind_id,
-		f.file_id
+		t.task_uids
 		from prm_task t
-		LEFT JOIN prm_task AS sub ON t.task_id = sub.parent_id and sub.task_del = 0
-		left join prm_tag_relation tr on t.task_id = tr.task_id
-		left join prm_tag tg on tr.tag_id = tg.tag_id
-		left join tb_user u on t.executor = u.user_id
-		LEFT JOIN prm_binding as bd on bd.public_id = t.task_id
-		LEFT JOIN prm_file as f on f.public_id = t.task_id
 		where t.task_menu_id = #{menuId} and t.task_del = 0
         order by t.`order` asc
 	</select>
@@ -1194,11 +1161,11 @@
 
     <!-- 期间截止任务分成员完成情况 -->
     <select id="taskByMember" resultMap="BaseResultMap4">
-	   SELECT tu.u_name,
-	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='完成'  AND pt1.executor=tu.u_id) AS task_finish,
-	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='未完成'   AND pt1.executor=tu.u_id)  AS task_unfinish
+	   SELECT tu.user_name,
+	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='完成'  AND pt1.executor=tu.user_id) AS task_finish,
+	   (SELECT COUNT(1) FROM prm_task pt1 WHERE pt1.task_status='未完成'   AND pt1.executor=tu.user_id)  AS task_unfinish
 	   FROM prm_task pt
-	   LEFT JOIN tb_user tu ON pt.executor=tu.u_id
+	   LEFT JOIN tb_user tu ON pt.executor=tu.user_id
 	   where project_id = #{projectId}
 	   AND FROM_UNIXTIME(pt.create_time/1000,'%Y-%m-%d %T')
        BETWEEN  DATE_SUB(NOW(),INTERVAL 7 DAY) AND FROM_UNIXTIME(#{currDate}, '%Y-%m-%d %T')
@@ -1776,6 +1743,4 @@
         select t.*,u.image as executorImg from prm_task t join tb_user u on t.executor=u.user_id
         where t.task_del='0' and t.parent_id='0' and t.project_id=#{projectId}
     </select>
-
-
 </mapper>

@@ -142,4 +142,6 @@ public interface TagService extends IService<Tag> {
 	 * @return 标签集合
 	 */
 	List<Tag> getByProjectId(String projectId);
+
+	List<Tag> findTagByTaskId(String taskId);
 }

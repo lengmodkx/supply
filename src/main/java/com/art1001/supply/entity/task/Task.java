@@ -37,7 +37,6 @@ Task extends Model<Task> {
 	@TableId(value = "task_id",type = IdType.ASSIGN_UUID)
 	private String taskId;
 
-
 	/**
 	 * 项目id
 	 */
@@ -48,7 +47,7 @@ Task extends Model<Task> {
 	 */
 	@TableField(exist = false)
 	private List<Tag> tagList;
-
+	//多余字段，无用
 	private String tagId;
 	/**
 	 * 任务名称
@@ -62,7 +61,8 @@ Task extends Model<Task> {
 	private String groupName;
 
 	@TableField(exist = false)
-	private String menuName;
+	private String taskMenuName;
+
 	/**
 	 * 开始时间
 	 */
@@ -152,12 +152,6 @@ Task extends Model<Task> {
 	 * 任务菜单id
 	 */
 	private String taskMenuId;
-
-	/**
-	 * 列表名称
-	 */
-	@TableField(exist = false)
-	private String taskMenuName;
 
 	/**
 	 * 任务分组id
@@ -314,16 +308,15 @@ Task extends Model<Task> {
 	private Boolean subIsAllComplete;
 
 	/**
-	 * 关联信息的id
+	 * 关联信息的数量
 	 */
 	@TableField(exist = false)
-	private String bindId;
-
+	private Integer bindCount;
 	/**
-	 * 附件的id
+	 * 附件的数量
 	 */
 	@TableField(exist = false)
-	private String fileId;
+	private Integer fileCount;
 
 	/**
 	 * 任务的总工时
