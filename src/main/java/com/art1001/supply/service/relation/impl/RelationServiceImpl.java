@@ -178,11 +178,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		List<Relation> relationAllList = relationMapper.findRelationAllList(relation);
 		String userId = ShiroAuthenticationManager.getUserId();
 		relationAllList.forEach(r -> {
-			r.getTaskList().forEach(t -> {
-				t.setCompleteCount((int)t.getTaskList().stream().filter(Task::getTaskStatus).count());
-				t.setIsExistSub(t.getTaskList().size() > 0);
-				t.setChildCount(t.getTaskList().size());
-			});
+			r.getTaskList().forEach(t -> { t.setCompleteCount((int)t.getTaskList().stream().filter(Task::getTaskStatus).count()); });
 
 			Iterator<Task> iterator = r.getTaskList().iterator();
 			while(iterator.hasNext()){
@@ -206,15 +202,15 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 		List<Relation> relations = list(new LambdaQueryWrapper<Relation>().eq(Relation::getParentId, groupId).orderByAsc(Relation::getOrder));
 		relations.forEach(relation -> {
 			List<Task> tasks = taskService.findTaskByMenuId(relation.getRelationId());
-			tasks.stream().
-					filter(task -> task.getPrivacyPattern()==1&&userId.equals(task.getExecutor())&&(task.getTaskUIds() != null && Arrays.asList(task.getTaskUIds().split(",")).contains(userId)))
-					.forEach(task -> {
+			tasks.forEach(task -> {
 				UserEntity entity = userService.getById(task.getExecutor());
 				task.setTagList(tagService.findTagByTaskId(task.getTaskId()));
 				task.setBindCount(bindingService.count(new LambdaQueryWrapper<Binding>().eq(Binding::getPublicId,task.getTaskId())));
 				task.setFileCount(fileService.count(new LambdaQueryWrapper<File>().eq(File::getPublicId,task.getTaskId()).eq(File::getFileDel, 0)));
-				task.setExecutorName(entity.getUserName());
-				task.setExecutorImg(entity.getImage());
+				if(entity!=null){
+					task.setExecutorName(entity.getUserName());
+					task.setExecutorImg(entity.getImage());
+				}
 				List<Task> list = taskService.list(new LambdaQueryWrapper<Task>().eq(Task::getParentId, task.getTaskId()));
 				if(list!=null&&list.size() > 0){
 					task.setChildCount(list.size());
@@ -222,6 +218,7 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 					task.setTaskList(list);
 				}
 			});
+			tasks = tasks.stream().filter(task -> task.getPrivacyPattern()==1&&userId.equals(task.getExecutor())&&(task.getTaskUIds() != null && Arrays.asList(task.getTaskUIds().split(",")).contains(userId))).collect(Collectors.toList());
 			relation.setTaskList(tasks);
 		});
 		return relations;

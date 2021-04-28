@@ -92,6 +92,11 @@
         <result column="task_uids" property="taskUIds" jdbcType="CLOB"/>
         <result column="total_work_hours" property="totalWorkHours"/>
         <result column="plan_work_hours" property="planWorkHours"/>
+        <result column="file_count" property="fileCount" jdbcType="INTEGER"/>
+        <result column="bind_count" property="bindCount" jdbcType="INTEGER"/>
+        <result column="child_count" property="childCount" jdbcType="INTEGER"/>
+        <collection property="tagList" column="task_id" javaType="java.util.ArrayList"
+                    select="com.art1001.supply.mapper.tag.TagMapper.findTagByTaskId"/>
     </resultMap>
 
     <!-- 任务看板模式专用 -->
@@ -797,34 +802,15 @@
 
     <!-- 查询当前菜单下的全部任务信息 -->
     <select id="findTaskByMenuId" resultMap="BaseResultMap2">
-		select
-		t.task_id,
-		t.project_id,
-		t.task_name,
-		t.start_time,
-		t.end_time,
-		t.`repeat`,
-		t.remarks,
-		t.priority,
-		t.`level`,
-		t.parent_id,
-		t.member_id,
-		t.executor,
-		t.task_type,
-		t.task_menu_id,
-		t.task_group_id,
-		t.task_status,
-		t.task_code,
-		t.task_del,
-		t.create_time,
-		t.update_time,
-		t.finish_time,
-		t.fabulous_count,
-		t.privacy_pattern,
-		t.other,
-		t.`order`,
-		t.task_uids
-		from prm_task t
+		select t.task_id,t.project_id,t.task_name,t.start_time,t.end_time,t.`repeat`,t.remarks,t.priority,t.`level`,
+                t.parent_id,t.member_id,t.executor,t.task_type,
+                t.task_menu_id,t.task_group_id,t.task_status,t.task_code,t.task_del,t.create_time,
+                t.update_time,t.finish_time,t.fabulous_count,t.privacy_pattern,t.other,t.`order`,t.task_uids,
+		       tu.user_name as executor_name,tu.image as executor_img,
+               (SELECT count(0) FROM prm_file where prm_file.public_id = t.task_id) as file_count,
+               (SELECT count(0) FROM prm_binding where prm_binding.public_id = t.task_id) as bind_count,
+               (SELECT count(0) FROM prm_task where prm_task.parent_id = t.task_id) as child_count
+		from prm_task t left join tb_user tu on t.executor = tu.user_id
 		where t.task_menu_id = #{menuId} and t.task_del = 0
         order by t.`order` asc
 	</select>

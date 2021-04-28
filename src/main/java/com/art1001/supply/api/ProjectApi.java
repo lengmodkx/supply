@@ -323,7 +323,11 @@ public class ProjectApi extends BaseController {
             //查询项目默认分组
             String groupId = projectMemberService.findDefaultGroup(projectId, userId);
             //查询默认分组下的菜单（包含任务）
-            List<Relation> taskMenu = relationService.findMenus(groupId);
+            Relation relation = new Relation();
+            relation.setParentId(groupId);
+            relation.setLable(1);
+            relation.setProjectId(projectId);
+            List<Relation> taskMenu = relationService.findRelationAllList(relation);
             object.put("userId", userId);
             object.put("result", 1);
             object.put("menus", taskMenu);
