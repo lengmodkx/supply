@@ -204,15 +204,15 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper,Relation> im
 	public List<Relation> findMenus(String groupId) {
 		String userId = ShiroAuthenticationManager.getUserId();
 		List<Relation> relations = list(new LambdaQueryWrapper<Relation>().eq(Relation::getParentId, groupId).orderByAsc(Relation::getOrder));
-		relations.parallelStream().forEach(relation -> {
+		relations.forEach(relation -> {
 			List<Task> tasks = taskService.findTaskByMenuId(relation.getRelationId());
-			tasks.parallelStream().
+			tasks.stream().
 					filter(task -> task.getPrivacyPattern()==1&&userId.equals(task.getExecutor())&&(task.getTaskUIds() != null && Arrays.asList(task.getTaskUIds().split(",")).contains(userId)))
 					.forEach(task -> {
 				UserEntity entity = userService.getById(task.getExecutor());
 				task.setTagList(tagService.findTagByTaskId(task.getTaskId()));
 				task.setBindCount(bindingService.count(new LambdaQueryWrapper<Binding>().eq(Binding::getPublicId,task.getTaskId())));
-				task.setFileCount(fileService.count(new LambdaQueryWrapper<File>().eq(File::getPublicId,task.getTaskId())));
+				task.setFileCount(fileService.count(new LambdaQueryWrapper<File>().eq(File::getPublicId,task.getTaskId()).eq(File::getFileDel, 0)));
 				task.setExecutorName(entity.getUserName());
 				task.setExecutorImg(entity.getImage());
 				List<Task> list = taskService.list(new LambdaQueryWrapper<Task>().eq(Task::getParentId, task.getTaskId()));
