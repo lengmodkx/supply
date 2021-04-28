@@ -96,6 +96,7 @@
         <result column="bind_count" property="bindCount" jdbcType="INTEGER"/>
         <result column="child_count" property="childCount" jdbcType="INTEGER"/>
         <result column="complete_count" property="completeCount" jdbcType="INTEGER"/>
+        <result column="visible" property="visible"/>
         <collection property="tagList" column="task_id" javaType="java.util.ArrayList"
                     select="com.art1001.supply.mapper.tag.TagMapper.findTagByTaskId"/>
     </resultMap>
