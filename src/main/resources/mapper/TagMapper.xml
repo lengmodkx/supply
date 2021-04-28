@@ -318,7 +318,14 @@
     </select>
     <select id="findTagByTaskId" resultType="com.art1001.supply.entity.tag.Tag">
         SELECT
-        <include refid="Base_Column_List"/>
+            prm_tag.tag_id,
+            prm_tag.tag_name,
+            prm_tag.bg_color,
+            prm_tag.member_id,
+            prm_tag.project_id,
+            prm_tag.is_del,
+            prm_tag.create_time,
+            prm_tag.update_time
         from prm_tag left join prm_tag_relation ptr on prm_tag.tag_id = ptr.tag_id
         where ptr.task_id = #{taskId}
     </select>
