@@ -814,4 +814,7 @@ public interface TaskMapper extends BaseMapper<Task> {
 	 * @return
 	 */
 	List<Task> selectListAddExecutorImage(@Param("projectId")String projectId);
+
+	List<Task> findSubTasks(String taskId);
+
 }

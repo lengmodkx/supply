@@ -1731,4 +1731,19 @@
         select t.*,u.image as executorImg from prm_task t join tb_user u on t.executor=u.user_id
         where t.task_del='0' and t.parent_id='0' and t.project_id=#{projectId}
     </select>
+
+    <select id="findSubTasks" resultMap="BaseResultMap2">
+        select t.task_id,t.project_id,t.task_name,t.start_time,t.end_time,t.`repeat`,t.remarks,t.priority,t.`level`,
+               t.parent_id,t.member_id,t.executor,t.task_type,
+               t.task_menu_id,t.task_group_id,t.task_status,t.task_code,t.task_del,t.create_time,
+               t.update_time,t.finish_time,t.fabulous_count,t.privacy_pattern,t.other,t.`order`,t.task_uids,
+               tu.user_name as executor_name,tu.image as executor_img,
+               (SELECT count(0) FROM prm_file where prm_file.public_id = t.task_id) as file_count,
+               (SELECT count(0) FROM prm_binding where prm_binding.public_id = t.task_id) as bind_count,
+               (SELECT count(0) FROM prm_task where prm_task.parent_id = t.task_id) as child_count,
+               (SELECT count(0) FROM prm_task where prm_task.parent_id = t.task_id and prm_task.task_status=1) as complete_count
+        from prm_task t left join tb_user tu on t.executor = tu.user_id
+        where t.task_menu_id = #{menuId} and t.task_del = 0
+        order by t.`order` asc
+    </select>
 </mapper>

@@ -334,6 +334,8 @@ Task extends Model<Task> {
 	@TableField(exist = false)
 	private String projectName;
 
+	@TableField(exist = false)
+	private boolean visible;
 
 	@Override
 	protected Serializable pkVal() {

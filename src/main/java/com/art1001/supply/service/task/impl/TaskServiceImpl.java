@@ -2293,6 +2293,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         return list(new QueryWrapper<Task>().eq("task_group_id",groupId).eq("task_del",0).eq("parent_id",0));
     }
 
+    @Override
+    public List<Task> getSubTasks(String taskId) {
+        return taskMapper.findSubTasks(taskId);
+    }
+
 
     private List<Task> choiceByExample(List<Task> list, String executor, Integer tagId, Long startTime, Long endTime, String memberId, String taskUid, Integer taskStatus, String priority) {
         if (CollectionUtils.isNotEmpty(list)) {

@@ -7,6 +7,7 @@ import com.art1001.supply.annotation.PushName;
 import com.art1001.supply.annotation.PushType;
 import com.art1001.supply.api.base.BaseController;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.Result;
 import com.art1001.supply.entity.automation.constans.AutomationRuleConstans;
 import com.art1001.supply.entity.fabulous.Fabulous;
 import com.art1001.supply.entity.file.File;
@@ -1436,7 +1437,10 @@ public class TaskApi extends BaseController {
         }
     }
 
-
+    @RequestMapping("/{taskId}/sub")
+    public Result<List<Task>> getSubTasks(@PathVariable String taskId){
+        return Result.success(taskService.getSubTasks(taskId));
+    }
 }
 
 

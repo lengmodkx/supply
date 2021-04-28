@@ -762,4 +762,6 @@ public interface TaskService extends IService<Task> {
 	 * @return
 	 */
 	List<Task> getTaskByGroupId(String groupId);
+
+	List<Task> getSubTasks(String taskId);
 }
