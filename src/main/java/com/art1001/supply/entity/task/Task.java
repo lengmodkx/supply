@@ -16,6 +16,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -229,7 +230,7 @@ Task extends Model<Task> {
 	 * 该任务的子任务
 	 */
 	@TableField(exist = false)
-	private List<Task> taskList;
+	private List<Task> taskList = new ArrayList<>();
 
 	/**
 	 * 任务附件
