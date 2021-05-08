@@ -108,7 +108,6 @@ public class ArticleApi {
             throw new AjaxException(e);
         }
     }
-
     /**
      * 关注/取消关注 用户
      *
@@ -128,7 +127,6 @@ public class ArticleApi {
             throw new AjaxException(e);
         }
     }
-
     /**
      * 判断是否关注过目标
      * @param memberId
@@ -167,9 +165,7 @@ public class ArticleApi {
                 throw new AjaxException(e);
             }
         }
-
     }
-
     /**
      * 根据用户id获取关注的文章列表
      *
@@ -186,7 +182,6 @@ public class ArticleApi {
             throw new AjaxException(e);
         }
     }
-
     /**
      * 所有文章
      *
@@ -207,7 +202,6 @@ public class ArticleApi {
             throw new AjaxException(e);
         }
     }
-
     /**
      * 所有文章(后台)
      *
@@ -228,7 +222,6 @@ public class ArticleApi {
             throw new AjaxException(e);
         }
     }
-
     /**
      * 删除文章
      *
@@ -267,9 +260,6 @@ public class ArticleApi {
             throw new AjaxException(e);
         }
     }
-
-
-
     /**
      * 审核文章
      *
@@ -311,6 +301,4 @@ public class ArticleApi {
         articleService.dateToEs();
         return Result.success();
     }
-
-
 }

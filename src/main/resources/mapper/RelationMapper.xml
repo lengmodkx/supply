@@ -372,7 +372,7 @@
 
     <!-- 查询出项目下回收站中的所有任务分组 -->
     <select id="findRecycleBin" resultType="com.art1001.supply.entity.base.RecycleBinVO">
-		select relation_id as id,relation_name as publicName,update_time from prm_relation where project_id = #{projectId} and `lable` = 1 and relation_del = 1
+		select relation_id as id,relation_name as publicName,update_time from prm_relation where project_id = #{projectId} and `lable` = 1 and relation_del = 1 order by update_time desc
 	</select>
 
     <!-- 根据分组id 查询出 分组下所有菜单的id -->

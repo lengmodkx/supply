@@ -126,7 +126,7 @@
     <!-- 查询出在此项目回收站中的所有分享 -->
     <select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
         select id,title as publicName,update_time
-        from prm_share where is_del = 1 and project_id = #{projectId}
+        from prm_share where is_del = 1 and project_id = #{projectId} order by update_time desc
     </select>
 
     <!-- 查询分享部分信息 (项目名称,分享名称,执行者头像,标题,内容) -->

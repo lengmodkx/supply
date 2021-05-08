@@ -315,6 +315,7 @@
     <select id="findRecycleBin" parameterType="java.lang.String" resultType="com.art1001.supply.entity.base.RecycleBinVO">
         select tag_id as id ,tag_name as publicName ,update_time
         from prm_tag where is_del = 1 and project_id = #{projectId}
+        order by update_time desc
     </select>
     <select id="findTagByTaskId" resultType="com.art1001.supply.entity.tag.Tag">
         SELECT

@@ -1061,7 +1061,7 @@
     <select id="findRecycleBin" parameterType="java.lang.String"
             resultType="com.art1001.supply.entity.base.RecycleBinVO">
 		select task_id as id,task_name as publicName,update_time
-		from prm_task where project_id = #{projectId} and task_del = 1
+		from prm_task where project_id = #{projectId} and task_del = 1 order by update_time desc
 	</select>
 
     <!-- 永久删除多个任务 -->
