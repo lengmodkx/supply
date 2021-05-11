@@ -306,7 +306,7 @@
     </select>
 
     <update id="moveFile" parameterType="java.lang.String">
-		update prm_file set parent_id = #{parentId},project_id = #{projectId} where file_id = #{fileId}
+		update prm_file set parent_id = #{parentId},project_id = #{projectId} ,level=#{level} where file_id = #{fileId}
 	</update>
 
     <update id="moveToRecycleBin" parameterType="java.lang.String">

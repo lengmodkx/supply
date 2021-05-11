@@ -222,9 +222,9 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	 */
 	@Override
 	public Integer automaticUpdateProjectSchedule(Project r) {
-		List<Task> taskList = taskService.list(new QueryWrapper<Task>().eq("task_del",0).eq("parent_id",0).eq("project_id",r.getProjectId()));
-		List<Task> collect = taskList.stream().filter(Task::getTaskStatus).collect(Collectors.toList());
-		float v = ((float) collect.size() / taskList.size()) * 100;
+		int  finshCount = taskService.count(new QueryWrapper<Task>().eq("task_del",0).eq("parent_id",0).eq("project_id",r.getProjectId()).eq("task_status",true));
+		int taskCount = taskService.count(new QueryWrapper<Task>().eq("task_del",0).eq("parent_id",0).eq("project_id",r.getProjectId()));
+		float v = ((float) finshCount / taskCount) * 100;
 		return  (int) v;
 	}
 
@@ -232,7 +232,6 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper,Orga
 	public List<Project> getProjects(String orgId) {
 		return projectMapper.selectList(new QueryWrapper<Project>().eq("organization_id",orgId).eq("project_del",0).orderByDesc("create_time"));
 	}
-
 
 	@Override
 	public void personalProject(String userId) {

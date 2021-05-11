@@ -1204,6 +1204,7 @@
 		SELECT
 			t.task_name AS taskName,
 			t.task_id AS taskId,
+		    t.level as level,
 			u.image AS executorImg
 		FROM
 			prm_task AS t
@@ -1212,7 +1213,7 @@
 			t.parent_id = #{taskId}
 			AND t.task_del = 0
 		ORDER BY
-			t.ORDER DESC
+			t.order DESC
 	</select>
 
     <!-- 查询我执行的任务并且筛选 -->

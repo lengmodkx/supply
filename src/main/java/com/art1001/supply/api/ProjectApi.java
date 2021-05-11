@@ -350,10 +350,6 @@ public class ProjectApi extends BaseController {
         try {
             String userId = ShiroAuthenticationManager.getUserId();
             List<MenuVo> menuVos = projectService.taskIndex(projectId, userId);
-
-            ProjectMember projectMember = projectMemberService.getOne(new QueryWrapper<ProjectMember>()
-                    .eq("project_Id", projectId).eq("member_id", userId));
-            object.put("roleKey", projectMember.getRoleKey());
             object.put("userId", userId);
             object.put("result", 1);
             object.put("menus", menuVos);

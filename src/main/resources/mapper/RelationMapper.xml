@@ -31,7 +31,7 @@
     <!-- 回收站专用 -->
     <resultMap id="BaseResultMap3" type="com.art1001.supply.entity.base.RecycleBinVO">
         <id column="relation_id" property="id"/>
-        <result column="relation_name" property="name" jdbcType="VARCHAR"/>
+        <result column="relation_name" property="publicName" jdbcType="VARCHAR"/>
         <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
     </resultMap>
 
@@ -42,6 +42,7 @@
         <collection property="taskList" ofType="com.art1001.supply.entity.task.Task">
             <id column="t_id" property="taskId"/>
             <result column="t_name" property="taskName"/>
+            <result column="t_level" property="level"/>
             <result column="u_image" property="executorImg"/>
         </collection>
     </resultMap>
@@ -458,13 +459,14 @@
 			r.relation_name AS r_name,
 			t.task_id AS t_id,
 			t.task_name AS t_name,
+		    t.level as t_level,
 			u.image AS u_image
 		FROM
 			prm_relation AS r
 			LEFT JOIN prm_task t ON r.relation_id = t.task_menu_id
 			LEFT JOIN tb_user u ON t.executor = u.user_id
 		WHERE
-			r.parent_id = #{groupId}  order by r.order,t.order desc
+			r.parent_id = #{groupId} and t.parent_id = '0' order by r.order,t.order desc
 	</select>
 
     <!-- 获取项目下的全部分组信息 -->

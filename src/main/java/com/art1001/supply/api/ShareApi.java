@@ -352,7 +352,9 @@ public class ShareApi {
     public JSONObject getBindInfo(@PathVariable String projectId){
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data",new ArrayList<Share>(shareService.getBindInfo(projectId)));
+            List<Share> bindInfo = shareService.getBindInfo(projectId);
+            jsonObject.put("data",bindInfo);
+            jsonObject.put("result",1);
             return jsonObject;
         } catch (Exception e){
             throw new AjaxException("系统异常,获取绑定信息失败!",e);

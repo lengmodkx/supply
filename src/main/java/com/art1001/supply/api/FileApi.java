@@ -1060,11 +1060,22 @@ public class FileApi extends BaseController {
         try {
             String parentId = checkIsProjectId(id);
             if (parentId == null) {
-                jsonObject.put("data", fileService.getBindInfo(id));
+                List<File> bindInfo = fileService.getBindInfo(id);
+                if(bindInfo!=null&&bindInfo.size()>0){
+                    jsonObject.put("data", bindInfo);
+                    jsonObject.put("result", 1);
+                }else{
+                    jsonObject.put("result", 0);
+                }
             } else {
-                jsonObject.put("data", fileService.getBindInfo(parentId));
+                List<File> bindInfo = fileService.getBindInfo(parentId);
+                if(bindInfo!=null&&bindInfo.size()>0){
+                    jsonObject.put("data", bindInfo);
+                    jsonObject.put("result", 1);
+                }else{
+                    jsonObject.put("result", 0);
+                }
             }
-            jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException("系统异常,获取文件信息失败!", e);

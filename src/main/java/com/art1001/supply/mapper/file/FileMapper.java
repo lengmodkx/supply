@@ -101,7 +101,7 @@ public interface FileMapper extends BaseMapper<File> {
 	 * @param projectId 目标项目Id
 	 * @param fileId 要移动的文件/文件夹的Id
 	 */
-	void moveFile(String parentId,String projectId,String fileId);
+	void moveFile(String parentId,String projectId,String fileId,Integer level);
 
 	/**
 	 * 查询子目录

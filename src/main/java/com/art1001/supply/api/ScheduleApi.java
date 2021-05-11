@@ -572,7 +572,7 @@ public class ScheduleApi extends BaseController {
         JSONObject jsonObject = new JSONObject();
         try {
             List<ScheduleVo> beforeByMonth = scheduleService.getBeforeByMonth(projectId);
-            jsonObject.put("data", new JSONObject().fluentPut("before", beforeByMonth).fluentPut("after", scheduleService.getAfterBind(projectId)).fluentPut("beforeCount", beforeByMonth.stream().mapToInt(b -> b.getScheduleList().size()).sum()));
+            jsonObject.put("data", new JSONObject().fluentPut("before", beforeByMonth).fluentPut("after", scheduleService.getAfterBind(projectId)));
             jsonObject.put("result", 1);
             return jsonObject;
         } catch (Exception e) {

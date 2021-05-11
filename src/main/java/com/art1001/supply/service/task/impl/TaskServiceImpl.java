@@ -301,23 +301,37 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         task.setProjectId(projectId);
         task.setTaskMenuId(menuId);
         task.setTaskGroupId(groupId);
+        task.setParentId("0");
         task.setUpdateTime(System.currentTimeMillis());
         task.setTaskUIds(null);
         task.setExecutor(null);
+        task.setLevel(0);
         //根据查询菜单id 查询 菜单id 下的 最大排序号
         int maxOrder = relationService.findMenuTaskMaxOrder(menuId);
         task.setOrder(++maxOrder);
         updateById(task);
-        logService.saveLog(taskId,entity+ "将任务移动到了"+ project.getProjectName(),1);
+        logService.saveLog(taskId,"将任务移动到了"+ project.getProjectName(),1);
         //移动子任务
-        if (CollectionUtils.isNotEmpty(task.getTaskList())) {
-            task.getTaskList().forEach(subTask -> {
-                subTask.setTaskUIds(null);
-                subTask.setExecutor(null);
-                updateById(subTask);
+        recursiveTask(task);
+    }
+
+    private void recursiveTask(Task parentTask){
+        List<Task> tasks  = taskMapper.findTaskByFatherTask(parentTask.getTaskId());
+        if(tasks!=null&&tasks.size() > 0){
+            tasks.forEach(task -> {
+                task.setTaskUIds(null);
+                task.setExecutor(null);
+                task.setLevel(parentTask.getLevel()+1);
+                updateById(task);
+                int count = count(new QueryWrapper<Task>().eq("task_del", 0).eq("parent_id", task.getTaskId()));
+                if(count > 0){
+                    recursiveTask(task);
+                }
             });
         }
     }
+
+
 
     /**
      * 根据任务id 数组查询出多条任务信息
@@ -560,8 +574,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Task copyTask(String taskId, String projectId, String groupId, String menuId) {
-        Task task = taskService.findTaskByTaskId(taskId);
-        List<Task> child = task.getTaskList();
+        Project project = projectService.getById(projectId);
+        Task task = getById(taskId);
         try {
             task.setTaskId(IdGen.uuid());
             task.setTaskStatus(false);
@@ -574,30 +588,43 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             task.setTaskGroupId(groupId);
             //清空参与者
             task.setTaskUIds(null);
+            task.setLevel(0);
             //根据查询菜单id 查询 菜单id 下的 最大排序号
             int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
             task.setOrder(++maxOrder);
             this.save(task);
-            if (CollectionUtils.isNotEmpty(child)) {
-                child.forEach(item -> {
-                    item.setTaskStatus(false);
-                    item.setTaskId(IdGen.uuid());
-                    //设置新的子任务id
-                    item.setProjectId(projectId);
-                    //设置新的子任务的父任务id
-                    item.setParentId(task.getTaskId());
-                    //设置新子任务的更新时间
-                    item.setUpdateTime(System.currentTimeMillis());
-                    //设置新子任务的创建时间
-                    item.setCreateTime(System.currentTimeMillis());
-                    this.save(item);
-                });
-            }
+            logService.saveLog(taskId,"将任务复制到了"+ project.getProjectName(),1);
+            recursiveCopyTask(taskId,task.getLevel(),projectId,groupId,menuId);
             return task;
         } catch (Exception e) {
-            throw e;
+            throw new ServiceException(e);
         }
     }
+
+
+    private void recursiveCopyTask(String taskId,Integer level,String projectId, String groupId, String menuId){
+        List<Task> child = taskMapper.findTaskByFatherTask(taskId);
+        if(CollectionUtils.isNotEmpty(child)){
+            child.forEach(item -> {
+                List<Task> childs = taskMapper.findTaskByFatherTask(item.getTaskId());
+
+
+                item.setTaskId(IdGen.uuid());
+                item.setProjectId(projectId);
+                item.setLevel(level+1);
+                item.setTaskMenuId(menuId);
+                item.setTaskGroupId(groupId);
+                item.setTaskStatus(false);
+                save(item);
+
+                if(childs!=null && childs.size()>0){
+                    recursiveCopyTask(item.getTaskId(),item.getLevel(),projectId,groupId,menuId);
+                }
+            });
+        }
+
+    }
+
 
     /**
      * 收藏任务

@@ -488,31 +488,34 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      */
     private void moveSingleFile(String parentId, String projectId, String fileId) {
         File file = getOne(new QueryWrapper<File>().eq("file_id", fileId).eq("file_del", 0));
-        fileMapper.moveFile(parentId, projectId, fileId);
+        File tagetFile = getOne(new QueryWrapper<File>().eq("file_id", parentId).eq("file_del", 0));
+        fileMapper.moveFile(parentId, projectId, fileId,tagetFile.getLevel()+1);
         // 文件移动后处理文件版本
         if (file.getCatalog() == 0) {
             dealWithFile(file.getFileId(), parentId, 1);
         }
-        //文件和文件夹的处理
+        //文件夹的处理
         if (file.getCatalog() == 1) {
-            //递归更新子文件/文件夹的项目id，其他字段不变
-            recursiveFile(projectId, fileId);
+            //递归更新子文件/文件夹的项目id，更新当前文件夹的层级，然后递归里面的文件/文件夹
+            file = getOne(new QueryWrapper<File>().eq("file_id", fileId).eq("file_del", 0));
+            recursiveFile(projectId, fileId, file);
         }
     }
 
-    private void recursiveFile(String projectId, String fileId) {
+    private void recursiveFile(String projectId, String fileId,File tagetFile) {
         List<File> fileList = fileMapper.selectList(new QueryWrapper<File>().eq("parent_id", fileId).eq("file_del", 0));
         if (fileList != null && fileList.size() > 0) {
             fileList.forEach(file -> {
                 File f = new File();
                 f.setFileId(file.getFileId());
                 f.setProjectId(projectId);
+                f.setLevel(tagetFile.getLevel()+1);
                 updateById(f);
                 if (file.getCatalog() == 0) {
                     dealWithFile(file.getFileId(), fileId, 1);
                 }
                 if (file.getCatalog() == 1) {
-                    recursiveFile(projectId, file.getFileId());
+                    recursiveFile(projectId, file.getFileId(),f);
                 }
             });
         }
@@ -534,33 +537,34 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
 
     private void copySingleFile(String fileId, String projectId, String folderId) {
         File file = getOne(new QueryWrapper<File>().eq("file_id", fileId).eq("file_del", 0));
+        File tagetFile = getOne(new QueryWrapper<File>().eq("file_id", folderId).eq("file_del", 0));
         file.setFileId(IdGen.uuid());
         file.setParentId(folderId);
         file.setProjectId(projectId);
-        //判断是否是同项目->解除绑定关系
+        file.setLevel(tagetFile.getLevel()+1);
         save(file);
         if (file.getCatalog() == 0) {
             dealWithFile(file.getFileId(), folderId, 0);
         }
-
         if (file.getCatalog() == 1) {
-            recursiveCopyFile(projectId, fileId);
+            recursiveCopyFile(projectId, fileId, file);
         }
     }
 
-    private void recursiveCopyFile(String projectId, String parentId) {
+    private void recursiveCopyFile(String projectId, String parentId, File tagetFile) {
         List<File> fileList = fileMapper.selectList(new QueryWrapper<File>().eq("parent_id", parentId).eq("file_del", 0));
         if (fileList != null && fileList.size() > 0) {
             fileList.forEach(file -> {
                 file.setFileId(IdGen.uuid());
                 file.setProjectId(projectId);
                 file.setParentId(parentId);
+                file.setLevel(tagetFile.getLevel()+1);
                 save(file);
                 if (file.getCatalog() == 0) {
                     dealWithFile(file.getFileId(), parentId, 0);
                 }
                 if (file.getCatalog() == 1) {
-                    recursiveCopyFile(projectId, file.getFileId());
+                    recursiveCopyFile(projectId, file.getFileId(),file);
                 }
             });
         }
@@ -999,7 +1003,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
      */
     @Override
     public List<File> getBindInfo(String id) {
-        return list(new QueryWrapper<File>().select("file_id fileId", "file_name fileName", "ext ext", "catalog catalog").eq("parent_id", id).eq("file_del", 0));
+        return list(new QueryWrapper<File>().select("file_id fileId", "file_name fileName", "ext ext", "catalog catalog","level level").eq("parent_id", id).eq("file_del", 0));
     }
 
     /**

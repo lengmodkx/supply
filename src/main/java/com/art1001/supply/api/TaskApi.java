@@ -1,5 +1,6 @@
 package com.art1001.supply.api;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.annotation.AutomationRule;
 import com.art1001.supply.annotation.Push;
@@ -41,6 +42,7 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -702,7 +704,10 @@ public class TaskApi extends BaseController {
                                    @RequestParam(value = "taskName") String taskName,
                                    @RequestParam(value = "executor", required = false) String executor,
                                    @RequestParam(value = "startTime", required = false) String startTime,
-                                   @RequestParam(value = "projectId") String projectId) {
+                                   @RequestParam(value = "projectId") String projectId,
+                                   @RequestParam(value = "level") Integer level,
+                                   @RequestParam(value = "groupId") String groupId,
+                                   @RequestParam(value = "menuId") String menuId) {
         JSONObject object = new JSONObject();
         try {
             if (StringUtils.isEmpty(taskName)) {
@@ -714,23 +719,16 @@ public class TaskApi extends BaseController {
             task.setParentId(taskId);
             task.setTaskName(taskName);
             task.setProjectId(projectId);
-
-            //子任务存分组
-            Task taskGroupId = taskService.findTaskByTaskId(taskId);
-            //getOne(new QueryWrapper<Task>().select("project_id").eq("task_id", taskId));
-            if (StringUtils.isNotEmpty(taskGroupId.getTaskGroupId())) {
-                task.setTaskGroupId(taskGroupId.getTaskGroupId());
-            }
-
+            task.setTaskGroupId(groupId);
+            task.setTaskMenuId(menuId);
+            task.setLevel(level);
             if (StringUtils.isNotEmpty(executor)) {
                 task.setExecutor(executor);
             }
             if (StringUtils.isNotEmpty(startTime)) {
                 task.setStartTime(DateUtils.strToLong(startTime));
             }
-            Task parentTask = taskService.getById(taskId);
-            Integer pLevel = parentTask.getLevel();
-            task.setLevel(pLevel + 1);
+
             taskService.saveTask(task);
             Task pTask = new Task();
             pTask.setTaskId(taskId);
@@ -789,7 +787,7 @@ public class TaskApi extends BaseController {
      * @param menuId    菜单id
      * @return 是否复制成功
      */
-    @Push(value = PushType.A15, name =PushName.TASK,type = 1)
+    @Push(value = PushType.A15, name =PushName.TASK)
     @PostMapping("/{taskId}/copy")
     public JSONObject copyTask(@PathVariable(value = "taskId") String taskId,
                                @RequestParam(value = "projectId") String projectId,
@@ -1035,8 +1033,19 @@ public class TaskApi extends BaseController {
     public JSONObject getBindChild(@PathVariable String taskId) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("data", taskService.getBindChild(taskId));
-            jsonObject.put("result", 1);
+            List<Task> bindChild = taskService.getBindChild(taskId);
+            List<Map<String,Object>> list = new ArrayList<>();
+            Map<String,Object> map = new HashMap<>();
+            map.put("relationId","");
+            map.put("relationName","子任务");
+            map.put("taskList",bindChild);
+            list.add(map);
+            if(CollectionUtils.isNotEmpty(bindChild)){
+                jsonObject.put("data",list);
+                jsonObject.put("result", 1);
+            }else{
+                jsonObject.put("result", 0);
+            }
             return jsonObject;
         } catch (Exception e) {
             throw new AjaxException("系统异常,获取子任务失败!", e);
