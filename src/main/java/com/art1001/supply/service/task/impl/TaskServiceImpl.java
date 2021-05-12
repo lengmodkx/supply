@@ -586,15 +586,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             task.setProjectId(projectId);
             task.setTaskMenuId(menuId);
             task.setTaskGroupId(groupId);
+            task.setPrivacyPattern(1);
             //清空参与者
-            task.setTaskUIds(null);
+            task.setTaskUIds(ShiroAuthenticationManager.getUserId());
             task.setLevel(0);
             //根据查询菜单id 查询 菜单id 下的 最大排序号
             int maxOrder = relationService.findMenuTaskMaxOrder(task.getTaskMenuId());
             task.setOrder(++maxOrder);
             this.save(task);
             logService.saveLog(taskId,"将任务复制到了"+ project.getProjectName(),1);
-            recursiveCopyTask(taskId,task.getLevel(),projectId,groupId,menuId);
+            recursiveCopyTask(taskId,task.getTaskId(), task.getLevel(),projectId,groupId,menuId);
             return task;
         } catch (Exception e) {
             throw new ServiceException(e);
@@ -602,23 +603,25 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     }
 
 
-    private void recursiveCopyTask(String taskId,Integer level,String projectId, String groupId, String menuId){
+    private void recursiveCopyTask(String taskId,String newTaskId,Integer level,String projectId, String groupId, String menuId){
         List<Task> child = taskMapper.findTaskByFatherTask(taskId);
         if(CollectionUtils.isNotEmpty(child)){
             child.forEach(item -> {
-                List<Task> childs = taskMapper.findTaskByFatherTask(item.getTaskId());
-
-
+                Map<String,String> map = new HashMap<String,String>(){{ put("taskId",item.getTaskId()); }};
                 item.setTaskId(IdGen.uuid());
                 item.setProjectId(projectId);
+                item.setParentId(newTaskId);
                 item.setLevel(level+1);
                 item.setTaskMenuId(menuId);
                 item.setTaskGroupId(groupId);
                 item.setTaskStatus(false);
+                item.setPrivacyPattern(1);
+                //清空参与者
+                item.setTaskUIds(ShiroAuthenticationManager.getUserId());
                 save(item);
-
-                if(childs!=null && childs.size()>0){
-                    recursiveCopyTask(item.getTaskId(),item.getLevel(),projectId,groupId,menuId);
+                int count = count(new QueryWrapper<Task>().eq("task_del", 0).eq("parent_id", item.getTaskId()));
+                if(count>0){
+                    recursiveCopyTask(map.get("taskId"),item.getTaskId(),item.getLevel(),projectId,groupId,menuId);
                 }
             });
         }
