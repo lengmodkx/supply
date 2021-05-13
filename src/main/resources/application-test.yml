@@ -49,3 +49,5 @@ http:
 
 es:
   shortIp: 47.93.237.225:9200
+
+oss.endpoint: oss-cn-beijing-internal.aliyuncs.com
