@@ -1519,12 +1519,12 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             java.io.File zipFile = java.io.File.createTempFile("ald-bim-design", ".zip");
             ZipOutputStream zos = new ZipOutputStream(new CheckedOutputStream(new FileOutputStream(zipFile), new Adler32()));
             compress(file, zos, filename);
+            zos.close();
             FileInputStream fis = new FileInputStream(zipFile);
             response.addHeader("Content-Length", String.valueOf(fis.available()));
             BufferedInputStream in = new BufferedInputStream(fis);
             ServletOutputStream out = response.getOutputStream();
             IOUtils.copy(in, out);
-            zos.close();
             out.close();
             in.close();
             fis.close();
@@ -1595,7 +1595,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                     compress(file, zos, file.getFileName());
                 }
             }
-
+            zos.close();
             FileInputStream fis = new FileInputStream(zipFile);
             response.addHeader("Content-Length", String.valueOf(fis.available()));
             BufferedInputStream in = new BufferedInputStream(fis);
@@ -1604,7 +1604,6 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             out.close();
             in.close();
             fis.close();
-
             // 删除临时文件
             zipFile.deleteOnExit();
         } catch (IOException e) {
