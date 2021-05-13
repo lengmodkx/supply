@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.zip.Adler32;
@@ -35,14 +36,14 @@ import java.util.zip.ZipOutputStream;
 public class AliyunOss {
 
     // TODO 开发使用
-    private static String endpoint = "https://oss-cn-beijing.aliyuncs.com";
-    private static String accessKeyId = "LTAI4G24eniXnJtHWFGt7dYr";
-    private static String accessKeySecret = "MLM7h4dHKSShQB15s4v3SkVewwccCV";
-    private static String bucketName = "art1001-bim-5d";
-
+    public static String endpoint = "https://oss-cn-beijing.aliyuncs.com";
+    public static String accessKeyId = "LTAI4G24eniXnJtHWFGt7dYr";
+    public static String accessKeySecret = "MLM7h4dHKSShQB15s4v3SkVewwccCV";
+    public static String bucketName = "art1001-bim-5d";
+    private static HashMap<Object, Object> index = new HashMap<>();
     // Object是OSS存储数据的基本单元，称为OSS的对象，也被称为OSS的文件。详细描述请参看“开发人员指南 > 基本概念 > OSS基本概念介绍”。
     // Object命名规范如下：使用UTF-8编码，长度必须在1-1023字节之间，不能以“/”或者“\”字符开头。
-    private static String firstKey = "my-first-key";
+    public static String firstKey = "my-first-key";
 
 
 
@@ -587,7 +588,7 @@ public class AliyunOss {
     //压缩文件夹中的文件
     public static void doZip(com.art1001.supply.entity.file.File inFile, ZipOutputStream out, String dir)  {
         String entryName;
-        StringBuffer randomNum=new StringBuffer();
+        StringBuilder randomNum = new StringBuilder();
         for (int i = 0; i < 6; i++) {
             int i1 = new Random().nextInt(6);
             randomNum.append(i1);
@@ -597,7 +598,6 @@ public class AliyunOss {
             entryName = dir + "/" + inFile.getFileName()+randomNum+ inFile.getExt();
         } else {
             entryName = inFile.getFileName()+randomNum + inFile.getExt();
-
         }
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
         try {

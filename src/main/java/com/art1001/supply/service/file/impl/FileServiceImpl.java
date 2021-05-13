@@ -3,6 +3,8 @@ package com.art1001.supply.service.file.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.OSSObject;
 import com.art1001.supply.common.Constants;
 import com.art1001.supply.entity.base.RecycleBinVO;
 import com.art1001.supply.entity.file.File;
@@ -1535,7 +1537,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         }
     }
 
-    private void compress(File folder, ZipOutputStream out, String dir) throws IOException {
+    private void compress(File folder, ZipOutputStream out, String dir) {
+        OSSClient ossClient = new OSSClient(AliyunOss.endpoint, AliyunOss.accessKeyId, AliyunOss.accessKeySecret);
         List<File> files = list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()));
         if (files != null && files.size() > 0) {
             //过滤出符合下载条件的文件
@@ -1543,24 +1546,47 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                     || (f.getFilePrivacy().equals(Constants.B_ONE) &&
                     (StringUtils.isNotEmpty(f.getFileUids()) && f.getFileUids().contains(ShiroAuthenticationManager.getUserId()))))
                     .collect(Collectors.toList());
-
-            for (File inFile : fileList) {
-                if (inFile.getCatalog() == 1) {
-                    String name = inFile.getFileName();
-                    if (!"".equals(dir)) {
-                        name = dir + "/" + name;
+            try {
+                fileList.forEach(inFile -> {
+                    if (inFile.getCatalog() == 1) {
+                        String name = inFile.getFileName();
+                        if (!"".equals(dir)) {
+                            name = dir + "/" + name;
+                        }
+                        compress(inFile, out, name);
+                    } else {
+                        saveDownloadFileInfo(inFile);
+                        String entryName;
+                        if (!"".equals(dir)) {
+                            entryName = dir + "/" + inFile.getFileName()+(int)((Math.random()*9+1)*100000) + inFile.getExt();
+                        } else {
+                            entryName = inFile.getFileName()+(int)((Math.random()*9+1)*100000) + inFile.getExt();
+                        }
+                        try {
+                            out.putNextEntry(new ZipEntry(entryName));
+                            OSSObject ossObject = ossClient.getObject(AliyunOss.bucketName, inFile.getFileUrl());
+                            InputStream in = ossObject.getObjectContent();
+                            IOUtils.copy(in,out);
+                            in.close();
+                            out.close();
+                            ossObject.close();
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
                     }
-                    compress(inFile, out, name);
-                } else {
-                    saveDownloadFileInfo(inFile);
-                    AliyunOss.doZip(inFile, out, dir);
-                }
+                });
+            }finally {
+                ossClient.shutdown();
             }
         } else {
-            // 空文件夹的处理
-            out.putNextEntry(new ZipEntry(dir + "/"));
-            // 没有文件，不需要文件的copy
-            out.closeEntry();
+            try {
+                // 空文件夹的处理
+                out.putNextEntry(new ZipEntry(dir + "/"));
+                // 没有文件，不需要文件的copy
+                out.closeEntry();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
