@@ -608,7 +608,6 @@ public class AliyunOss {
             IOUtils.copy(in,out);
             in.close();
             ossObject.close();
-            out.closeEntry();
         }catch (IOException e){
             e.printStackTrace();
         }finally {
