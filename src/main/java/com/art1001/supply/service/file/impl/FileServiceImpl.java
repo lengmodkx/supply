@@ -1514,6 +1514,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
         response.reset(); // 非常重要
         // 设置fileName的编码
         String filename = file.getFileName();
+        AliyunOss.index = new HashMap<>();
+        AliyunOss.count = 0;
         try {
             String fileName = URLEncoder.encode(filename + ".zip", "UTF-8");
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
@@ -1525,8 +1527,10 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             FileInputStream fis = new FileInputStream(zipFile);
             response.addHeader("Content-Length", String.valueOf(fis.available()));
             BufferedInputStream in = new BufferedInputStream(fis);
-            ServletOutputStream out = response.getOutputStream();
+            //缓冲文件输出流
+            BufferedOutputStream out=new BufferedOutputStream(response.getOutputStream());
             IOUtils.copy(in, out);
+            out.flush();
             out.close();
             in.close();
             fis.close();
@@ -1547,7 +1551,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                     (StringUtils.isNotEmpty(f.getFileUids()) && f.getFileUids().contains(ShiroAuthenticationManager.getUserId()))))
                     .collect(Collectors.toList());
             try {
-                fileList.forEach(inFile -> {
+                for (File inFile:fileList) {
                     if (inFile.getCatalog() == 1) {
                         String name = inFile.getFileName();
                         if (!"".equals(dir)) {
@@ -1557,25 +1561,35 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                     } else {
                         saveDownloadFileInfo(inFile);
                         String entryName;
-                        if (!"".equals(dir)) {
-                            entryName = dir + "/" + inFile.getFileName()+(int)((Math.random()*9+1)*100000) + inFile.getExt();
-                        } else {
-                            entryName = inFile.getFileName()+(int)((Math.random()*9+1)*100000) + inFile.getExt();
+                        if(AliyunOss.index.containsKey(inFile.getFileName())){
+                            AliyunOss.count ++;
+                            AliyunOss.index.put(inFile.getFileName() + "(" + AliyunOss.count + ")",true);
+                            if (!"".equals(dir)) {
+                                entryName = dir + "/" + inFile.getFileName()+"(" + AliyunOss.count + ")" + inFile.getExt();
+                            } else {
+                                entryName = inFile.getFileName()+"(" + AliyunOss.count + ")" + inFile.getExt();
+                            }
+                        }else{
+                            AliyunOss.index.put(inFile.getFileName(),true);
+                            if (!"".equals(dir)) {
+                                entryName = dir + "/" + inFile.getFileName() + inFile.getExt();
+                            } else {
+                                entryName = inFile.getFileName() + inFile.getExt();
+                            }
                         }
-                        try {
-                            out.putNextEntry(new ZipEntry(entryName));
-                            OSSObject ossObject = ossClient.getObject(AliyunOss.bucketName, inFile.getFileUrl());
-                            InputStream in = ossObject.getObjectContent();
-                            IOUtils.copy(in,out);
-                            in.close();
-                            out.close();
-                            ossObject.close();
-                        }catch (IOException e){
-                            e.printStackTrace();
-                        }
+
+                        out.putNextEntry(new ZipEntry(entryName));
+                        OSSObject ossObject = ossClient.getObject(AliyunOss.bucketName, inFile.getFileUrl());
+                        InputStream in = ossObject.getObjectContent();
+                        IOUtils.copy(in,out);
+                        in.close();
+                        ossObject.close();
                     }
-                });
-            }finally {
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            finally {
                 ossClient.shutdown();
             }
         } else {
