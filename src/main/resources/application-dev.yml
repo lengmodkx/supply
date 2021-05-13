@@ -38,7 +38,6 @@ spring:
     database: 1
     host: 127.0.0.1
     port: 6379
-  #password: 1qaz2wsx#EDC
   #配置JSON时区和空值处理
   jackson:
     time-zone: GMT+8
@@ -55,5 +54,6 @@ http:
 
 es:
   shortIp: 47.93.237.225:9200
+oss.endpoint: oss-cn-beijing.aliyuncs.com
 
 

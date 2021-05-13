@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -85,6 +86,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Resource
     private EsUtil<File> esUtil;
 
+    @Resource
+    Environment environment;
     /**
      * 公共模型库 常量定义信息
      */
@@ -1542,7 +1545,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     }
 
     private void compress(File folder, ZipOutputStream out, String dir) {
-        OSSClient ossClient = new OSSClient(AliyunOss.endpoint, AliyunOss.accessKeyId, AliyunOss.accessKeySecret);
+        OSSClient ossClient = new OSSClient(environment.getProperty("oss.endpoint"), AliyunOss.accessKeyId, AliyunOss.accessKeySecret);
         List<File> files = list(new QueryWrapper<File>().eq("parent_id", folder.getFileId()));
         if (files != null && files.size() > 0) {
             //过滤出符合下载条件的文件
