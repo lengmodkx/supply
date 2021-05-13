@@ -1604,7 +1604,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             out.close();
             in.close();
             fis.close();
-            zos.close();
+
             // 删除临时文件
             zipFile.deleteOnExit();
         } catch (IOException e) {
