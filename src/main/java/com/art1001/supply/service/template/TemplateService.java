@@ -45,7 +45,7 @@ public interface TemplateService extends IService<Template> {
 	 * 
 	 * @param template
 	 */
-	public void saveTemplate(Template template);
+	public Template saveTemplate(Template template);
 
 	/**
 	 * 获取所有数据
@@ -53,5 +53,6 @@ public interface TemplateService extends IService<Template> {
 	 * @return
 	 */
 	public List<Template> findTemplateAllList();
-	
+
+	void addProject(String templateId,String projectName);
 }

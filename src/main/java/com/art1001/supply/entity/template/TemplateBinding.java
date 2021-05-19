@@ -1,4 +1,5 @@
 package com.art1001.supply.entity.template;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -15,48 +16,41 @@ import java.io.Serializable;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@TableName("template")
-public class Template extends Model<Template> {
+@TableName(value = "template_binding")
+public class TemplateBinding extends Model<TemplateBinding> {
 	
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 关联关系id
+	 */
+	@TableId(value = "id",type = IdType.ASSIGN_UUID)
+	private String id;
 
 
 	/**
-	 * template_id
+	 * 任务，日程，文件，分享id
 	 */
-	@TableId(type = IdType.ASSIGN_UUID)
-	private String templateId;
+	private String publicId;
 
 
 	/**
-	 * template_cover
+	 * 任务，日程，文件，分享id
 	 */
-	private String templateCover;
+	private String bindId;
 
 
 	/**
-	 * template_name
+	 * 任务，日程，文件，分享
 	 */
-	private String templateName;
-
+	private String publicType;
 
 	/**
-	 * template_des
+	 * 绑定的内容
 	 */
-	private String templateDes;
-
-
-	/**
-	 * template_title
-	 */
-	private String templateTitle;
-
-	private String orgId;
-
-	private String memberId;
+	private String bindContent;
 
 	@Override
 	protected Serializable pkVal() {
-		return this.templateId;
+		return this.id;
 	}
+
 }

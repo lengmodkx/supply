@@ -185,10 +185,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         relation.setCreator(ShiroAuthenticationManager.getUserId());
         relationService.saveRelation(relation);
 
-        //初始化项目文件夹
-        fileService.initProjectFolder(project.getProjectId());
-
-
         //初始化项目功能菜单
         String[] funcs = new String[]{"任务", "分享", "文件", "日程", "群聊", "统计"};
         JSONArray array = new JSONArray();
@@ -202,7 +198,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
         project.setFunc(array.toString());
         save(project);
-
+        //初始化项目文件夹
+        fileService.initProjectFolder(project.getProjectId());
 
         //初始化菜单
         String[] menus = new String[]{"待处理", "进行中", "已完成", "已审核", "已拒绝"};
@@ -222,7 +219,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
         //企业中 项目拥有者的角色信息
         ProRole orgAdminRole = proRoleService.getOrgProjectRoleByKey(Constants.OWNER_KEY, project.getOrganizationId());
-
         ProRoleUser proRoleUser = new ProRoleUser();
         if (orgAdminRole != null) {
             proRoleUser.setRoleId(orgAdminRole.getRoleId());
@@ -231,7 +227,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         proRoleUser.setProjectId(project.getProjectId());
         proRoleUser.setTCreateTime(LocalDateTime.now());
         proRoleUserService.save(proRoleUser);
-
         Integer userProjectCount = projectMemberService.getUserProjectCount();
         if (userProjectCount == 1) {
             projectMemberService.updateTargetProjectCurrent(project.getProjectId(), ShiroAuthenticationManager.getUserId());

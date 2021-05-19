@@ -59,8 +59,6 @@
         <collection property="taskList" column="relation_id" javaType="ArrayList"
                     ofType="com.art1001.supply.entity.task.Task"
                     select="com.art1001.supply.mapper.task.TaskMapper.findTaskByMenuId"/>
-
-        
     </resultMap>
 
     <!-- 映射菜单信息,任务信息 -->

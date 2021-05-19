@@ -1,16 +1,19 @@
 package com.art1001.supply.api;
 
 import com.art1001.supply.entity.Result;
+import com.art1001.supply.entity.relation.Relation;
 import com.art1001.supply.entity.template.Template;
 import com.art1001.supply.entity.template.TemplateRelation;
 import com.art1001.supply.exception.AjaxException;
 import com.art1001.supply.service.template.TemplateRelationService;
 import com.art1001.supply.service.template.TemplateService;
+import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,7 +47,19 @@ public class TemplateApi {
         }
     }
 
-
+    /**
+     * 获取模板信息列表
+     * @return
+     */
+    @GetMapping("{templateId}")
+    public Result<Template> getTemplate(@PathVariable String templateId){
+        try {
+            Template templates = templateService.getById(templateId);
+            return Result.success(templates);
+        }catch (Exception e){
+            throw new AjaxException(e.getMessage());
+        }
+    }
     /**
      * 保存模板信息
      * @param templateName 模板名称
@@ -54,25 +69,18 @@ public class TemplateApi {
      */
     @PostMapping
     public Result<Template> saveTemplate(@RequestParam String templateName,
-                               @RequestParam String templateDes,
-                               @RequestParam String templateCover,
-                               @RequestParam String orgId){
+                                         @RequestParam String templateDes,
+                                         @RequestParam String templateCover,
+                                         @RequestParam String orgId){
         try {
+            //处理模板
             Template template = new Template();
             template.setTemplateName(templateName);
             template.setTemplateDes(templateDes);
             template.setTemplateCover(templateCover);
             template.setOrgId(orgId);
-            templateService.save(template);
-            String[] relations = new String[]{"待认领","进行中","已完成"};
-            for (int i = 0; i < relations.length; i++) {
-                TemplateRelation templateRelation = new TemplateRelation();
-                templateRelation.setTemplateId(template.getTemplateId());
-                templateRelation.setRelationName(relations[i]);
-                templateRelation.setRelationOrder(i);
-                templateRelation.setCreateTime(System.currentTimeMillis());
-                templateRelationService.save(templateRelation);
-            }
+            template.setMemberId(ShiroAuthenticationManager.getUserId());
+            templateService.saveTemplate(template);
         }catch (Exception e){
             throw new AjaxException(e.getMessage());
         }
@@ -125,12 +133,15 @@ public class TemplateApi {
     @GetMapping("/relations")
     public Result<List<TemplateRelation>> getRelations(@RequestParam String templateId){
         try {
-            List<TemplateRelation> relations = templateRelationService.list(new QueryWrapper<TemplateRelation>().eq("template_id", templateId).orderByAsc("relation_order"));
+            List<TemplateRelation> relations = templateRelationService.getRelation(templateId);
             return Result.success(relations);
         }catch (Exception e){
             throw new AjaxException(e.getMessage());
         }
     }
+
+
+
 
     @DeleteMapping("/relations")
     public Result deleteRelation(@RequestParam String relationId){
@@ -151,7 +162,7 @@ public class TemplateApi {
             TemplateRelation relation = new TemplateRelation();
             relation.setRelationId(relationId);
             relation.setRelationName(relationName);
-            relation.setRelationOrder(relationOrder);
+            relation.setOrder(relationOrder);
             relation.setUpdateTime(System.currentTimeMillis());
             templateRelationService.updateById(relation);
             return Result.success();
@@ -166,7 +177,7 @@ public class TemplateApi {
             TemplateRelation relation = new TemplateRelation();
             relation.setTemplateId(templateId);
             relation.setRelationName(relationName);
-            relation.setRelationOrder(relationOrder);
+            relation.setOrder(relationOrder);
             relation.setUpdateTime(System.currentTimeMillis());
             templateRelationService.save(relation);
             return Result.success();
@@ -174,4 +185,37 @@ public class TemplateApi {
             throw new AjaxException(e.getMessage());
         }
     }
+
+    /**
+     * 更新模板中的任务
+     * @param taskId
+     * @param taskName
+     * @param order
+     * @return
+     */
+    @PutMapping("{taskId}/update")
+    public Result<String> updateTemplateTask(@PathVariable String taskId,
+                                             @RequestParam(required = false) String taskName,
+                                             @RequestParam(required = false) Integer relationId,
+                                             @RequestParam(required = false) Integer order){
+
+
+        return Result.success();
+    }
+
+    /**
+     * 根据模板创建项目
+     * @param templateId 模板id
+     * @return
+     */
+    @PostMapping("/project/{templateId}")
+    public Result<String> addProjectByTemplate(@PathVariable String templateId,@RequestParam String projectName){
+        try {
+
+        }catch (Exception e){
+            throw new AjaxException(e);
+        }
+        return  Result.success();
+    }
+
 }

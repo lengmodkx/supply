@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.art1001.supply.mapper.template.TemplateTaskMapper">
+    <resultMap id="BaseResultMap2" type="com.art1001.supply.entity.task.Task">
+        <!--查询执行者-->
+        <id column="task_id" property="taskId"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="task_name" property="taskName" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+        <result column="repeat" property="repeat" jdbcType="VARCHAR"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="priority" property="priority" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="executor" property="executor" jdbcType="VARCHAR"/>
+        <result column="executor_name" property="executorName" jdbcType="VARCHAR"/>
+        <result column="executor_img" property="executorImg" jdbcType="VARCHAR"/>
+        <result column="task_type" property="taskType" jdbcType="VARCHAR"/>
+        <result column="task_menu_id" property="taskMenuId" jdbcType="VARCHAR"/>
+        <result column="task_group_id" property="taskGroupId" jdbcType="VARCHAR"/>
+        <result column="task_status" property="taskStatus" jdbcType="VARCHAR"/>
+        <result column="task_code" property="taskCode" jdbcType="VARCHAR"/>
+        <result column="task_del" property="taskDel" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="finish_time" property="finishTime" jdbcType="BIGINT"/>
+        <result column="fabulous_count" property="fabulousCount" jdbcType="INTEGER"/>
+        <result column="privacy_pattern" property="privacyPattern" jdbcType="INTEGER"/>
+        <result column="other" property="other" jdbcType="VARCHAR"/>
+        <result column="order" property="order" jdbcType="INTEGER"/>
+        <result column="task_uids" property="taskUIds" jdbcType="CLOB"/>
+        <result column="total_work_hours" property="totalWorkHours"/>
+        <result column="plan_work_hours" property="planWorkHours"/>
+        <result column="file_count" property="fileCount" jdbcType="INTEGER"/>
+        <result column="bind_count" property="bindCount" jdbcType="INTEGER"/>
+        <result column="child_count" property="childCount" jdbcType="INTEGER"/>
+        <result column="complete_count" property="completeCount" jdbcType="INTEGER"/>
+        <result column="visible" property="visible"/>
+        <!--查询标签-->
+        <collection property="tagList" column="task_id" ofType="com.art1001.supply.entity.tag.Tag">
+            <id property="tagId" column="tag_id"/>
+            <result property="tagName" column="tag_name"/>
+            <result property="bgColor" column="bg_color"/>
+        </collection>
+    </resultMap>
+
+    <!-- 查询当前菜单下的全部任务信息 -->
+    <select id="findTaskByMenuId" resultMap="BaseResultMap2">
+		select t.task_id,t.project_id,t.task_name,t.start_time,t.end_time,t.`repeat`,t.remarks,t.priority,t.`level`,
+                t.parent_id,t.member_id,t.executor,t.task_type,
+                t.task_menu_id,t.task_group_id,t.task_status,t.task_code,t.task_del,t.create_time,
+                t.update_time,t.finish_time,t.fabulous_count,t.privacy_pattern,t.other,t.`order`,t.task_uids,
+                tt.tag_id,tt.tag_name,tt.bg_color
+		from prm_task t left join prm_tag_relation ptr on t.task_id = ptr.task_id
+		left join template_tag tt on ptr.tag_id = tt.tag_id
+		where t.task_menu_id = #{menuId} and t.task_del = 0 and t.parent_id = '0'
+        order by t.`order`
+	</select>
+
+</mapper>
