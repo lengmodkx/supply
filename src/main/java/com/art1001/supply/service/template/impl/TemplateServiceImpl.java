@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
 import com.art1001.supply.entity.relation.Relation;
@@ -18,6 +19,7 @@ import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.tag.TagRelation;
 import com.art1001.supply.entity.task.Task;
 import com.art1001.supply.entity.template.*;
+import com.art1001.supply.mapper.binding.BindingMapper;
 import com.art1001.supply.mapper.project.ProjectMapper;
 import com.art1001.supply.mapper.project.ProjectMemberMapper;
 import com.art1001.supply.mapper.relation.RelationMapper;
@@ -84,6 +86,12 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper,Template> im
 	private TemplateTagRelationMapper templateTagRelationMapper;
 	@Resource
 	private TemplateTagMapper templateTagMapper;
+
+	@Resource
+	private TemplateBindingMapper templateBindingMapper;
+
+	@Resource
+	private BindingMapper bindingMapper;
 
 	/**
 	 * 查询分页数据
@@ -237,9 +245,13 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper,Template> im
 					tagRelation.setTagId(tag.getTagId());
 					tagRelationMapper.insert(tagRelation);
 				});
-
-
-
+				List<TemplateBinding> bindings = templateBindingMapper.selectList(new QueryWrapper<TemplateBinding>().eq("public_id", templateTask.getTaskId()));
+				bindings.forEach(templateBinding -> {
+					Binding binding = new Binding();
+					binding.setPublicId(task.getTaskId());
+					binding.setPublicType("任务");
+					bindingMapper.insert(binding);
+				});
 
 				dealTask(templateTask,task.getTaskId(),relation1.getRelationId(),relation.getRelationId(),project.getProjectId());
 			});
@@ -313,7 +325,13 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper,Template> im
 					tagRelation.setTagId(tag.getTagId());
 					tagRelationMapper.insert(tagRelation);
 				});
-
+				List<TemplateBinding> bindings = templateBindingMapper.selectList(new QueryWrapper<TemplateBinding>().eq("public_id", templateTask.getTaskId()));
+				bindings.forEach(templateBinding -> {
+					Binding binding = new Binding();
+					binding.setPublicId(task.getTaskId());
+					binding.setPublicType("任务");
+					bindingMapper.insert(binding);
+				});
 				dealTask(templateTask,task.getTaskId(),menuId,groupId,parentId);
 			});
 		}
