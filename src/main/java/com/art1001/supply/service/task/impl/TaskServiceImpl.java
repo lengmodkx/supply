@@ -945,6 +945,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      */
     @Override
     public List<Task> findByUserIdAndByTreeDay() {
+        
         return taskMapper.findByUserIdAndByTreeDay(ShiroAuthenticationManager.getUserId());
     }
 

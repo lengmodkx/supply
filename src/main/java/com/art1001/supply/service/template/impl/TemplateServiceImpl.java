@@ -1,14 +1,9 @@
 package com.art1001.supply.service.template.impl;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.art1001.supply.common.Constants;
+import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.binding.Binding;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.project.ProjectMember;
@@ -35,8 +30,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
-import com.art1001.supply.entity.base.Pager;
+
+import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ServiceImpl
@@ -226,7 +227,8 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper,Template> im
 				task.setTaskUIds(ShiroAuthenticationManager.getUserId());
 				task.setRemarks(templateTask.getRemarks());
 				task.setTaskMenuId(relation1.getRelationId());
-				task.setTaskGroupId(relation.getRelationId());
+				task.setTaskGroupId(relation1.getRelationId());
+//				task.setTaskGroupId(relation.getRelationId());
 				task.setPrivacyPattern(1);
 				task.setParentId("0");
 				taskMapper.insert(task);
@@ -293,6 +295,47 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper,Template> im
 		}
 	}
 
+	@Override
+	public TemplateTask getTemplateTaskList(String taskId) {
+		TemplateTask task = templateTaskMapper.selectById(taskId);
+		if ("0".equals(task.getParentId())) {
+			List<TemplateTask> taskList = templateTaskMapper.selectList(new QueryWrapper<TemplateTask>().eq("parent_id", taskId));
+			task.setTaskList(taskList);
+		}
+
+		List<TemplateTagRelation> tagIds = templateTagRelationMapper.selectList(new QueryWrapper<TemplateTagRelation>().eq("task_id", taskId));
+		if (CollectionUtils.isNotEmpty(tagIds)) {
+			List<TemplateTag> tags = tagIds.stream().map(m -> {
+				TemplateTag tag = templateTagMapper.selectOne(new QueryWrapper<TemplateTag>().eq("tag_id", m.getTagId()));
+				return tag;
+			}).collect(Collectors.toList());
+			task.setTagList(tags);
+		}
+
+		return task;
+	}
+
+	@Override
+	public void insertChildTask(String parentTaskId, String taskName, String relationId) {
+		TemplateTask task = new TemplateTask();
+		task.setParentId(parentTaskId);
+		task.setTaskName(taskName);
+		task.setTaskMenuId(relationId);
+		task.setTaskGroupId(relationId);
+		task.setCreateTime(System.currentTimeMillis());
+		task.setUpdateTime(System.currentTimeMillis());
+		templateTaskMapper.insert(task);
+	}
+
+
+	/**
+	 * 处理任务
+	 * @param parentTask
+	 * @param parentId
+	 * @param menuId
+	 * @param groupId
+	 * @param projectId
+	 */
 	private void dealTask(TemplateTask parentTask,String parentId,String menuId,String groupId,String projectId){
 		List<TemplateTask> taskList = templateTaskMapper.selectList(new QueryWrapper<TemplateTask>().eq("parent_id",parentTask.getTaskId()));
 		if(taskList!=null&&taskList.size()>0){

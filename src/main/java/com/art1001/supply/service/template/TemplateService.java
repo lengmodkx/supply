@@ -1,9 +1,12 @@
 package com.art1001.supply.service.template;
 
-import java.util.List;
 import com.art1001.supply.entity.base.Pager;
 import com.art1001.supply.entity.template.Template;
+import com.art1001.supply.entity.template.TemplateTask;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Service接口
@@ -54,5 +57,18 @@ public interface TemplateService extends IService<Template> {
 	 */
 	public List<Template> findTemplateAllList();
 
+	@Transactional(rollbackFor = Exception.class)
 	void addProject(String templateId,String projectName);
+
+
+	TemplateTask getTemplateTaskList(String taskId);
+
+	/**
+	 * 模板添加子任务
+	 * @param parentTaskId
+	 * @param taskName
+	 * @param relationId
+	 * @return
+	 */
+    void insertChildTask(String parentTaskId, String taskName, String relationId);
 }

@@ -246,6 +246,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         bool.must(QueryBuilders.matchQuery("isDel", 0).operator(Operator.AND));
         bool.must(QueryBuilders.matchQuery("state", 2).operator(Operator.AND));
         List<Article> list = Lists.newArrayList();
+
         if (StringUtils.isNotEmpty(acId)) {
             bool.must(QueryBuilders.matchQuery("acId", acId).operator(Operator.AND));
         }

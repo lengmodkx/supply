@@ -48,12 +48,12 @@
 
     <!-- 查询当前菜单下的全部任务信息 -->
     <select id="findTaskByMenuId" resultMap="BaseResultMap2">
-		select t.task_id,t.project_id,t.task_name,t.start_time,t.end_time,t.`repeat`,t.remarks,t.priority,t.`level`,
+		select t.task_id,t.task_name,t.start_time,t.end_time,t.`repeat`,t.remarks,t.priority,t.`level`,
                 t.parent_id,t.member_id,t.executor,t.task_type,
                 t.task_menu_id,t.task_group_id,t.task_status,t.task_code,t.task_del,t.create_time,
                 t.update_time,t.finish_time,t.fabulous_count,t.privacy_pattern,t.other,t.`order`,t.task_uids,
                 tt.tag_id,tt.tag_name,tt.bg_color
-		from prm_task t left join prm_tag_relation ptr on t.task_id = ptr.task_id
+		from template_task t left join prm_tag_relation ptr on t.task_id = ptr.task_id
 		left join template_tag tt on ptr.tag_id = tt.tag_id
 		where t.task_menu_id = #{menuId} and t.task_del = 0 and t.parent_id = '0'
         order by t.`order`

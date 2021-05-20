@@ -31,12 +31,6 @@ public interface ProjectMapper extends BaseMapper<Project> {
 
 	Project getProjectGanttChart(@Param("projectId") String projectId);
 
-	/**
-	 * 保存project数据
-	 * 
-	 * @param project
-	 */
-	void saveProject(Project project);
 
 	/**
 	 * 获取所有project数据

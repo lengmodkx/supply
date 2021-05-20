@@ -6,7 +6,6 @@ import com.art1001.supply.entity.log.Log;
 import com.art1001.supply.entity.project.Project;
 import com.art1001.supply.entity.schedule.ScheduleApiBean;
 import com.art1001.supply.entity.share.ShareApiBean;
-import com.art1001.supply.entity.tag.Tag;
 import com.art1001.supply.entity.task.TaskApiBean;
 import com.art1001.supply.entity.user.UserEntity;
 import com.baomidou.mybatisplus.annotation.*;
@@ -46,7 +45,7 @@ public class TemplateTask extends Model<TemplateTask> {
 	 * 标签
 	 */
 	@TableField(exist = false)
-	private List<Tag> tagList;
+	private List<TemplateTag> tagList;
 	//多余字段，无用
 	private String tagId;
 	/**
