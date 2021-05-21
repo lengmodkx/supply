@@ -46,7 +46,7 @@ public class TemplateApi {
      * @return
      */
     @GetMapping
-    public Result<List<Template>> getTemplates(@RequestParam String orgId) {
+    public Result<List<Template>> getTemplates(@RequestParam(value = "orgId") String orgId) {
         try {
             List<Template> templates = templateService.list(new QueryWrapper<Template>().eq("org_Id", orgId));
             return Result.success(templates);
@@ -78,7 +78,7 @@ public class TemplateApi {
      * @param templateCover 模板封面
      * @return
      */
-    @PostMapping
+    @PostMapping("/saveTemplate")
     public Result<Template> saveTemplate(@RequestParam(value = "templateName", required = false) String templateName,
                                          @RequestParam(value = "templateDes", required = false) String templateDes,
                                          @RequestParam(value = "templateCover", required = false) String templateCover,
@@ -86,6 +86,14 @@ public class TemplateApi {
                                          @RequestParam(value = "templateId", required = false) String templateId) {
         try {
             if (StringUtils.isNotEmpty(templateId)) {
+
+                Template template = new Template();
+                template.setTemplateId(templateId);
+                template.setTemplateName(templateName);
+                template.setTemplateDes(templateDes);
+                template.setTemplateCover(templateCover);
+                templateService.updateById(template);
+            } else {
                 //处理模板
                 Template template = new Template();
                 template.setTemplateName(templateName);
@@ -94,13 +102,6 @@ public class TemplateApi {
                 template.setOrgId(orgId);
                 template.setMemberId(ShiroAuthenticationManager.getUserId());
                 templateService.saveTemplate(template);
-            } else {
-                Template template = new Template();
-                template.setTemplateId(templateId);
-                template.setTemplateName(templateName);
-                template.setTemplateDes(templateDes);
-                template.setTemplateCover(templateCover);
-                templateService.updateById(template);
             }
 
         } catch (Exception e) {
@@ -166,7 +167,7 @@ public class TemplateApi {
 
 
     @DeleteMapping("/relations")
-    public Result deleteRelation(@RequestParam String relationId) {
+    public Result deleteRelation(@RequestParam(value = "relationId") String relationId) {
         try {
             TemplateRelation relation = new TemplateRelation();
             relation.setRelationId(relationId);
@@ -201,6 +202,7 @@ public class TemplateApi {
             relation.setRelationName(relationName);
             relation.setOrder(relationOrder);
             relation.setUpdateTime(System.currentTimeMillis());
+            relation.setLable(1);
             templateRelationService.save(relation);
             return Result.success();
         } catch (Exception e) {

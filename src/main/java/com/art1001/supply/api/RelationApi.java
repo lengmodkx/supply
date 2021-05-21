@@ -50,8 +50,6 @@ public class RelationApi {
     ) {
         JSONObject jsonObject = new JSONObject();
         try {
-
-
             Relation relation = new Relation();
             relation.setRelationName(menuName);
             relation.setProjectId(projectId);
