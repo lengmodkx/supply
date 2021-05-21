@@ -24,7 +24,7 @@ public class TemplateRelationServiceImpl extends ServiceImpl<TemplateRelationMap
         if (relation.getOrder()!=null && relation.getOrder()!=0) {
             Integer maxOrder = templateRelationMapper.findMaxOrder(relation.getTemplateId());
             relation.setOrder(maxOrder+1);
-            save(relation);
         }
+        save(relation);
     }
 }
