@@ -203,7 +203,7 @@ public class TemplateApi {
             relation.setOrder(relationOrder);
             relation.setUpdateTime(System.currentTimeMillis());
             relation.setLable(1);
-            templateRelationService.save(relation);
+            templateRelationService.createRelation(relation);
             return Result.success();
         } catch (Exception e) {
             throw new AjaxException(e.getMessage());

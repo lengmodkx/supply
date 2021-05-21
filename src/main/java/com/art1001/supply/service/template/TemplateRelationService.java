@@ -9,4 +9,5 @@ public interface TemplateRelationService extends IService<TemplateRelation> {
 
     List<TemplateRelation> getRelation(String templateId);
 
+    void createRelation(TemplateRelation relation);
 }

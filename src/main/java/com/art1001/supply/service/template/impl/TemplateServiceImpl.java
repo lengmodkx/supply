@@ -201,7 +201,8 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper,Template> im
 		relation.setRelationName("任务");
 		relation.setProjectId(project.getProjectId());
 		relation.setCreator(ShiroAuthenticationManager.getUserId());
-		relationMapper.saveRelation(relation);
+//		relationMapper.saveRelation(relation);
+		relationMapper.insert(relation);
 
 
 		List<TemplateRelation> relations = templateRelationMapper.selectList(new QueryWrapper<TemplateRelation>().eq("template_id", templateId).eq("lable",1));

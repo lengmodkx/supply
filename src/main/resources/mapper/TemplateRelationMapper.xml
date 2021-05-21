@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.art1001.supply.mapper.template.TemplateRelationMapper">
-	
-	<resultMap id="BaseResultMap" type="com.art1001.supply.entity.template.TemplateRelation">
-		<result column="relation_id" property="relationId" jdbcType="VARCHAR"/>
-		<result column="relation_name" property="relationName" jdbcType="VARCHAR"/>
-		<result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
-		<result column="template_id" property="templateId" jdbcType="VARCHAR"/>
-		<result column="create_time" property="createTime" jdbcType="BIGINT"/>
-		<result column="update_time" property="updateTime" jdbcType="BIGINT"/>
-		<result column="lable" property="lable" jdbcType="INTEGER"/>
-		<result column="relation_del" property="relationDel" jdbcType="INTEGER"/>
-		<result column="order" property="order" jdbcType="INTEGER"/>
-		<result column="creator" property="creator" jdbcType="VARCHAR"/>
-		<result column="default_group" property="defaultGroup" jdbcType="INTEGER"/>
-	</resultMap>
 
-	<resultMap id="BaseResultMapVo" type="com.art1001.supply.entity.template.TemplateRelation" extends="BaseResultMap">
-		<collection property="taskList" column="relation_id" javaType="ArrayList"
-					ofType="com.art1001.supply.entity.template.TemplateTask"
-					select="com.art1001.supply.mapper.template.TemplateTaskMapper.findTaskByMenuId"/>
-	</resultMap>
+    <resultMap id="BaseResultMap" type="com.art1001.supply.entity.template.TemplateRelation">
+        <result column="relation_id" property="relationId" jdbcType="VARCHAR"/>
+        <result column="relation_name" property="relationName" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR"/>
+        <result column="template_id" property="templateId" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="lable" property="lable" jdbcType="INTEGER"/>
+        <result column="relation_del" property="relationDel" jdbcType="INTEGER"/>
+        <result column="order" property="order" jdbcType="INTEGER"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="default_group" property="defaultGroup" jdbcType="INTEGER"/>
+    </resultMap>
 
-	<sql id="Base_Column_List">
+    <resultMap id="BaseResultMapVo" type="com.art1001.supply.entity.template.TemplateRelation" extends="BaseResultMap">
+        <collection property="taskList" column="relation_id" javaType="ArrayList"
+                    ofType="com.art1001.supply.entity.template.TemplateTask"
+                    select="com.art1001.supply.mapper.template.TemplateTaskMapper.findTaskByMenuId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
 		relation_id,
 		relation_name,
 		parent_id,
@@ -34,12 +34,18 @@
 		creator
 	</sql>
 
-	<select id="getRelation" resultMap="BaseResultMapVo" parameterType="com.art1001.supply.entity.template.TemplateRelation">
-		SELECT
-		<include refid="Base_Column_List"/>
-		from template_relation
-		where lable = 1 and template_id =#{templateId}
-		order by `order`
+    <select id="getRelation" resultMap="BaseResultMapVo"
+            parameterType="com.art1001.supply.entity.template.TemplateRelation">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from template_relation
+        where lable = 1 and template_id =#{templateId}
+        order by `order`
+    </select>
+
+
+    <select id="findMaxOrder" resultType="java.lang.Integer">
+         select IFNULL(MAX(`order`),0) from template_relation where template_id=#{templateId};
 	</select>
 
 

@@ -18,4 +18,13 @@ public class TemplateRelationServiceImpl extends ServiceImpl<TemplateRelationMap
     public List<TemplateRelation> getRelation(String templateId) {
         return templateRelationMapper.getRelation(templateId);
     }
+
+    @Override
+    public void createRelation(TemplateRelation relation) {
+        if (relation.getOrder()!=null && relation.getOrder()!=0) {
+            Integer maxOrder = templateRelationMapper.findMaxOrder(relation.getTemplateId());
+            relation.setOrder(maxOrder+1);
+            save(relation);
+        }
+    }
 }
