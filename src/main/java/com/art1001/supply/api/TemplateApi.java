@@ -8,6 +8,7 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -233,9 +234,16 @@ public class TemplateApi {
             task.setRemarks(remarks);
             task.setTagId(tagId+"");
             templateTaskService.updateById(task);
-            TemplateTagRelation templateTagRelation = new TemplateTagRelation();
-            templateTagRelation.setTagId(tagId);
-            templateTagRealtionService.save(templateTagRelation);
+            if (tagId!=null) {
+                List<TemplateTagRelation> list = templateTagRealtionService.list(new QueryWrapper<TemplateTagRelation>().eq("tag_id", tagId).eq("task_id", taskId));
+                if (CollectionUtils.isEmpty(list)) {
+                    TemplateTagRelation templateTagRelation = new TemplateTagRelation();
+                    templateTagRelation.setTagId(tagId);
+                    templateTagRelation.setTaskId(taskId);
+                    templateTagRealtionService.save(templateTagRelation);
+                }
+            }
+
         } catch (Exception e) {
             throw new AjaxException(e.getMessage());
         }
