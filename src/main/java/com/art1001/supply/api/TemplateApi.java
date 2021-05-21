@@ -223,7 +223,7 @@ public class TemplateApi {
                                              @RequestParam(required = false) String taskName,
                                              @RequestParam(required = false) String relationId,
                                              @RequestParam(required = false) String remarks,
-                                             @RequestParam(required = false)Long tagId) {
+                                             @RequestParam(required = false) Long tagId) {
 
         try {
             TemplateTask task = new TemplateTask();
@@ -231,9 +231,9 @@ public class TemplateApi {
             task.setTaskName(taskName);
             task.setTaskMenuId(relationId);
             task.setRemarks(remarks);
+            task.setTagId(tagId+"");
             templateTaskService.updateById(task);
             TemplateTagRelation templateTagRelation = new TemplateTagRelation();
-            templateTagRelation.setTagId(tagId);
             templateTagRelation.setTagId(tagId);
             templateTagRealtionService.save(templateTagRelation);
         } catch (Exception e) {
@@ -251,7 +251,7 @@ public class TemplateApi {
     @PostMapping("/project/{templateId}")
     public Result<String> addProjectByTemplate(@PathVariable String templateId, @RequestParam String projectName) {
         try {
-            templateService.addProject(templateId,projectName);
+            templateService.addProject(templateId, projectName);
         } catch (Exception e) {
             throw new AjaxException(e);
         }
@@ -291,6 +291,7 @@ public class TemplateApi {
 
     /**
      * 创建模板标签
+     *
      * @param templateTagName
      * @param templateId
      * @param bgColor
@@ -299,7 +300,7 @@ public class TemplateApi {
     @GetMapping("/createTemplateTag")
     public Result createTemplateTag(@RequestParam(value = "templateTagName") String templateTagName,
                                     @RequestParam(value = "templateId") String templateId,
-                                    @RequestParam(value = "bgColor")String bgColor) {
+                                    @RequestParam(value = "bgColor") String bgColor) {
         try {
             TemplateTag templateTag = new TemplateTag();
             templateTag.setTemplateId(templateId);
@@ -316,17 +317,18 @@ public class TemplateApi {
 
     /**
      * 更新模板标签
+     *
      * @param templateTagName
      * @param bgColor
      * @param tagId
      * @return
      */
     @GetMapping("/updateTemplateTag")
-    public Result updateTemplateTag(@RequestParam(value = "templateTagName",required = false) String templateTagName,
-                                    @RequestParam(value = "bgColor",required = false)String bgColor,
-                                    @RequestParam(value ="tagId" ) Long tagId){
+    public Result updateTemplateTag(@RequestParam(value = "templateTagName", required = false) String templateTagName,
+                                    @RequestParam(value = "bgColor", required = false) String bgColor,
+                                    @RequestParam(value = "tagId") Long tagId) {
         try {
-            templateTagService.update(new UpdateWrapper<TemplateTag>().set("tag_name",templateTagName).set("bg_color",bgColor).eq("tag_id",tagId));
+            templateTagService.update(new UpdateWrapper<TemplateTag>().set("tag_name", templateTagName).set("bg_color", bgColor).eq("tag_id", tagId));
         } catch (Exception e) {
             throw new AjaxException(e);
         }
@@ -335,11 +337,12 @@ public class TemplateApi {
 
     /**
      * 模板标签列表
+     *
      * @param templateId
      * @return
      */
     @GetMapping("/getTemplateTagList")
-    public Result getTemplateTagList(@RequestParam(value = "templateId") String templateId){
+    public Result getTemplateTagList(@RequestParam(value = "templateId") String templateId) {
         try {
             List<TemplateTag> List = templateTagService.list(new QueryWrapper<TemplateTag>().eq("template_id", templateId));
             return Result.success(List);
@@ -351,11 +354,12 @@ public class TemplateApi {
 
     /**
      * 移除模板标签
+     *
      * @param tagId
      * @return
      */
     @GetMapping("/removeTemplateTag")
-    public Result removeTemplateTag(@RequestParam(value = "tagId") String tagId){
+    public Result removeTemplateTag(@RequestParam(value = "tagId") String tagId) {
         try {
             templateTagService.removeById(tagId);
         } catch (Exception e) {
@@ -366,13 +370,14 @@ public class TemplateApi {
 
     /**
      * 移除模板列表任务
+     *
      * @param relationId
      * @return
      */
     @GetMapping("/deleteRealtionAllTask")
     public Result deleteRealtionAllTask(@RequestParam(value = "relationId") String relationId) {
         try {
-            templateTaskService.remove(new QueryWrapper<TemplateTask>().eq("task_menu_id",relationId));
+            templateTaskService.remove(new QueryWrapper<TemplateTask>().eq("task_menu_id", relationId));
         } catch (Exception e) {
             throw new AjaxException(e);
         }
@@ -380,14 +385,15 @@ public class TemplateApi {
     }
 
     /**
-     *  模板任务初始化
+     * 模板任务初始化
+     *
      * @param taskId
      * @return
      */
     @GetMapping("/getTemplateTaskList")
-    public Result getTemplateTaskList(@RequestParam("taskId") String taskId){
+    public Result getTemplateTaskList(@RequestParam("taskId") String taskId) {
         try {
-            TemplateTask task=templateService.getTemplateTaskList(taskId);
+            TemplateTask task = templateService.getTemplateTaskList(taskId);
             return Result.success(task);
         } catch (Exception e) {
             throw new AjaxException(e);
@@ -396,6 +402,7 @@ public class TemplateApi {
 
     /**
      * 添加子任务
+     *
      * @param parentTaskId
      * @param taskName
      * @param relationId
@@ -403,10 +410,10 @@ public class TemplateApi {
      */
     @GetMapping("/insertChildTask")
     public Result insertChildTask(@RequestParam("parentTaskId") String parentTaskId,
-                                  @RequestParam("taskName")String taskName,
-                                  @RequestParam(value = "relationId") String relationId){
+                                  @RequestParam("taskName") String taskName,
+                                  @RequestParam(value = "relationId") String relationId) {
         try {
-            templateService.insertChildTask(parentTaskId,taskName,relationId);
+            templateService.insertChildTask(parentTaskId, taskName, relationId);
         } catch (Exception e) {
             throw new AjaxException(e);
         }
