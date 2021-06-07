@@ -9,9 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,6 +22,7 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @TableName("template_tag")
+
 public class TemplateTag extends Model<TemplateTag> {
 	
 	private static final long serialVersionUID = 1L;

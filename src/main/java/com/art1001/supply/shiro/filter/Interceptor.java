@@ -59,20 +59,28 @@ public class Interceptor implements HandlerInterceptor {
         HandlerMethod handlerMethod = (HandlerMethod)handler;
         String name = handlerMethod.getMethod().getName();
         String className = handlerMethod.getBeanType().getSimpleName();
+        // 当前请求的资源路径
         StringBuilder key = new StringBuilder(className);
         key.append(":").append(name);
+        // 获悉系统所有资源
         List<String> allResources = redisUtil.getList(String.class, "allResources");
 
+        // 所有资源包含当前请求路径
         if(allResources.contains(key.toString())){
             String userId = ShiroAuthenticationManager.getUserId();
             String orgByUserId = organizationMemberService.findOrgByUserId(userId);
+            // 获取当前登录人的企业权限
             List<String> list = redisUtil.getList(String.class, "orgms:" + userId);
+            // 为空，第一次登陆
             if(CollectionUtils.isEmpty(list)){
+                // 查询出本企业下当前登录人所拥有的所有权限并存入redis
                 list = resourceService.getMemberResourceKey(userId, orgByUserId);
                 redisUtil.lset("orgms:" + userId, list);
             }
 
+            // 获取当前登录人的项目权限
             List<String> permsList = redisUtil.getList(String.class, "perms:" + userId);
+            // 若企业权限或项目权限都包含当前登录人的资源请求路径则通过
             if(list.contains(key.toString()) || permsList.contains(key.toString())){
                 log.info("用户：{} -- 拥有{}权限", ShiroAuthenticationManager.getUserId(), key);
                 return true;

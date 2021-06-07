@@ -29,6 +29,7 @@ public class ProductApi {
     public JSONObject getList(){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", productService.list(null));
+
         return jsonObject;
     }
 

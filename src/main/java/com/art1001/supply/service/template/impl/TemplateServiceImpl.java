@@ -29,14 +29,17 @@ import com.art1001.supply.shiro.ShiroAuthenticationManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ServiceImpl
@@ -310,15 +313,14 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper,Template> im
 			task.setTagList(tags);
 		}
 
-		/*List<TemplateTagRelation> tagIds = templateTagRelationMapper.selectList(new QueryWrapper<TemplateTagRelation>().eq("task_id", taskId));
+		List<TemplateTagRelation> tagIds = templateTagRelationMapper.selectList(new QueryWrapper<TemplateTagRelation>().eq("task_id", taskId));
 		if (CollectionUtils.isNotEmpty(tagIds)) {
 			List<TemplateTag> tags = tagIds.stream().map(m -> {
 				TemplateTag tag = templateTagMapper.selectOne(new QueryWrapper<TemplateTag>().eq("tag_id", m.getTagId()));
 				return tag;
 			}).collect(Collectors.toList());
 			task.setTagList(tags);
-		}*/
-
+		}
 		return task;
 	}
 

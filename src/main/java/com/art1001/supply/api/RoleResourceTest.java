@@ -6,7 +6,7 @@ import com.art1001.supply.service.resource.ProResourcesRoleService;
 import com.art1001.supply.service.role.ProRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.commons.collections.CollectionUtils;
-import org.junit.Test;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
